@@ -19,6 +19,14 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
+  config.gem "authlogic"
+  config.gem "carlosbrando-remarkable", :lib => "remarkable", :source => "http://gems.github.com"
+  config.gem "enum_field", :lib => "enum_field", :source => "http://gems.github.com"
+  config.gem "haml", :source => "http://gems.github.com"
+  config.gem "pager-acts_as_list", :lib => "active_record/acts/list", :source => "http://gems.github.com"
+  config.gem "rspec", :lib => false
+  config.gem "rspec-rails", :lib => false
+  config.gem "rubyist-aasm", :lib => "aasm", :source => "http://gems.github.com"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
