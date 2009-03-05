@@ -1,0 +1,68 @@
+  [4;36;1mSQL (0.3ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mselect sqlite_version(*)[0m
+  [4;36;1mSQL (7.9ms)[0m   [0;1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [4;35;1mSQL (5.5ms)[0m   [0mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateHexes (20090305184717)
+  [4;36;1mSQL (7.5ms)[0m   [0;1mCREATE TABLE "hexes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "x" integer, "y" integer, "hex_type" varchar(255), "roll" integer, "map_id" integer) [0m
+  [4;35;1mSQL (6.7ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090305184717')[0m
+Migrating to CreateMaps (20090305185431)
+  [4;36;1mSQL (8.4ms)[0m   [0;1mCREATE TABLE "maps" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "game_id" integer, "height" integer, "width" integer, "robber_x" integer, "robber_y" integer) [0m
+  [4;35;1mSQL (33.4ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090305185431')[0m
+Migrating to CreateGames (20090305185527)
+  [4;36;1mSQL (15.4ms)[0m   [0;1mCREATE TABLE "games" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "aasm_state" varchar(255), "current_player_number" integer, "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (7.3ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090305185527')[0m
+Migrating to CreatePlayers (20090305190523)
+  [4;36;1mSQL (8.9ms)[0m   [0;1mCREATE TABLE "players" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "bricks" integer, "grain" integer, "ore" integer, "wool" integer, "lumber" integer, "settlements" integer, "cities" integer, "roads" integer, "position" integer, "user_id" integer, "game_id" integer, "points" integer) [0m
+  [4;35;1mSQL (6.5ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090305190523')[0m
+  [4;36;1mSQL (1.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (1.5ms)[0m   [0mSELECT version FROM schema_migrations[0m
+  [4;36;1mSQL (0.8ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mPRAGMA index_list("games")[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1mPRAGMA index_list("hexes")[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mPRAGMA index_list("maps")[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1mPRAGMA index_list("players")[0m
+  [4;36;1mSQL (0.9ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.3ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateHexes (20090305184717)
+Migrating to CreateMaps (20090305185431)
+Migrating to CreateGames (20090305185527)
+Migrating to CreatePlayers (20090305190523)
+Migrating to CreateEdges (20090305192903)
+  [4;36;1mSQL (0.2ms)[0m   [0;1mselect sqlite_version(*)[0m
+  [4;35;1mSQL (11.3ms)[0m   [0mCREATE TABLE "edges" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "x" integer, "y" integer, "player_id" integer, "map_id" integer) [0m
+  [4;36;1mSQL (6.2ms)[0m   [0;1mINSERT INTO schema_migrations (version) VALUES ('20090305192903')[0m
+Migrating to CreateNodes (20090305192941)
+  [4;35;1mSQL (5.5ms)[0m   [0mCREATE TABLE "nodes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "x" integer, "y" integer, "player_id" integer, "map_id" integer, "aasm_state" varchar(255)) [0m
+  [4;36;1mSQL (9.6ms)[0m   [0;1mINSERT INTO schema_migrations (version) VALUES ('20090305192941')[0m
+  [4;35;1mSQL (0.6ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mSELECT version FROM schema_migrations[0m
+  [4;35;1mSQL (0.5ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.1ms)[0m   [0;1mPRAGMA index_list("edges")[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mPRAGMA index_list("games")[0m
+  [4;36;1mSQL (0.1ms)[0m   [0;1mPRAGMA index_list("hexes")[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mPRAGMA index_list("maps")[0m
+  [4;36;1mSQL (0.1ms)[0m   [0;1mPRAGMA index_list("nodes")[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mPRAGMA index_list("players")[0m

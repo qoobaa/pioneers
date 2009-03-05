@@ -17,13 +17,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Filters added to this controller apply to all controllers in the application.
-# Likewise, all the methods added will be available for all controllers.
+class CreatePlayers < ActiveRecord::Migration
+  def self.up
+    create_table :players do |t|
+      t.integer :bricks
+      t.integer :grain
+      t.integer :ore
+      t.integer :wool
+      t.integer :lumber
+      t.integer :settlements
+      t.integer :cities
+      t.integer :roads
+      t.integer :position
+      t.integer :user_id
+      t.integer :game_id
+      t.integer :points
+    end
+  end
 
-class ApplicationController < ActionController::Base
-  helper :all # include all helpers, all the time
-  protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
-  # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
+  def self.down
+    drop_table :players
+  end
 end

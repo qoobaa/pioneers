@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  x: 1
+  y: 1
+  player_id: 1
+  map_id: 1
+  aasm_state: MyString
+
+two:
+  x: 1
+  y: 1
+  player_id: 1
+  map_id: 1
+  aasm_state: MyString
