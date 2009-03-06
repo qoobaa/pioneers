@@ -1,0 +1,552 @@
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Load (0.4ms)[0m   [0mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;36;1mHex Exists (0.5ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.3ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.3ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Load (0.4ms)[0m   [0mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.3ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.8ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.5ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.3ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.4ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.3ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.3ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.6ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.3ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.3ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.3ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.3ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.3ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.6ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.7ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.6ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.5ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.3ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.3ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.4ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.2ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" IS NULL AND "hexes".x IS NULL AND "hexes".y IS NULL) LIMIT 1[0m
+  [4;36;1mHex Load (0.4ms)[0m   [0;1mSELECT * FROM "hexes" LIMIT 1[0m
+  [4;35;1mHex Exists (0.3ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 1 AND "hexes".y = 1) LIMIT 1[0m
+  [4;36;1mHex Exists (0.2ms)[0m   [0;1mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 1) LIMIT 1[0m
+  [4;35;1mHex Exists (0.2ms)[0m   [0mSELECT "hexes".id FROM "hexes" WHERE ("hexes"."map_id" = 1 AND "hexes".x = 2 AND "hexes".y = 2) LIMIT 1[0m
+  [4;36;1mNode Load (0.4ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.2ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.1ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mNode Load (0.3ms)[0m   [0;1mSELECT * FROM "nodes" LIMIT 1[0m
+  [4;35;1mMap Load (0.2ms)[0m   [0mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m
+  [4;35;1mNode Exists (0.3ms)[0m   [0mSELECT "nodes".id FROM "nodes" WHERE ("nodes"."map_id" = 1 AND "nodes".x = 1 AND "nodes".y = 1) LIMIT 1[0m
+  [4;36;1mMap Load (0.2ms)[0m   [0;1mSELECT * FROM "maps" WHERE ("maps"."id" = 1) [0m

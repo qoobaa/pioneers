@@ -37,15 +37,15 @@ class Game < ActiveRecord::Base
 
   aasm_event :end_turn do
     transitions :from => :first_settlement, :to => :first_road
-    transitions :from => :first_road, :to => :first_settlement, :guard => :next_player?, :on_transition => :next_player!
+    transitions :from => :first_road, :to => :first_settlement, :guard => :next_player?, :on_transition => :next_player
     transitions :from => :first_road, :to => :second_settlement
     transitions :from => :second_settlement, :to => :second_road
-    transitions :from => :second_road, :to => :second_settlement, :guard => :previous_player?, :on_transition => :previous_player!
+    transitions :from => :second_road, :to => :second_settlement, :guard => :previous_player?, :on_transition => :previous_player
     transitions :from => :second_road, :to => :before_roll
     transitions :from => :before_roll, :to => :ended, :guard => :end_of_game?
     transitions :from => :before_roll, :to => :after_roll
     transitions :from => :after_roll, :to => :ended, :guard => :end_of_game?
-    transitions :from => :after_roll, :to => :before_roll, :on_transition => :next_player!
+    transitions :from => :after_roll, :to => :before_roll, :on_transition => :next_player
   end
 
   aasm_initial_state :waiting_for_players
@@ -62,7 +62,7 @@ class Game < ActiveRecord::Base
     current_player_number < players.count
   end
 
-  def next_player!
+  def next_player
     self.current_player_number = current_player_number + 1
     self.current_player_number = 1 if current_player_number > players.count
   end
@@ -71,7 +71,7 @@ class Game < ActiveRecord::Base
     current_player_number != 1
   end
 
-  def previous_player!
+  def previous_player
     self.current_player_number = current_player_number - 1
     self.current_player_number = players.count if current_player_number == 0
   end
