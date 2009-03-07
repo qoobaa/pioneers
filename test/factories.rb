@@ -35,7 +35,6 @@ Factory.define :hex do |h|
 end
 
 Factory.define :map do |m|
-  m.width 2
-  m.height 2
+  m.size [2, 2]
   m.hexes_attributes [Factory.attributes_for(:hex)] * 4
 end

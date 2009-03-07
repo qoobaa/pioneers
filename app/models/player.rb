@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Player < ActiveRecord::Base
-  validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points, :greater_than_or_equal_to => 0
+  validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points, :greater_than_or_equal_to => 0, :only_integer => true
   belongs_to :game
   has_many :nodes
   has_many :edges

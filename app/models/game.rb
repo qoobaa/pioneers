@@ -24,6 +24,8 @@ class Game < ActiveRecord::Base
   validates_length_of :players, :in => 3..4, :if => :first_settlement?
   validates_presence_of :map, :if => :first_settlement?
 
+  delegate :hexes, :nodes, :edges, :to => :map, :prefix => true
+
   include AASM
   aasm_state :waiting_for_players
   aasm_state :first_settlement

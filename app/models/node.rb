@@ -27,7 +27,7 @@ class Node < ActiveRecord::Base
   validates_associated :player
   validates_uniqueness_of :map_id, :scope => [:x, :y]
   validates_numericality_of :x, :y, :greater_than_or_equal_to => 0, :only_integer => true
-  validate :first_settlement, :second_settlement
+  validate :proximity_of_land, :proximity_of_settlements, :first_settlement, :second_settlement, :state_of_game_for_settlement, :state_of_game_for_city, :possesion_of_road
 
   aasm_event :expand do
     transitions :from => :settlement, :to => :city, :on_transition => :build_city
@@ -40,7 +40,7 @@ class Node < ActiveRecord::Base
 
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
-  delegate :first_settlement?, :second_settlement?, :after_roll?, :current_player, :to => :game, :prefix => true
+  delegate :players, :first_settlement?, :second_settlement?, :after_roll?, :current_player, :to => :game, :prefix => true
   delegate :nodes, :to => :player, :prefix => true
 
   def self.find_by_position(position)
@@ -102,7 +102,7 @@ class Node < ActiveRecord::Base
   end
 
   def has_road?
-    edges.detect { |edge| not edge.nil? and edge.road? and edge.player == player } != nil
+    edges.detect { |edge| not edge.nil? and edge.player == player } != nil
   end
 
   protected
@@ -112,10 +112,12 @@ class Node < ActiveRecord::Base
   end
 
   def first_settlement?
+    return if player.nil?
     player_nodes.settlement.count == 0
   end
 
   def second_settlement?
+    return if player.nil?
     player_nodes.settlement.count == 1
   end
 
@@ -123,8 +125,23 @@ class Node < ActiveRecord::Base
     game_first_settlement? or game_second_settlement? or game_after_roll?
   end
 
+  def state_of_game_for_settlement
+    return unless settlement?
+    errors.add_to_base "you cannot build settlement at the moment" unless game_settlement_build_phase? and game_current_player == player
+  end
+
+  def possesion_of_road
+    return unless game_after_roll?
+    errors.add :position, "has no road" unless has_road?
+  end
+
   def game_city_build_phase?
     game_after_roll?
+  end
+
+  def state_of_game_for_city
+    return unless city?
+    errors.add_to_base "you cannot build city at the moment" unless game_city_build_phase? and game_current_player == player
   end
 
   def first_settlement
@@ -135,66 +152,45 @@ class Node < ActiveRecord::Base
     errors.add_to_base "you have already built the second settlement" if game_second_settlement? and not second_settlement?
   end
 
+  def position_settleable?
+    hexes.detect { |hex| hex.settleable? if hex } != nil
+  end
 
+  def proximity_of_land
+    errors.add :position, "is not settleable" unless position_settleable?
+  end
+
+  def proximity_of_settlements
+    errors.add :position, "is too close to another settlement" unless nodes.compact.empty?
+  end
+
+  def build_settlement
+    return if player.nil?
+    player.settlements -= 1
+    add_resources_from_neighbours if game_second_settlement?
+    charge_for_settlement if game_after_roll?
+  end
+
+  def build_city
+    return if player.nil?
+    player.settlements += 1
+    player.cities -= 1
+    charge_for_city
+  end
+
+  def add_resources_from_neighbours
+    hexes.compact.each { |hex| add_resources(hex.resource_type) }
+  end
+
+  def charge_for_settlement
+    player.lumber -= 1
+    player.grain -= 1
+    player.wool -= 1
+    player.bricks -= 1
+  end
+
+  def charge_for_city
+    player.ore -= 3
+    player.grain -= 2
+  end
 end
-
-# class Node < ActiveRecord::Base
-#   validate :state_of_game_for_city, :state_of_game_for_settlement, :proximity_of_settled_nodes, :player_id_changed, :first_settlement, :second_settlement
-
-
-#   protected
-
-#   def player_id_changed
-#     return if player_id_was == nil
-#     errors.add :player, "cannot be changed" if player_id_changed?
-#   end
-
-#   def neighbour_nodes
-#     edges.compact.map { |edge| edge.nodes - [self] }.flatten
-#   end
-
-#   def proximity_of_settled_nodes
-#     return unless settlement?
-#     errors.add_to_base "you cannot build settlement here (another settlement in neighbourhood)" if neighbour_nodes.detect { |node| not node.unsettled? }
-#   end
-
-#   def state_of_game_for_settlement
-#     return unless settlement?
-#     errors.add_to_base "you cannot build settlement at the moment" unless game_settlement_build_phase? and game_current_player == player
-#   end
-
-#   def state_of_game_for_city
-#     return unless city?
-#     errors.add_to_base "you cannot build city at the moment" unless game_city_build_phase? and game_current_player == player
-#   end
-
-#   def build_settlement
-#     return if player.nil?
-#     player.settlements -= 1
-#     add_resources_from_neighbours if game_second_settlement?
-#     charge_for_settlement if game_after_roll?
-#   end
-
-#   def build_city
-#     return if player.nil?
-#     player.settlements += 1
-#     player.cities -= 1
-#     charge_for_city
-#   end
-
-#   def add_resources_from_neighbours
-#     hexes.compact.each { |hex| add_resources(hex.resource_type) }
-#   end
-
-#   def charge_for_settlement
-#     player.lumber -= 1
-#     player.grain -= 1
-#     player.wool -= 1
-#     player.bricks -= 1
-#   end
-
-#   def charge_for_city
-#     player.ore -= 3
-#     player.grain -= 2
-#   end
-# end
