@@ -27,7 +27,7 @@ class Hex < ActiveRecord::Base
   validates_numericality_of :x, :y, :greater_than_or_equal_to => 0, :only_integer => true
 
   extend EnumField
-  enum_field :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea"]
+  enum_field :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
 
   RESOURCE_TYPES = { "hill" => "bricks", "field" => "grain", "mountain" => "ore", "pasture" => "wool", "forest" => "lumber" }.freeze
 

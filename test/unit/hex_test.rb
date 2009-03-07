@@ -22,7 +22,7 @@ require 'test_helper'
 class HexTest < Test::Unit::TestCase
   should_belong_to :map
   should_allow_values_for :roll, [2, 3, 4, 5, 6, 8, 9, 10, 11, 12, nil]
-  should_allow_values_for :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea"]
+  should_allow_values_for :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
   # should_validate_uniqueness_of :map_id, :scoped_to => [:x, :y]
 
   context "With position [0, 0]" do

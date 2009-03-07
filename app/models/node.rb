@@ -36,6 +36,7 @@ class Node < ActiveRecord::Base
   belongs_to :map
   belongs_to :player
 
+  before_validation_on_create :build_settlement
   after_save :save_player
 
   delegate :game, :to => :map
@@ -113,12 +114,12 @@ class Node < ActiveRecord::Base
 
   def first_settlement?
     return if player.nil?
-    player_nodes.settlement.count == 0
+    player_nodes.settlement.count < 1
   end
 
   def second_settlement?
     return if player.nil?
-    player_nodes.settlement.count == 1
+    player_nodes.settlement.count < 2
   end
 
   def game_settlement_build_phase?
@@ -169,6 +170,7 @@ class Node < ActiveRecord::Base
     player.settlements -= 1
     add_resources_from_neighbours if game_second_settlement?
     charge_for_settlement if game_after_roll?
+    add_victory_point
   end
 
   def build_city
@@ -176,6 +178,7 @@ class Node < ActiveRecord::Base
     player.settlements += 1
     player.cities -= 1
     charge_for_city
+    add_victory_point
   end
 
   def add_resources_from_neighbours
@@ -192,5 +195,9 @@ class Node < ActiveRecord::Base
   def charge_for_city
     player.ore -= 3
     player.grain -= 2
+  end
+
+  def add_victory_point
+    player.points += 1
   end
 end
