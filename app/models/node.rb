@@ -59,12 +59,6 @@ class Node < ActiveRecord::Base
     self.x, self.y = position
   end
 
-  def add_resources(type)
-    return if type.nil?
-    player[type] += 1 if settlement?
-    player[type] += 2 if city?
-  end
-
   def hex_positions
     if y.odd?
       [[x - 1, y.div(2)], [x, y.div(2) - 1], [x, y.div(2)]]
@@ -101,6 +95,16 @@ class Node < ActiveRecord::Base
     map_edges.find_by_positions(edge_positions)
   end
 
+  def add_resources(type)
+    return if type.nil?
+    player[type] += 1 if settlement?
+    player[type] += 2 if city?
+  end
+
+  def has_road?
+    edges.detect { |edge| not edge.nil? and edge.road? and edge.player == player } != nil
+  end
+
   protected
 
   def save_player
@@ -124,22 +128,19 @@ class Node < ActiveRecord::Base
   end
 
   def first_settlement
-    return unless settlement?
     errors.add_to_base "you have already built the first settlement" if game_first_settlement? and not first_settlement?
   end
 
   def second_settlement
-    return unless settlement?
     errors.add_to_base "you have already built the second settlement" if game_second_settlement? and not second_settlement?
   end
+
+
 end
 
 # class Node < ActiveRecord::Base
 #   validate :state_of_game_for_city, :state_of_game_for_settlement, :proximity_of_settled_nodes, :player_id_changed, :first_settlement, :second_settlement
 
-#   def has_road?
-#     edges.detect { |edge| edge.road? and edge.player == player } != nil
-#   end
 
 #   protected
 

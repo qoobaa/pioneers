@@ -17,10 +17,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'test_helper'
+Factory.define :player do |p|
+  p.bricks 0
+  p.grain 0
+  p.ore 0
+  p.wool 0
+  p.lumber 0
+  p.settlements 0
+  p.cities 0
+  p.roads 0
+  p.points 0
+end
 
-class PlayerTest < Test::Unit::TestCase
-  should_belong_to :game
-  should_have_many :nodes, :edges
-  should_validate_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points
+Factory.define :hex do |h|
+  h.hex_type "forest"
+  h.roll 2
+end
+
+Factory.define :map do |m|
+  m.width 2
+  m.height 2
+  m.hexes_attributes [Factory.attributes_for(:hex)] * 4
 end

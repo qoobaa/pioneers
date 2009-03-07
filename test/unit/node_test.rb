@@ -22,7 +22,6 @@ require 'test_helper'
 class NodeTest < Test::Unit::TestCase
   should_belong_to :map
   should_belong_to :player
-  should_validate_uniqueness_of :map_id, :scoped_to => [:x, :y]
 
   context "With position [3, 10]" do
     setup { @node = Node.new(:position => [3, 10]) }

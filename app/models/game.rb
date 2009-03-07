@@ -21,6 +21,9 @@ class Game < ActiveRecord::Base
   has_many :players, :order => "position"
   has_one :map
 
+  validates_length_of :players, :in => 3..4, :if => :first_settlement?
+  validates_presence_of :map, :if => :first_settlement?
+
   include AASM
   aasm_state :waiting_for_players
   aasm_state :first_settlement
