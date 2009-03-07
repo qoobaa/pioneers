@@ -20,8 +20,51 @@
 require 'test_helper'
 
 class EdgeTest < Test::Unit::TestCase
-  # Replace this with your real tests.
-  should "the truth" do
-    assert true
+  context "With position [3, 15]" do
+    setup { @edge = Edge.new(:position => [3, 15]) }
+
+    should "return correct hex positions" do
+      assert_equal [[3, 4], [3, 3]], @edge.hex_positions
+    end
+
+    should "return correct node positions" do
+      assert_equal [[3, 9], [4, 8]], @edge.node_positions
+    end
+
+    should "return correct edge positions" do
+      assert_equal [[3, 16], [3, 14], [4, 13], [4, 14]], @edge.edge_positions
+    end
+  end
+
+  context "With position [6, 13]" do
+    setup { @edge = Edge.new(:position => [6, 13]) }
+
+    should "return correct hex positions" do
+      assert_equal [[5, 3], [6, 3]], @edge.hex_positions
+    end
+
+    should "return correct node positions" do
+      assert_equal [[6, 8], [6, 7]], @edge.node_positions
+    end
+
+    should "return correct edge positions" do
+      assert_equal [[5, 15], [6, 11], [6, 12], [6, 14]], @edge.edge_positions
+    end
+  end
+
+  context "With position [1, 20]" do
+    setup { @edge = Edge.new(:position => [1, 20]) }
+
+    should "return correct hex positions" do
+      assert_equal [[0, 6], [1, 5]], @edge.hex_positions
+    end
+
+    should "return correct node positions" do
+      assert_equal [[1, 13], [1, 12]], @edge.node_positions
+    end
+
+    should "return correct edge positions" do
+      assert_equal [[1, 22], [0, 21], [1, 19], [1, 21]], @edge.edge_positions
+    end
   end
 end

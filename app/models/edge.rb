@@ -28,6 +28,69 @@ class Edge < ActiveRecord::Base
 
   after_save :save_player
 
+  delegate :game, :to => :map
+  delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
+  delegate :first_road?, :second_road?, :after_roll?, :current_player, :to => :game, :prefix => true
+  delegate :edges, :to => :player, :prefix => true
+
+  def self.find_by_position(position)
+    find(:first, :conditions => { :x => position.first, :y => position.second })
+  end
+
+  def self.find_by_positions(positions)
+    positions.map { |position| find_by_position(position) }
+  end
+
+  def position
+    [x, y]
+  end
+
+  def position=(position)
+    self.x, self.y = position
+  end
+
+  def hex_positions
+    if y % 3 == 0
+      [[x, y.div(3) - 1], [x, y.div(3) - 2]]
+    elsif y % 3 == 1
+      [[x - 1, y.div(3) - 1], [x, y.div(3) - 1]]
+    else
+      [[x - 1, y.div(3)], [x, y.div(3) - 1]]
+    end
+  end
+
+  def hexes
+    map_hexes.find_by_positions(hex_positions)
+  end
+
+  def node_positions
+    if y % 3 == 0
+      [[x, 2 * y.div(3) - 1], [x + 1, 2 * y.div(3) - 2]]
+    elsif y % 3 == 1
+      [[x, 2 * y.div(3)], [x, 2 * y.div(3) - 1]]
+    else
+      [[x, 2 * y.div(3) + 1], [x, 2 * y.div(3)]]
+    end
+  end
+
+  def nodes
+    map_nodes.find_by_positions(node_positions)
+  end
+
+  def edge_positions
+    if y % 3 == 0
+      [[x, y + 1], [x, y - 1], [x + 1, y - 2], [x + 1, y - 1]]
+    elsif y % 3 == 1
+      [[x - 1, y + 2], [x, y - 2], [x, y - 1], [x, y + 1]]
+    else
+      [[x, y + 2], [x - 1, y + 1], [x, y - 1], [x, y + 1]]
+    end
+  end
+
+  def edges
+    map_edges.find_by_positions(edge_positions)
+  end
+
   protected
 
   def save_player
