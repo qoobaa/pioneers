@@ -1,0 +1,12 @@
+%fieldset
+  %legend Account
+  %ol
+    %li
+      = f.label :login, "Login<em>*</em>"
+      = f.text_field :login
+    %li
+      = f.label :password, "Password<em>*</em>"
+      = f.password_field :password
+    %li
+      = f.label :password_confirmation, "Confirm password<em>*</em>"
+      = f.password_field :password_confirmation

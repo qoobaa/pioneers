@@ -1,0 +1,5 @@
+- form_for @user, :url => user_path do |f|
+  = render :partial => 'form', :locals => { :f => f }
+  = submit_tag 'Sign up'
+  or
+  = link_to "Back", new_user_session_path

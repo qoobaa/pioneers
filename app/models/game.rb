@@ -34,6 +34,7 @@ class Game < ActiveRecord::Base
   aasm_state :second_road
   aasm_state :before_roll
   aasm_state :after_roll
+  aasm_state :robber
   aasm_state :ended
 
   aasm_event :start do
@@ -46,17 +47,23 @@ class Game < ActiveRecord::Base
     transitions :from => :first_road, :to => :second_settlement
     transitions :from => :second_settlement, :to => :second_road
     transitions :from => :second_road, :to => :second_settlement, :guard => :previous_player?, :on_transition => :previous_player
-    transitions :from => :second_road, :to => :before_roll
+    transitions :from => :second_road, :to => :before_roll, :on_transition => :roll
     transitions :from => :before_roll, :to => :ended, :guard => :end_of_game?
+    transitions :from => :before_roll, :to => :robber, :guard => :robber_rolled?
     transitions :from => :before_roll, :to => :after_roll
     transitions :from => :after_roll, :to => :ended, :guard => :end_of_game?
-    transitions :from => :after_roll, :to => :before_roll, :on_transition => :next_player
+    transitions :from => :after_roll, :to => :before_roll, :on_transition => :next_turn
+    transitions :from => :robber, :to => :after_roll
   end
 
   aasm_initial_state :waiting_for_players
 
   def current_player_number
     self[:current_player_number] or 1
+  end
+
+  def current_turn
+    self[:current_turn] or 1
   end
 
   def current_player
@@ -87,5 +94,20 @@ class Game < ActiveRecord::Base
 
   def end_of_game?
     !winner.nil?
+  end
+
+  def roll
+    self.current_roll = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
+    map_hexes.roll(current_roll).each(&:rolled) unless robber_rolled?
+  end
+
+  def robber_rolled?
+    self.current_roll == 7
+  end
+
+  def next_turn
+    self.current_turn += 1
+    next_player
+    roll
   end
 end

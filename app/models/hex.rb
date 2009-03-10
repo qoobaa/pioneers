@@ -29,6 +29,8 @@ class Hex < ActiveRecord::Base
   extend EnumField
   enum_field :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
 
+  named_scope :roll, lambda { |roll| { :conditions => { :roll => roll } } }
+
   RESOURCE_TYPES = { "hill" => "bricks", "field" => "grain", "mountain" => "ore", "pasture" => "wool", "forest" => "lumber" }.freeze
 
   def robber?
