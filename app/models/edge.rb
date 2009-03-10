@@ -33,6 +33,9 @@ class Edge < ActiveRecord::Base
   delegate :first_road?, :second_road?, :after_roll?, :current_player, :to => :game, :prefix => true
   delegate :edges, :to => :player, :prefix => true
 
+  before_validation_on_create :build_road
+  validate :state_of_game, :proximity_of_land, :position_of_development_road, :position_of_road
+
   def self.find_by_position(position)
     find(:first, :conditions => { :x => position.first, :y => position.second })
   end
@@ -95,5 +98,67 @@ class Edge < ActiveRecord::Base
 
   def save_player
     player.save
+  end
+
+  # validations
+
+  def position_settleable?
+    hexes.detect { |hex| hex.settleable? if hex } != nil
+  end
+
+  def first_road?
+    player_edges.count < 1 and game_first_road? and player == game_current_player
+  end
+
+  def second_road?
+    player_edges.count < 2 and game_second_road? and player == game_current_player
+  end
+
+  def development_phase?
+    first_road? or second_road?
+  end
+
+  def build_phase?
+    game_after_roll? and player == game_current_player
+  end
+
+  def state_of_game
+    errors.add_to_base "you cannot build at the moment" unless development_phase? or build_phase?
+  end
+
+  def proximity_of_land
+    errors.add :position, "is not settleable" unless position_settleable?
+  end
+
+  def has_settlement_without_road?
+    nodes.detect { |node| not node.nil? and node.player == player and not node.has_road? } != nil
+  end
+
+  def position_of_development_road
+    errors.add :position, "is invalid, no settlements without roads in neighbourhood" if development_phase? and not has_settlement_without_road?
+  end
+
+  def has_settlement?
+    nodes.detect { |node| not node.nil? and node.player == player }
+  end
+
+  def has_road?
+    edges.detect { |edge| not edge.nil? and edge.player == player }
+  end
+
+  def position_of_road
+    errors.add :position, "is invalid, no roads nor settlements in neighbourhood" if build_phase? and not has_settlement? and not has_road?
+  end
+
+  # before validation
+
+  def build_road
+    player.roads -= 1
+    charge_for_road if game_after_roll?
+  end
+
+  def charge_for_road
+    player.bricks -= 1
+    player.lumber -= 1
   end
 end

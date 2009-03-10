@@ -116,15 +116,15 @@ class Node < ActiveRecord::Base
     player.points += 1
   end
 
-  def position_settleable?
-    hexes.detect { |hex| hex.settleable? if hex } != nil
-  end
-
   def save_player
     player.save
   end
 
   # validations
+
+  def position_settleable?
+    hexes.detect { |hex| hex.settleable? if hex } != nil
+  end
 
   def first_settlement?
     player_nodes.settlement.count < 1 and game_first_settlement? and player == game_current_player
