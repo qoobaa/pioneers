@@ -143,7 +143,11 @@ class Edge < ActiveRecord::Base
   end
 
   def has_road?
-    edges.detect { |edge| not edge.nil? and edge.player == player }
+    edges = self.edges.select { |edge| not edge.nil? and edge.player == player }
+    nodes = self.nodes.select { |node| not node.nil? and node.player != player }
+    edges_to_remove = nodes.map(&:edges).flatten
+    edges -= edges_to_remove
+    !edges.empty?
   end
 
   def position_of_road
