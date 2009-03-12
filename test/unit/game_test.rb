@@ -56,4 +56,78 @@ class GameTest < Test::Unit::TestCase
       assert @game.start!
     end
   end
+
+  context "State machine" do
+    setup do
+      @game = Game.create!
+      3.times { @game.players << Factory(:player) }
+      @game.map = Factory(:map)
+      @game.save
+    end
+
+    should "work" do
+      assert_equal "waiting_for_players", @game.aasm_state
+      assert @game.start!
+      assert_equal "first_settlement", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "first_road", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "first_settlement", @game.aasm_state
+      assert_equal 2, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "first_road", @game.aasm_state
+      assert_equal 2, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "first_settlement", @game.aasm_state
+      assert_equal 3, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "first_road", @game.aasm_state
+      assert_equal 3, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "second_settlement", @game.aasm_state
+      assert_equal 3, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "second_road", @game.aasm_state
+      assert_equal 3, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "second_settlement", @game.aasm_state
+      assert_equal 2, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "second_road", @game.aasm_state
+      assert_equal 2, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "second_settlement", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "second_road", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "before_roll", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "after_roll", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "before_roll", @game.aasm_state
+      assert_equal 2, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "after_roll", @game.aasm_state
+      assert_equal 2, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "before_roll", @game.aasm_state
+      assert_equal 3, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "after_roll", @game.aasm_state
+      assert_equal 3, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "before_roll", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+      assert_equal "after_roll", @game.aasm_state
+      assert_equal 1, @game.current_player_number
+      assert @game.end_turn!
+    end
+  end
 end

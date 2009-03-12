@@ -62,7 +62,7 @@ class Hex < ActiveRecord::Base
   end
 
   def rolled
-    nodes.each { |node| node.add_resources(resource_type) } unless robber?
+    nodes.each { |node| node.add_resources(resource_type) unless node.nil? } unless robber?
   end
 
   def hex_positions
