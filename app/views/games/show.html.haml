@@ -1,0 +1,3 @@
+%ul#map{ :class => "size-#{@game.map_height}-#{@game.map_width}" }
+  - @game.map_hexes.each do |hex|
+    %li{ :id => "hex-#{hex.x}-#{hex.y}", :class => hex.hex_type }

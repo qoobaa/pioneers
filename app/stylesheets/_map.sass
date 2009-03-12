@@ -1,0 +1,95 @@
+/*
+  Pioneers - web game based on the Settlers of Catan board game.
+
+  Copyright (C) 2009 Jakub Kuźma <qoobaa@gmail.com>
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+!map_hex_width = 95px
+!map_hex_height = 80px
+!map_hex_x_offset = 15px
+!map_hex_y_offset = 10px
+!map_max_width = 10
+!map_max_height = 10
+!map_node_width = 24px
+!map_node_height = 24px
+!map_edge_width = 48px
+!map_edge_height = 48px
+
+=map
+  ul#map
+    :position relative
+    :left 150px
+    :top 150px
+    :background blue
+    li
+      :position absolute
+      :list-style none
+    li.forest
+      :width= !map_hex_width
+      :height= !map_hex_height
+      :background url("/images/desert.png")
+    li.settlement
+      :background url("/images/settlement.png")
+      :width= !map_node_width
+      :height= !map_node_height
+    li.city
+      :background url("/images/city.png")
+      :width= !map_node_width
+      :height= !map_node_height
+    li.road
+      :width= !map_edge_width
+      :height= !map_edge_height
+
+  // maps
+  @for !x from 1 to !map_max_height + 1
+    @for !y from 1 to !map_max_width + 1
+      ul.size-#{!x + "-" + !y}
+        :width= !x * (!map_hex_width - 25px) + 25px
+        :height= !y * !map_hex_height + (!map_hex_height / 2) * !x - !map_hex_height / 2
+
+  // hexes
+  @for !x from 0 to !map_max_height
+    @for !y from 0 to !map_max_width
+      li#hex-#{!x + "-" + !y}
+        :top= !x * (!map_hex_width - !map_hex_x_offset) + !y * (!map_hex_height / 2)
+        :left= !y * (!map_hex_height - !map_hex_y_offset)
+
+  // nodes
+  @for !x from 0 to !map_max_height + 1
+    @for !y from 0 to !map_max_width * 2 + 2
+      li#node-#{!x + "-" + !y}
+        :top= -(!map_node_height / 2) + !x * !map_hex_height - !map_hex_height / 2 + round(!y / 2) * !map_hex_height / 2
+        @if !y % 2 == 0
+          :left= -(!map_node_width / 2) + round(!y / 2) * (!map_hex_width - 25px)
+        @else
+          :left= -(!map_node_width / 2) + round(!y / 2) * (!map_hex_width - 25px) - 45px
+
+  // edges
+  @for !x from 0 to !map_max_height + 1
+    @for !y from 0 to !map_max_width * 3 + 6
+      li#edge-#{!x + "-" + !y}
+        @if !y % 3 == 0
+          :top= -!map_edge_height + !x * !map_hex_height - !map_hex_height / 2 + (floor(!y / 3) + 1) * !map_hex_height / 2 + 4px
+          :background url("/images/road0.png")
+          :left= -!map_edge_width + floor(!y / 3) * (!map_hex_width - 25px) - 33px
+        @else
+          @if !y % 3 == 1
+            :top= -!map_edge_height + !x * !map_hex_height - !map_hex_height / 2 + (floor(!y / 3) + 1) * !map_hex_height / 2 - 12px
+            :background url("/images/road1.png")
+            :left= -(!map_edge_width) + floor(!y / 3) * (!map_hex_width - 25px)
+          @else
+            :top= -!map_edge_height + !x * !map_hex_height - !map_hex_height / 2 + (floor(!y / 3) + 1) * !map_hex_height / 2 + 6px
+            :background url("/images/road2.png")
+            :left= -(!map_edge_width) + floor(!y / 3) * (!map_hex_width - 25px) + 34px

@@ -20,6 +20,7 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "authlogic"
+  config.gem "chriseppstein-compass", :lib => "compass", :source => "http://gems.github.com"
   config.gem "enum_field", :lib => "enum_field", :source => "http://gems.github.com"
   config.gem "haml", :source => "http://gems.github.com"
   config.gem "pager-acts_as_list", :lib => "active_record/acts/list", :source => "http://gems.github.com"
