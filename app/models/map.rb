@@ -59,6 +59,18 @@ class Map < ActiveRecord::Base
     self.robber_x, self.robber_y = robber_position
   end
 
+  def hexes_groupped
+    (0...height).map { |x| hexes.find_all_by_x(x) }
+  end
+
+  def nodes_groupped
+    (0..height).map { |x| nodes.find_all_by_x(x) }
+  end
+
+  def edges_groupped
+    (0..height).map { |x| edges.find_all_by_x(x) }
+  end
+
   protected
 
   def build_hexes

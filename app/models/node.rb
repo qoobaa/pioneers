@@ -42,7 +42,7 @@ class Node < ActiveRecord::Base
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
   delegate :players, :first_settlement?, :second_settlement?, :after_roll?, :current_player, :to => :game, :prefix => true
-  delegate :nodes, :to => :player, :prefix => true
+  delegate :nodes, :position, :to => :player, :prefix => true
 
   def self.find_by_position(position)
     find(:first, :conditions => { :x => position.first, :y => position.second })
@@ -50,6 +50,10 @@ class Node < ActiveRecord::Base
 
   def self.find_by_positions(positions)
     positions.map { |position| find_by_position(position) }
+  end
+
+  def player_number
+    player_position
   end
 
   def position
@@ -85,7 +89,7 @@ class Node < ActiveRecord::Base
   end
 
   def edge_positions
-    if y.odd?
+    if position[1].odd?
       [[x, 3 * (y.div(2) + 1) + 1], [x, 3 * (y.div(2) + 1) - 1], [x, 3 * (y.div(2) + 1)]]
     else
       [[x - 1, 3 * y.div(2) + 3], [x, 3 * y.div(2) + 1], [x, 3 * y.div(2) + 2]]
@@ -100,6 +104,7 @@ class Node < ActiveRecord::Base
     return if type.nil?
     player[type] += 1 if settlement?
     player[type] += 2 if city?
+    player.save
   end
 
   def has_road?

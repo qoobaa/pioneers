@@ -1,11 +1,102 @@
-%ul#map{ :class => "size-#{@game.map_height}-#{@game.map_width}" }
-  - @game.map_hexes.each do |hex|
-    %li{ :id => "hex-#{hex.x}-#{hex.y}", :class => hex.hex_type }
-  - @game.map_nodes.each do |node|
-    %li{ :id => "node-#{node.x}-#{node.y}", :class => node.aasm_state }
-  - @game.map_edges.each do |edge|
-    %li{ :id => "edge-#{edge.x}-#{edge.y}", :class => "road-#{edge.y % 3}" }
+%div#map{ :class => "size-#{@game.map_height}-#{@game.map_width}" }
+  %ul#hexes
+    - @game.map_hexes_groupped.each_with_index do |hexes, x|
+      %li{ :class => "x-#{x}" }
+        %ul
+          - hexes.each do |hex|
+            %li{ :class => "y-#{hex.position[1]} #{hex.hex_type}" }
+              %strong{ :class => "roll-#{hex.roll}" }
+                = hex.roll
+  %ul#nodes
+    - @game.map_nodes_groupped.each_with_index do |nodes, x|
+      %li{ :class => "x-#{x}" }
+        %ul
+          - nodes.each do |node|
+            %li{ :class => "y-#{node.position[1]} #{node.aasm_state} player-#{node.player_number}" }
+  %ul#edges
+    - @game.map_edges_groupped.each_with_index do |edges, x|
+      %li{ :class => "x-#{x}" }
+        %ul
+          - edges.each do |edge|
+            %li{ :class => "y-#{edge.position[1]} road player-#{edge.player_number}" }
 
 %p
   %strong Game state
   = @game.aasm_state
+%p
+  %strong Current player
+  = @game.current_player_number
+%p
+  %strong Current roll
+  = @game.current_roll
+%p
+  %strong Current turn
+  = @game.current_turn
+
+%p
+  %strong Players
+  %ul
+    - @game.players.each do |player|
+      %li
+        %strong Login
+        = player.user_login
+      %ul
+        %li
+          %strong Lumber
+          = player.lumber
+        %li
+          %strong Ore
+          = player.ore
+        %li
+          %strong Grain
+          = player.grain
+        %li
+          %strong Wool
+          = player.wool
+        %li
+          %strong Bricks
+          = player.bricks
+        %li
+          %strong Settlements
+          = player.settlements
+        %li
+          %strong Cities
+          = player.cities
+        %li
+          %strong Roads
+          = player.roads
+        %li
+          %strong Points
+          = player.points
+      - form_tag game_player_path(@game, player), :method => :delete do
+        = submit_tag "Destroy"
+
+  - form_tag game_players_path(@game) do
+    = submit_tag "Join"
+
+%p
+  %strong State manipulation
+  - form_tag start_game_path(@game), :method => :put do
+    = submit_tag "Start"
+  - form_tag roll_game_path(@game), :method => :put do
+    = submit_tag "Roll dice"
+  - form_tag end_turn_game_path(@game), :method => :put do
+    = submit_tag "End turn"
+
+%p
+  %strong Create nodes
+  - form_tag game_nodes_path(@game) do
+    = label_tag "node[x]", "X"
+    = text_field_tag "node[x]"
+    = label_tag "node[y]", "Y"
+    = text_field_tag "node[y]"
+    = submit_tag "Create"
+
+%p
+  %strong Create edges
+  - form_tag game_edges_path(@game) do
+    = label_tag "edge[x]", "X"
+    = text_field_tag "edge[x]"
+    = label_tag "edge[y]", "Y"
+    = text_field_tag "edge[y]"
+    = submit_tag "Create"

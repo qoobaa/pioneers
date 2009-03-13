@@ -17,45 +17,33 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class GamesController < ApplicationController
-  def index
-    @games = Game.all
-  end
+class PlayersController < ApplicationController
+  before_filter :require_user, :fetch_game
 
-  def show
-    @game = Game.find(params[:id])
-  end
-
-  def start
-    @game = Game.find(params[:id])
-    @game.start
-    if @game.save
-      flash[:success] = "Game started!"
+  def create
+    @player = @game.players.build
+    @player.user = @current_user
+    if @player.save
+      flash[:success] = "Successfully joined"
     else
-      flash[:error] = "Game could not be started"
+      flash[:error] = "Could not join"
     end
     redirect_to game_path(@game)
   end
 
-  def end_turn
-    @game = Game.find(params[:id])
-    @game.end_turn
-    if @game.save
-      flash[:success] = "Ended turn"
+  def destroy
+    @player = @game.players.find(params[:id])
+    if @player.destroy
+      flash[:success] = "Successfully destroyed"
     else
-      flash[:error] = "Turn could not be ended"
+      flash[:error] = "Could not destroy"
     end
     redirect_to game_path(@game)
   end
 
-  def roll
-    @game = Game.find(params[:id])
-    @game.roll
-    if @game.save
-      flash[:success] = "Rolled successfully"
-    else
-      flash[:error] = "Could not roll"
-    end
-    redirect_to game_path(@game)
+  protected
+
+  def fetch_game
+    @game = Game.find(params[:game_id])
   end
 end

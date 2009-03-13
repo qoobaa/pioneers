@@ -31,7 +31,7 @@ class Edge < ActiveRecord::Base
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
   delegate :first_road?, :second_road?, :after_roll?, :current_player, :to => :game, :prefix => true
-  delegate :edges, :to => :player, :prefix => true
+  delegate :edges, :position, :to => :player, :prefix => true
 
   before_validation_on_create :build_road
   validate :state_of_game, :proximity_of_land, :position_of_development_road, :position_of_road
@@ -42,6 +42,10 @@ class Edge < ActiveRecord::Base
 
   def self.find_by_positions(positions)
     positions.map { |position| find_by_position(position) }
+  end
+
+  def player_number
+    player_position
   end
 
   def position

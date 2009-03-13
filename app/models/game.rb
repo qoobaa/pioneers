@@ -21,10 +21,12 @@ class Game < ActiveRecord::Base
   has_many :players, :order => "position"
   has_one :map
 
-  validates_length_of :players, :in => 3..4, :if => :first_settlement?
+  validates_length_of :players, :in => 2..4, :if => :first_settlement?
   validates_presence_of :map, :if => :first_settlement?
 
-  delegate :hexes, :nodes, :edges, :height, :width, :size, :to => :map, :prefix => true
+  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :to => :map, :prefix => true
+
+  after_update :save_players
 
   include AASM
   aasm_state :waiting_for_players
@@ -38,7 +40,7 @@ class Game < ActiveRecord::Base
   aasm_state :ended
 
   aasm_event :start do
-    transitions :from => :waiting_for_players, :to => :first_settlement
+    transitions :from => :waiting_for_players, :to => :first_settlement, :on_transition => :deal_resources
   end
 
   aasm_event :end_turn do
@@ -47,13 +49,16 @@ class Game < ActiveRecord::Base
     transitions :from => :first_road, :to => :second_settlement
     transitions :from => :second_settlement, :to => :second_road
     transitions :from => :second_road, :to => :second_settlement, :guard => :previous_player?, :on_transition => :previous_player
-    transitions :from => :second_road, :to => :before_roll, :on_transition => :roll
-    transitions :from => :before_roll, :to => :ended, :guard => :end_of_game?
-    transitions :from => :before_roll, :to => :robber, :guard => :robber_rolled?
-    transitions :from => :before_roll, :to => :after_roll
+    transitions :from => :second_road, :to => :before_roll
     transitions :from => :after_roll, :to => :ended, :guard => :end_of_game?
     transitions :from => :after_roll, :to => :before_roll, :on_transition => :next_turn
     transitions :from => :robber, :to => :after_roll
+  end
+
+  aasm_event :roll do
+    transitions :from => :before_roll, :to => :ended, :guard => :end_of_game?
+    transitions :from => :before_roll, :to => :robber, :guard => :robber_rolled?
+    transitions :from => :before_roll, :to => :after_roll
   end
 
   aasm_initial_state :waiting_for_players
@@ -96,18 +101,34 @@ class Game < ActiveRecord::Base
     !winner.nil?
   end
 
-  def roll
+  def roll_dice
     self.current_roll = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
-    map_hexes.roll(current_roll).each(&:rolled) unless robber_rolled?
+    map_hexes.roll(current_roll).each(&:rolled)
   end
 
   def robber_rolled?
+    roll_dice
     self.current_roll == 7
   end
 
   def next_turn
     self.current_turn += 1
     next_player
-    roll
+  end
+
+  def deal_resources
+    players.each do |player|
+      player.bricks = player.lumber = player.ore = player.grain = player.wool = 0
+      player.settlements = 5
+      player.cities = 5
+      player.roads = 15
+      player.points = 0
+    end
+  end
+
+  def save_players
+    players.each do |player|
+      player.save
+    end
   end
 end
