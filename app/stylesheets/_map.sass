@@ -20,8 +20,8 @@
 !map_hex_height = 80px
 !map_hex_x_offset = 15px
 !map_hex_y_offset = 10px
-!map_max_width = 10
-!map_max_height = 10
+!map_max_width = 7
+!map_max_height = 7
 !map_node_width = 24px
 !map_node_height = 24px
 !map_edge_width = 48px
@@ -30,16 +30,25 @@
 =map
   ul#map
     :position relative
-    :left 150px
-    :top 150px
-    :background blue
+    :background url("/images/sea.png")
     li
       :position absolute
       :list-style none
-    li.forest
+    li
       :width= !map_hex_width
       :height= !map_hex_height
-      :background url("/images/desert.png")
+      &.forest
+        :background url("/images/forest.png")
+      &.hill
+        :background url("/images/hill.png")
+      &.field
+        :background url("/images/field.png")
+      &.mountain
+        :background url("/images/mountain.png")
+      &.pasture
+        :background url("/images/pasture.png")
+      &.desert
+        :background url("/images/desert.png")
     li.settlement
       :background url("/images/settlement.png")
       :width= !map_node_width
@@ -48,7 +57,16 @@
       :background url("/images/city.png")
       :width= !map_node_width
       :height= !map_node_height
-    li.road
+    li.road0
+      :background url("/images/road0.png")
+      :width= !map_edge_width
+      :height= !map_edge_height
+    li.road1
+      :background url("/images/road1.png")
+      :width= !map_edge_width
+      :height= !map_edge_height
+    li.road2
+      :background url("/images/road2.png")
       :width= !map_edge_width
       :height= !map_edge_height
 
@@ -82,14 +100,11 @@
       li#edge-#{!x + "-" + !y}
         @if !y % 3 == 0
           :top= -!map_edge_height + !x * !map_hex_height - !map_hex_height / 2 + (floor(!y / 3) + 1) * !map_hex_height / 2 + 4px
-          :background url("/images/road0.png")
           :left= -!map_edge_width + floor(!y / 3) * (!map_hex_width - 25px) - 33px
         @else
           @if !y % 3 == 1
             :top= -!map_edge_height + !x * !map_hex_height - !map_hex_height / 2 + (floor(!y / 3) + 1) * !map_hex_height / 2 - 12px
-            :background url("/images/road1.png")
             :left= -(!map_edge_width) + floor(!y / 3) * (!map_hex_width - 25px)
           @else
             :top= -!map_edge_height + !x * !map_hex_height - !map_hex_height / 2 + (floor(!y / 3) + 1) * !map_hex_height / 2 + 6px
-            :background url("/images/road2.png")
             :left= -(!map_edge_width) + floor(!y / 3) * (!map_hex_width - 25px) + 34px

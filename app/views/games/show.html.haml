@@ -1,3 +1,11 @@
 %ul#map{ :class => "size-#{@game.map_height}-#{@game.map_width}" }
   - @game.map_hexes.each do |hex|
     %li{ :id => "hex-#{hex.x}-#{hex.y}", :class => hex.hex_type }
+  - @game.map_nodes.each do |node|
+    %li{ :id => "node-#{node.x}-#{node.y}", :class => node.aasm_state }
+  - @game.map_edges.each do |edge|
+    %li{ :id => "edge-#{edge.x}-#{edge.y}", :class => "road-#{edge.y % 3}" }
+
+%p
+  %strong Game state
+  = @game.aasm_state
