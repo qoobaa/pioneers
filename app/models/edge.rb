@@ -20,8 +20,8 @@
 class Edge < ActiveRecord::Base
   validates_presence_of :player, :map
   validates_associated :player
-  validates_uniqueness_of :map_id, :scope => [:x, :y]
-  validates_numericality_of :x, :y, :greater_than_or_equal_to => 0, :only_integer => true
+  validates_uniqueness_of :map_id, :scope => [:row, :col]
+  validates_numericality_of :row, :col, :greater_than_or_equal_to => 0, :only_integer => true
 
   belongs_to :map
   belongs_to :player
@@ -37,7 +37,7 @@ class Edge < ActiveRecord::Base
   validate :state_of_game, :proximity_of_land, :position_of_development_road, :position_of_road
 
   def self.find_by_position(position)
-    find(:first, :conditions => { :x => position.first, :y => position.second })
+    find(:first, :conditions => { :row => position.first, :col => position.second })
   end
 
   def self.find_by_positions(positions)
@@ -49,20 +49,20 @@ class Edge < ActiveRecord::Base
   end
 
   def position
-    [x, y]
+    [row, col]
   end
 
   def position=(position)
-    self.x, self.y = position
+    self.row, self.col = position
   end
 
   def hex_positions
-    if y % 3 == 0
-      [[x, y.div(3) - 1], [x, y.div(3) - 2]]
-    elsif y % 3 == 1
-      [[x - 1, y.div(3) - 1], [x, y.div(3) - 1]]
+    if col % 3 == 0
+      [[row, col.div(3) - 1], [row, col.div(3) - 2]]
+    elsif col % 3 == 1
+      [[row - 1, col.div(3) - 1], [row, col.div(3) - 1]]
     else
-      [[x - 1, y.div(3)], [x, y.div(3) - 1]]
+      [[row - 1, col.div(3)], [row, col.div(3) - 1]]
     end
   end
 
@@ -71,12 +71,12 @@ class Edge < ActiveRecord::Base
   end
 
   def node_positions
-    if y % 3 == 0
-      [[x, 2 * y.div(3) - 1], [x + 1, 2 * y.div(3) - 2]]
-    elsif y % 3 == 1
-      [[x, 2 * y.div(3)], [x, 2 * y.div(3) - 1]]
+    if col % 3 == 0
+      [[row, 2 * col.div(3) - 1], [row + 1, 2 * col.div(3) - 2]]
+    elsif col % 3 == 1
+      [[row, 2 * col.div(3)], [row, 2 * col.div(3) - 1]]
     else
-      [[x, 2 * y.div(3) + 1], [x, 2 * y.div(3)]]
+      [[row, 2 * col.div(3) + 1], [row, 2 * col.div(3)]]
     end
   end
 
@@ -85,12 +85,12 @@ class Edge < ActiveRecord::Base
   end
 
   def edge_positions
-    if y % 3 == 0
-      [[x, y + 1], [x, y - 1], [x + 1, y - 2], [x + 1, y - 1]]
-    elsif y % 3 == 1
-      [[x - 1, y + 2], [x, y - 2], [x, y - 1], [x, y + 1]]
+    if col % 3 == 0
+      [[row, col + 1], [row, col - 1], [row + 1, col - 2], [row + 1, col - 1]]
+    elsif col % 3 == 1
+      [[row - 1, col + 2], [row, col - 2], [row, col - 1], [row, col + 1]]
     else
-      [[x, y + 2], [x - 1, y + 1], [x, y - 1], [x, y + 1]]
+      [[row, col + 2], [row - 1, col + 1], [row, col - 1], [row, col + 1]]
     end
   end
 

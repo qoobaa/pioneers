@@ -31,16 +31,16 @@ class Map < ActiveRecord::Base
 
   attr_accessor :hexes_attributes
 
-  def x_belongs_to_map?(x)
-    (0...width).include? x
+  def row_belongs_to_map?(row)
+    (0...width).include? row
   end
 
-  def y_belongs_to_map?(y)
-    (0...height).include? y
+  def col_belongs_to_map?(col)
+    (0...height).include? col
   end
 
   def position_belongs_to_map?(position)
-    x_belongs_to_map?(position[0]) and y_belongs_to_map?(position[1])
+    row_belongs_to_map?(position[0]) and col_belongs_to_map?(position[1])
   end
 
   def size
@@ -52,23 +52,23 @@ class Map < ActiveRecord::Base
   end
 
   def robber_position
-    [robber_y, robber_y]
+    [robber_row, robber_col]
   end
 
   def robber_position=(robber_position)
-    self.robber_x, self.robber_y = robber_position
+    self.robber_row, self.robber_col = robber_position
   end
 
   def hexes_groupped
-    (0...height).map { |x| hexes.find_all_by_x(x) }
+    (0...height).map { |row| hexes.find_all_by_row(row) }
   end
 
   def nodes_groupped
-    (0..height).map { |x| nodes.find_all_by_x(x) }
+    (0..height).map { |row| nodes.find_all_by_row(row) }
   end
 
   def edges_groupped
-    (0..height).map { |x| edges.find_all_by_x(x) }
+    (0..height).map { |row| edges.find_all_by_row(row) }
   end
 
   protected

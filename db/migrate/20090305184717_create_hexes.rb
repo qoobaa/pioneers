@@ -20,8 +20,8 @@
 class CreateHexes < ActiveRecord::Migration
   def self.up
     create_table :hexes do |t|
-      t.integer :x
-      t.integer :y
+      t.integer :row
+      t.integer :col
       t.string :hex_type
       t.integer :roll
       t.integer :map_id

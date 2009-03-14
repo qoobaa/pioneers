@@ -23,8 +23,8 @@ class Hex < ActiveRecord::Base
   delegate :game, :to => :map
 
   validates_inclusion_of :roll, :in => [2, 3, 4, 5, 6, 8, 9, 10, 11, 12], :allow_nil => true
-  validates_uniqueness_of :map_id, :scope => [:x, :y]
-  validates_numericality_of :x, :y, :greater_than_or_equal_to => 0, :only_integer => true
+  validates_uniqueness_of :map_id, :scope => [:row, :col]
+  validates_numericality_of :row, :col, :greater_than_or_equal_to => 0, :only_integer => true
 
   extend EnumField
   enum_field :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
@@ -38,11 +38,11 @@ class Hex < ActiveRecord::Base
   end
 
   def position
-    [x, y]
+    [row, col]
   end
 
   def position=(position)
-    self.x, self.y = position
+    self.row, self.col = position
   end
 
   def settleable?
@@ -50,7 +50,7 @@ class Hex < ActiveRecord::Base
   end
 
   def self.find_by_position(position)
-    find(:first, :conditions => { :x => position.first, :y => position.second })
+    find(:first, :conditions => { :row => position.first, :col => position.second })
   end
 
   def self.find_by_positions(positions)
@@ -66,7 +66,7 @@ class Hex < ActiveRecord::Base
   end
 
   def hex_positions
-    [[x - 1, y + 1], [x - 1, y], [x, y - 1], [x + 1, y - 1], [x + 1, y], [x, y + 1]]
+    [[row - 1, col + 1], [row - 1, col], [row, col - 1], [row + 1, col - 1], [row + 1, col], [row, col + 1]]
   end
 
   def hexes
@@ -74,7 +74,7 @@ class Hex < ActiveRecord::Base
   end
 
   def node_positions
-    [[x, 2 * y + 3], [x, 2 * y + 2], [x, 2 * y + 1], [x + 1, 2 * y], [x + 1, 2 * y + 1], [x + 1, 2 * y + 2]]
+    [[row, 2 * col + 3], [row, 2 * col + 2], [row, 2 * col + 1], [row + 1, 2 * col], [row + 1, 2 * col + 1], [row + 1, 2 * col + 2]]
   end
 
   def nodes
@@ -82,7 +82,7 @@ class Hex < ActiveRecord::Base
   end
 
   def edge_positions
-    [[x, 3 * y + 5], [x, 3 * y + 4], [x, 3 * y + 3], [x + 1, 3 * y + 2], [x + 1, 3 * y + 4], [x, 3 * y + 6]]
+    [[row, 3 * col + 5], [row, 3 * col + 4], [row, 3 * col + 3], [row + 1, 3 * col + 2], [row + 1, 3 * col + 4], [row, 3 * col + 6]]
   end
 
   def edges

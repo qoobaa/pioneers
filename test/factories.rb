@@ -17,6 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+Factory.sequence :login do |n|
+  "user#{n}"
+end
+
+Factory.define :user do |u|
+  u.login { Factory.next(:login) }
+  u.password "secret"
+  u.password_confirmation "secret"
+end
+
 Factory.define :player do |p|
   p.bricks 0
   p.grain 0
@@ -27,6 +37,7 @@ Factory.define :player do |p|
   p.cities 0
   p.roads 0
   p.points 0
+  p.user { |user| user.association(:user) }
 end
 
 Factory.define :hex do |h|

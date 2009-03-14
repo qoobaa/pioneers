@@ -18,15 +18,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class EdgesController < ApplicationController
-  before_filter :require_user, :fetch_game
+  before_filter :require_user, :require_game, :require_playe
 
   def create
     @edge = @game.map_edges.build(params[:edge])
     @edge.player = @game.players.find_by_user_id(@current_user.id)
     if @edge.save
-      flash[:success] = "Successfully joined"
+      flash[:success] = "Successfully created"
     else
-      flash[:error] = "Could not join"
+      flash[:error] = "Could not create"
     end
     redirect_to game_path(@game)
   end

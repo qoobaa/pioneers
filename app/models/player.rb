@@ -22,7 +22,7 @@ class Player < ActiveRecord::Base
   belongs_to :user
   has_many :nodes
   has_many :edges
-  acts_as_list :scope => :game
+  acts_as_list :scope => :game, :column => "number"
 
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
   validates_uniqueness_of :user_id, :scope => [:game_id]

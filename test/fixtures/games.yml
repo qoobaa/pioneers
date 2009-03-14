@@ -1,9 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-one:
-  aasm_state: MyString
-  current_player_number: 1
-
-two:
-  aasm_state: MyString
-  current_player_number: 1

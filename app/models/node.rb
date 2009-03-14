@@ -20,13 +20,14 @@
 class Node < ActiveRecord::Base
   include AASM
   aasm_state :settlement
+
   aasm_state :city
   aasm_initial_state :settlement
 
   validates_presence_of :player, :map
   validates_associated :player
-  validates_uniqueness_of :map_id, :scope => [:x, :y]
-  validates_numericality_of :x, :y, :greater_than_or_equal_to => 0, :only_integer => true
+  validates_uniqueness_of :map_id, :scope => [:row, :col]
+  validates_numericality_of :row, :col, :greater_than_or_equal_to => 0, :only_integer => true
   validate :proximity_of_land, :proximity_of_settlements, :state_of_game, :possesion_of_road
 
   aasm_event :expand do
@@ -45,7 +46,7 @@ class Node < ActiveRecord::Base
   delegate :nodes, :position, :to => :player, :prefix => true
 
   def self.find_by_position(position)
-    find(:first, :conditions => { :x => position.first, :y => position.second })
+    find(:first, :conditions => { :row => position.first, :col => position.second })
   end
 
   def self.find_by_positions(positions)
@@ -57,18 +58,18 @@ class Node < ActiveRecord::Base
   end
 
   def position
-    [x, y]
+    [row, col]
   end
 
   def position=(position)
-    self.x, self.y = position
+    self.row, self.col = position
   end
 
   def hex_positions
-    if y.odd?
-      [[x - 1, y.div(2)], [x, y.div(2) - 1], [x, y.div(2)]]
+    if col.odd?
+      [[row - 1, col.div(2)], [row, col.div(2) - 1], [row, col.div(2)]]
     else
-      [[x - 1, y.div(2)], [x - 1, y.div(2) - 1], [x, y.div(2) - 1]]
+      [[row - 1, col.div(2)], [row - 1, col.div(2) - 1], [row, col.div(2) - 1]]
     end
   end
 
@@ -77,10 +78,10 @@ class Node < ActiveRecord::Base
   end
 
   def node_positions
-    if y.odd?
-      [[x, y + 1], [x, y - 1], [x + 1, y - 1]]
+    if col.odd?
+      [[row, col + 1], [row, col - 1], [row + 1, col - 1]]
     else
-      [[x - 1, y + 1], [x, y - 1], [x, y + 1]]
+      [[row - 1, col + 1], [row, col - 1], [row, col + 1]]
     end
   end
 
@@ -90,9 +91,9 @@ class Node < ActiveRecord::Base
 
   def edge_positions
     if position[1].odd?
-      [[x, 3 * (y.div(2) + 1) + 1], [x, 3 * (y.div(2) + 1) - 1], [x, 3 * (y.div(2) + 1)]]
+      [[row, 3 * (col.div(2) + 1) + 1], [row, 3 * (col.div(2) + 1) - 1], [row, 3 * (col.div(2) + 1)]]
     else
-      [[x - 1, 3 * y.div(2) + 3], [x, 3 * y.div(2) + 1], [x, 3 * y.div(2) + 2]]
+      [[row - 1, 3 * col.div(2) + 3], [row, 3 * col.div(2) + 1], [row, 3 * col.div(2) + 2]]
     end
   end
 

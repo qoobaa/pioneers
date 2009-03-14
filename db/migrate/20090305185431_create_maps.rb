@@ -23,8 +23,8 @@ class CreateMaps < ActiveRecord::Migration
       t.integer :game_id
       t.integer :height
       t.integer :width
-      t.integer :robber_x
-      t.integer :robber_y
+      t.integer :robber_row
+      t.integer :robber_col
     end
   end
 

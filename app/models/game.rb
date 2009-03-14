@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Game < ActiveRecord::Base
-  has_many :players, :order => "position"
+  has_many :players, :order => "number"
   has_one :map
 
   validates_length_of :players, :in => 2..4, :if => :first_settlement?

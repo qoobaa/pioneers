@@ -28,7 +28,7 @@ class CreatePlayers < ActiveRecord::Migration
       t.integer :settlements
       t.integer :cities
       t.integer :roads
-      t.integer :position
+      t.integer :number
       t.integer :user_id
       t.integer :game_id
       t.integer :points

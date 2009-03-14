@@ -20,8 +20,8 @@
 class CreateNodes < ActiveRecord::Migration
   def self.up
     create_table :nodes do |t|
-      t.integer :x
-      t.integer :y
+      t.integer :row
+      t.integer :col
       t.integer :player_id
       t.integer :map_id
       t.string :aasm_state
