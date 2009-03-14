@@ -34,31 +34,31 @@
     :position relative
     :padding 50px
     :background url("/images/sea.png")
-    @for !x from 1 to 11
-      @for !y from 1 to 11
-        &.size-#{!x + "-" + !y}
-          :height= !x * 80px + !y * 40px - 40px
-          :width= !y * 70px + 20px
+    @for !row from 1 to 11
+      @for !col from 1 to 11
+        &.size-#{!row + "-" + !col}
+          :height= !row * 80px + !col * 40px - 40px
+          :width= !col * 70px + 20px
     ul#hexes
       :position absolute
       li
         :list-style none
         :line-height= 80px
         :text-align center
-        @for !x from 0 to 11
-          &.x-#{!x}
+        @for !row from 0 to 11
+          &.row-#{!row}
             :position absolute
-            :top= !x * 80px
+            :top= !row * 80px
         ul
           li
             :list-style none
             :width= 95px
             :height= 80px
-            @for !y from 0 to 11
-              &.y-#{!y}
+            @for !col from 0 to 11
+              &.col-#{!col}
                 :position absolute
-                :top= !y * 40px
-                :left= !y * 70px
+                :top= !col * 40px
+                :left= !col * 70px
             &.forest
               :background url("/images/forest.png")
             &.hill
@@ -77,24 +77,24 @@
       :position absolute
       li
         :list-style none
-        @for !x from 0 to 11
-          &.x-#{!x}
+        @for !row from 0 to 11
+          &.row-#{!row}
             :position absolute
-            :top= !x * 80px
+            :top= !row * 80px
         ul
           li
             :z-index 2
             :list-style none
             :width= 24px
             :height= 24px
-            @for !y from 0 to 23
-              &.y-#{!y}
+            @for !col from 0 to 23
+              &.col-#{!col}
                 :position absolute
-                :top= floor((!y + 1) / 2) * 40px - 12px - 40px
-                @if !y % 2 == 0
-                  :left= floor(!y / 2) * 70px - 12px
+                :top= floor((!col + 1) / 2) * 40px - 12px - 40px
+                @if !col % 2 == 0
+                  :left= floor(!col / 2) * 70px - 12px
                 @else
-                  :left= floor(!y / 2) * 70px - 12px + 25px
+                  :left= floor(!col / 2) * 70px - 12px + 25px
             &.settlement.player-1
               :background url("/images/settlement-player-1.png")
             &.settlement.player-2
@@ -111,22 +111,22 @@
       :position absolute
       li
         :list-style none
-        @for !x from 0 to 11
-          &.x-#{!x}
+        @for !row from 0 to 11
+          &.row-#{!row}
             :position absolute
-            :top= !x * 80px
+            :top= !row * 80px
         ul
           li
             :z-index 1
             :list-style none
             :width= 48px
             :height= 48px
-            @for !y from 0 to 40
-              &.y-#{!y}
+            @for !col from 0 to 40
+              &.col-#{!col}
                 :position absolute
-                @if !y % 3 == 0
-                  :left= floor(!y / 3) * 70px - 24px - 58px
-                  :top= floor(!y / 3) * 40px - 40px - 24px + 20px
+                @if !col % 3 == 0
+                  :left= floor(!col / 3) * 70px - 24px - 58px
+                  :top= floor(!col / 3) * 40px - 40px - 24px + 20px
                   &.road.player-1
                     :background url("/images/road-0-player-1.png")
                   &.road.player-2
@@ -134,9 +134,9 @@
                   &.road.player-3
                     :background url("/images/road-0-player-3.png")
                 @else
-                  @if !y % 3 == 1
-                    :left= floor(!y / 3) * 70px - 24px - 24px
-                    :top= floor(!y / 3) * 40px - 40px - 24px
+                  @if !col % 3 == 1
+                    :left= floor(!col / 3) * 70px - 24px - 24px
+                    :top= floor(!col / 3) * 40px - 40px - 24px
                     &.road.player-1
                       :background url("/images/road-1-player-1.png")
                     &.road.player-2
@@ -144,8 +144,8 @@
                     &.road.player-3
                       :background url("/images/road-1-player-3.png")
                   @else
-                    :left= floor(!y / 3) * 70px - 24px + 10px
-                    :top= floor(!y / 3) * 40px - 40px - 24px + 20px
+                    :left= floor(!col / 3) * 70px - 24px + 10px
+                    :top= floor(!col / 3) * 40px - 40px - 24px + 20px
                     &.road.player-1
                       :background url("/images/road-2-player-1.png")
                     &.road.player-2

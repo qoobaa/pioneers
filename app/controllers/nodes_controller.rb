@@ -24,9 +24,9 @@ class NodesController < ApplicationController
     @node = @game.map_nodes.build(params[:node])
     @node.player = @game.players.find_by_user_id(@current_user.id)
     if @node.save
-      flash[:success] = "Successfully joined"
+      flash[:success] = "Successfully created"
     else
-      flash[:error] = "Could not join"
+      flash[:error] = "Could not create"
     end
     redirect_to game_path(@game)
   end

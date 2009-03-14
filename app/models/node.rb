@@ -43,7 +43,7 @@ class Node < ActiveRecord::Base
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
   delegate :players, :first_settlement?, :second_settlement?, :after_roll?, :current_player, :to => :game, :prefix => true
-  delegate :nodes, :position, :to => :player, :prefix => true
+  delegate :nodes, :number, :to => :player, :prefix => true
 
   def self.find_by_position(position)
     find(:first, :conditions => { :row => position.first, :col => position.second })
@@ -51,10 +51,6 @@ class Node < ActiveRecord::Base
 
   def self.find_by_positions(positions)
     positions.map { |position| find_by_position(position) }
-  end
-
-  def player_number
-    player_position
   end
 
   def position

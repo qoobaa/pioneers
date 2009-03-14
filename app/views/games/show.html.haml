@@ -1,24 +1,24 @@
 %div#map{ :class => "size-#{@game.map_height}-#{@game.map_width}" }
   %ul#hexes
-    - @game.map_hexes_groupped.each_with_index do |hexes, x|
-      %li{ :class => "x-#{x}" }
+    - @game.map_hexes_groupped.each_with_index do |hexes, row|
+      %li{ :class => "row-#{row}" }
         %ul
           - hexes.each do |hex|
-            %li{ :class => "y-#{hex.position[1]} #{hex.hex_type}" }
+            %li{ :class => "col-#{hex.col} #{hex.hex_type}" }
               %strong{ :class => "roll-#{hex.roll}" }
                 = hex.roll
   %ul#nodes
-    - @game.map_nodes_groupped.each_with_index do |nodes, x|
-      %li{ :class => "x-#{x}" }
+    - @game.map_nodes_groupped.each_with_index do |nodes, row|
+      %li{ :class => "row-#{row}" }
         %ul
           - nodes.each do |node|
-            %li{ :class => "y-#{node.position[1]} #{node.aasm_state} player-#{node.player_number}" }
+            %li{ :class => "col-#{node.col} #{node.aasm_state} player-#{node.player_number}" }
   %ul#edges
-    - @game.map_edges_groupped.each_with_index do |edges, x|
-      %li{ :class => "x-#{x}" }
+    - @game.map_edges_groupped.each_with_index do |edges, row|
+      %li{ :class => "row-#{row}" }
         %ul
           - edges.each do |edge|
-            %li{ :class => "y-#{edge.position[1]} road player-#{edge.player_number}" }
+            %li{ :class => "col-#{edge.col} road player-#{edge.player_number}" }
 
 %p
   %strong Game state
@@ -86,17 +86,17 @@
 %p
   %strong Create nodes
   - form_tag game_nodes_path(@game) do
-    = label_tag "node[x]", "X"
-    = text_field_tag "node[x]"
-    = label_tag "node[y]", "Y"
-    = text_field_tag "node[y]"
+    = label_tag "node[row]", "Row"
+    = text_field_tag "node[row]"
+    = label_tag "node[col]", "Column"
+    = text_field_tag "node[col]"
     = submit_tag "Create"
 
 %p
   %strong Create edges
   - form_tag game_edges_path(@game) do
-    = label_tag "edge[x]", "X"
-    = text_field_tag "edge[x]"
-    = label_tag "edge[y]", "Y"
-    = text_field_tag "edge[y]"
+    = label_tag "edge[row]", "Row"
+    = text_field_tag "edge[row]"
+    = label_tag "edge[col]", "Column"
+    = text_field_tag "edge[col]"
     = submit_tag "Create"

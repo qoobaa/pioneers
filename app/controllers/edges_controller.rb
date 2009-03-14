@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class EdgesController < ApplicationController
-  before_filter :require_user, :require_game, :require_playe
+  before_filter :require_user, :fetch_game
 
   def create
     @edge = @game.map_edges.build(params[:edge])
