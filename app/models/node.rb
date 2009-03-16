@@ -18,21 +18,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Node < ActiveRecord::Base
-  include AASM
-  aasm_state :settlement
+#   include AASM
+#   aasm_state :settlement
 
-  aasm_state :city
-  aasm_initial_state :settlement
+#   aasm_state :city
+#   aasm_initial_state :settlement
+
+#   aasm_event :expand do
+#     transitions :from => :settlement, :to => :city, :on_transition => :build_city
+#   end
+
+  state_machine :initial => :settlement do
+    event :expand do
+      transition :settlement => :city
+    end
+  end
 
   validates_presence_of :player, :map
   validates_associated :player
   validates_uniqueness_of :map_id, :scope => [:row, :col]
   validates_numericality_of :row, :col, :greater_than_or_equal_to => 0, :only_integer => true
   validate :proximity_of_land, :proximity_of_settlements, :state_of_game, :possesion_of_road
-
-  aasm_event :expand do
-    transitions :from => :settlement, :to => :city, :on_transition => :build_city
-  end
 
   belongs_to :map
   belongs_to :player

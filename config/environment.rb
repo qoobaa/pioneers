@@ -26,7 +26,7 @@ Rails::Initializer.run do |config|
   config.gem "pager-acts_as_list", :lib => "active_record/acts/list", :source => "http://gems.github.com"
   config.gem "rspec", :lib => false
   config.gem "rspec-rails", :lib => false
-  config.gem "rubyist-aasm", :lib => "aasm", :source => "http://gems.github.com"
+  config.gem "state_machine"
   config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
 

@@ -28,40 +28,24 @@ class Game < ActiveRecord::Base
 
   after_update :save_players
 
-  include AASM
-  aasm_state :waiting_for_players
-  aasm_state :first_settlement
-  aasm_state :first_road
-  aasm_state :second_settlement
-  aasm_state :second_road
-  aasm_state :before_roll
-  aasm_state :after_roll
-  aasm_state :robber
-  aasm_state :ended
+  state_machine :initial => :waiting_for_players do
+    event :start do
+      transition :waiting_for_players => :first_settlement
+    end
 
-  aasm_event :start do
-    transitions :from => :waiting_for_players, :to => :first_settlement, :on_transition => :deal_resources
+    event :end do
+      transition :first_settlement => :first_road
+      transition :first_road => :first_settlement, :if => :next_player?
+      transition :first_road => :second_settlement
+      transition :second_settlement => :second_road
+      transition :second_road => :second_settlement, :if => :previous_player?
+      transition :second_road => :before_roll
+      transition [:before_roll, :after_roll] => :ended, :if => :end_of_game?
+      transition :before_roll => :robber, :if => :robber_rolled?
+      transition [:before_roll, :robber] => :after_roll
+      transition :after_roll => :before_roll
+    end
   end
-
-  aasm_event :end_turn do
-    transitions :from => :first_settlement, :to => :first_road
-    transitions :from => :first_road, :to => :first_settlement, :guard => :next_player?, :on_transition => :next_player
-    transitions :from => :first_road, :to => :second_settlement
-    transitions :from => :second_settlement, :to => :second_road
-    transitions :from => :second_road, :to => :second_settlement, :guard => :previous_player?, :on_transition => :previous_player
-    transitions :from => :second_road, :to => :before_roll
-    transitions :from => :after_roll, :to => :ended, :guard => :end_of_game?
-    transitions :from => :after_roll, :to => :before_roll, :on_transition => :next_turn
-    transitions :from => :robber, :to => :after_roll
-  end
-
-  aasm_event :roll do
-    transitions :from => :before_roll, :to => :ended, :guard => :end_of_game?
-    transitions :from => :before_roll, :to => :robber, :guard => :robber_rolled?
-    transitions :from => :before_roll, :to => :after_roll
-  end
-
-  aasm_initial_state :waiting_for_players
 
   def current_player_number
     self[:current_player_number] or 1
@@ -107,7 +91,6 @@ class Game < ActiveRecord::Base
   end
 
   def robber_rolled?
-    roll_dice
     self.current_roll == 7
   end
 
