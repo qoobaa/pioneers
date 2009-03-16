@@ -1,0 +1,7 @@
+features/**/*.feature
+lib/**/*.rb
+History.txt
+License.txt
+README.txt
+Ruby1.9.markdown
+Upgrade.markdown

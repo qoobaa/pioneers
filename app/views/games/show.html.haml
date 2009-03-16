@@ -68,11 +68,11 @@
         %li
           %strong Points
           = player.points
-      - form_tag game_player_path(@game, player), :method => :delete do
-        = submit_tag "Destroy"
 
-  - form_tag game_players_path(@game) do
+  - form_tag game_player_path(@game) do
     = submit_tag "Join"
+  - form_tag game_player_path(@game), :method => :delete do
+    = submit_tag "Quit"
 
 %p
   %strong State manipulation
