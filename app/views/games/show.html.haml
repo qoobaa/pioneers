@@ -24,6 +24,9 @@
   %strong Game state
   = @game.state
 %p
+  %strong Game phase
+  = @game.phase
+%p
   %strong Current player
   = @game.current_player_number
 %p
@@ -40,6 +43,9 @@
       %li
         %strong Login
         = player.user_login
+      %li
+        %strong State
+        = player.state
       %ul
         %li
           %strong Lumber
@@ -73,6 +79,9 @@
     = submit_tag "Join"
   - form_tag game_player_path(@game), :method => :delete do
     = submit_tag "Quit"
+  - form_tag game_player_path(@game), :method => :put do
+    = hidden_field_tag "player[event]", "start"
+    = submit_tag "Start"
 
 %p
   %strong State manipulation

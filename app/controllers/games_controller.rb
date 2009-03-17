@@ -31,8 +31,7 @@ class GamesController < ApplicationController
   def update
     @game = Game.find(params[:id])
     @game.current_user = @current_user
-    @game.attributes = params[:game]
-    if @game.save
+    if @game.update_attributes(params[:game])
       flash[:success] = "Success"
     else
       flash[:error] = "Error"

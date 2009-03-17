@@ -27,8 +27,18 @@ class Player < ActiveRecord::Base
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
   validates_uniqueness_of :user_id, :scope => [:game_id]
 
-  before_destroy :game_waiting_for_players?
+  before_destroy :game_preparing?
 
   delegate :login, :to => :user, :prefix => true
-  delegate :waiting_for_players?, :to => :game, :prefix => true
+  delegate :preparing?, :start, :to => :game, :prefix => true
+
+  state_machine :initial => :preparing do
+    event :start do
+      transition :preparing => :ready
+    end
+  end
+
+  def event=(event)
+    self.start if event == "start"
+  end
 end

@@ -31,6 +31,16 @@ class PlayersController < ApplicationController
     redirect_to game_path(@game)
   end
 
+  def update
+    @player = @game.players.find_by_user_id(@current_user.id)
+    if @player.update_attributes(params[:player])
+      flash[:success] = "Successfully updated"
+    else
+      flash[:error] = "Could not update"
+    end
+    redirect_to game_path(@game)
+  end
+
   def destroy
     @player = @game.players.find_by_user_id(@current_user.id)
     if @player.destroy
