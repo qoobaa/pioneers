@@ -1,5 +1,5 @@
 %ul
   - @games.each do |game|
-    %li= link_to "#{game.id} (#{game.aasm_state})", game_path(game)
+    %li= link_to "#{game.id} (#{game.state})", game_path(game)
 
 = link_to "New game", new_game_path

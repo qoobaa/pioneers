@@ -12,7 +12,7 @@
       %li{ :class => "row-#{row}" }
         %ul
           - nodes.each do |node|
-            %li{ :class => "col-#{node.col} #{node.aasm_state} player-#{node.player_number}" }
+            %li{ :class => "col-#{node.col} #{node.state} player-#{node.player_number}" }
   %ul#edges
     - @game.map_edges_groupped.each_with_index do |edges, row|
       %li{ :class => "row-#{row}" }
@@ -22,7 +22,7 @@
 
 %p
   %strong Game state
-  = @game.aasm_state
+  = @game.state
 %p
   %strong Current player
   = @game.current_player_number
@@ -76,11 +76,11 @@
 
 %p
   %strong State manipulation
-  - form_tag start_game_path(@game), :method => :put do
+  - form_tag game_path(@game), :method => :put do
+    = hidden_field_tag "game[event]", "start"
     = submit_tag "Start"
-  - form_tag roll_game_path(@game), :method => :put do
-    = submit_tag "Roll dice"
-  - form_tag end_turn_game_path(@game), :method => :put do
+  - form_tag game_path(@game), :method => :put do
+    = hidden_field_tag "game[event]", "end"
     = submit_tag "End turn"
 
 %p

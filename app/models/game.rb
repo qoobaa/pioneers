@@ -120,4 +120,8 @@ class Game < ActiveRecord::Base
       player.save
     end
   end
+
+  def event=(event)
+
+  end
 end
