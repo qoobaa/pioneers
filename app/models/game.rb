@@ -34,17 +34,22 @@ class Game < ActiveRecord::Base
     end
 
     event :end do
+      transition all => :ended, :if => :end_of_game?
       transition :first_settlement => :first_road
       transition :first_road => :first_settlement, :if => :next_player?
       transition :first_road => :second_settlement
       transition :second_settlement => :second_road
       transition :second_road => :second_settlement, :if => :previous_player?
       transition :second_road => :before_roll
-      transition [:before_roll, :after_roll] => :ended, :if => :end_of_game?
       transition :before_roll => :robber, :if => :robber_rolled?
       transition [:before_roll, :robber] => :after_roll
       transition :after_roll => :before_roll
     end
+
+    before_transition :on => :start, :do => :deal_resources
+    before_transition :first_road => :first_settlement, :do => :next_player
+    before_transition :second_road => :second_settlement, :do => :previous_player
+    before_transition :after_roll => :before_roll, :do => :next_turn
   end
 
   def current_player_number
@@ -91,6 +96,7 @@ class Game < ActiveRecord::Base
   end
 
   def robber_rolled?
+    roll_dice
     self.current_roll == 7
   end
 
