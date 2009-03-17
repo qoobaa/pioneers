@@ -27,5 +27,8 @@ class Player < ActiveRecord::Base
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
   validates_uniqueness_of :user_id, :scope => [:game_id]
 
+  before_destroy :game_waiting_for_players?
+
   delegate :login, :to => :user, :prefix => true
+  delegate :waiting_for_players?, :to => :game, :prefix => true
 end

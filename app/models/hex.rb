@@ -24,7 +24,6 @@ class Hex < ActiveRecord::Base
 
   validates_inclusion_of :roll, :in => [2, 3, 4, 5, 6, 8, 9, 10, 11, 12], :allow_nil => true
   validates_uniqueness_of :map_id, :scope => [:row, :col]
-  validates_numericality_of :row, :col, :greater_than_or_equal_to => 0, :only_integer => true
 
   extend EnumField
   enum_field :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]

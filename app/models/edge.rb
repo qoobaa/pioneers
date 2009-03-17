@@ -21,7 +21,6 @@ class Edge < ActiveRecord::Base
   validates_presence_of :player, :map
   validates_associated :player
   validates_uniqueness_of :map_id, :scope => [:row, :col]
-  validates_numericality_of :row, :col, :greater_than_or_equal_to => 0, :only_integer => true
 
   belongs_to :map
   belongs_to :player

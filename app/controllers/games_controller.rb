@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class GamesController < ApplicationController
+  before_filter :require_user, :only => :update
+
   def index
     @games = Game.all
   end
@@ -26,35 +28,14 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
-  def start
+  def update
     @game = Game.find(params[:id])
-    @game.start
+    @game.current_user = @current_user
+    @game.attributes = params[:game]
     if @game.save
-      flash[:success] = "Game started!"
+      flash[:success] = "Success"
     else
-      flash[:error] = "Game could not be started"
-    end
-    redirect_to game_path(@game)
-  end
-
-  def end_turn
-    @game = Game.find(params[:id])
-    @game.end_turn
-    if @game.save
-      flash[:success] = "Ended turn"
-    else
-      flash[:error] = "Turn could not be ended"
-    end
-    redirect_to game_path(@game)
-  end
-
-  def roll
-    @game = Game.find(params[:id])
-    @game.roll
-    if @game.save
-      flash[:success] = "Rolled successfully"
-    else
-      flash[:error] = "Could not roll"
+      flash[:error] = "Error"
     end
     redirect_to game_path(@game)
   end

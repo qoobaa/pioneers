@@ -22,6 +22,7 @@ class Map < ActiveRecord::Base
 
   validates_numericality_of :width, :height, :greater_than => 0
   validates_presence_of :hexes_attributes, :on => :create
+  # validates_numericality_of :robber_row, :robber_col, :only_integer => true
 
   has_many :hexes, :dependent => :destroy
   has_many :nodes, :dependent => :destroy
@@ -30,18 +31,6 @@ class Map < ActiveRecord::Base
   before_validation_on_create :build_hexes
 
   attr_accessor :hexes_attributes
-
-  def row_belongs_to_map?(row)
-    (0...width).include? row
-  end
-
-  def col_belongs_to_map?(col)
-    (0...height).include? col
-  end
-
-  def position_belongs_to_map?(position)
-    row_belongs_to_map?(position[0]) and col_belongs_to_map?(position[1])
-  end
 
   def size
     [width, height]

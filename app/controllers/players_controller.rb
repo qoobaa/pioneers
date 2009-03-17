@@ -32,7 +32,7 @@ class PlayersController < ApplicationController
   end
 
   def destroy
-    @player = @game.players.find(params[:id])
+    @player = @game.players.find_by_user_id(@current_user.id)
     if @player.destroy
       flash[:success] = "Successfully destroyed"
     else

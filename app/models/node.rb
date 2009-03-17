@@ -18,16 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Node < ActiveRecord::Base
-#   include AASM
-#   aasm_state :settlement
-
-#   aasm_state :city
-#   aasm_initial_state :settlement
-
-#   aasm_event :expand do
-#     transitions :from => :settlement, :to => :city, :on_transition => :build_city
-#   end
-
   state_machine :initial => :settlement do
     event :expand do
       transition :settlement => :city
@@ -37,7 +27,6 @@ class Node < ActiveRecord::Base
   validates_presence_of :player, :map
   validates_associated :player
   validates_uniqueness_of :map_id, :scope => [:row, :col]
-  validates_numericality_of :row, :col, :greater_than_or_equal_to => 0, :only_integer => true
   validate :proximity_of_land, :proximity_of_settlements, :state_of_game, :possesion_of_road
 
   belongs_to :map
@@ -105,8 +94,7 @@ class Node < ActiveRecord::Base
 
   def add_resources(type)
     return if type.nil?
-    player[type] += 1 if settlement?
-    player[type] += 2 if city?
+    player[type] += settlement? ? 1 : 2
     player.save
   end
 
@@ -135,11 +123,11 @@ class Node < ActiveRecord::Base
   end
 
   def first_settlement?
-    player_nodes.settlement.count < 1 and game_first_settlement? and player == game_current_player
+    player_nodes.with_state(:settlement).count < 1 and game_first_settlement? and player == game_current_player
   end
 
   def second_settlement?
-    player_nodes.settlement.count < 2 and game_second_settlement? and player == game_current_player
+    player_nodes.with_state(:settlement).count < 2 and game_second_settlement? and player == game_current_player
   end
 
   def development_phase?
