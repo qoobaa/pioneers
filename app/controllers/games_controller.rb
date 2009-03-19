@@ -28,10 +28,10 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
-  def update
+  def end_phase
     @game = Game.find(params[:id])
     @game.current_user = @current_user
-    if @game.update_attributes(params[:game])
+    if @game.end_phase
       flash[:success] = "Success"
     else
       flash[:error] = "Error"

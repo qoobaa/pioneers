@@ -53,19 +53,15 @@ class Game < ActiveRecord::Base
       transition :second_road => :second_settlement, :if => :previous_player?
       transition :second_road => :before_roll
       transition :before_roll => :robber, :if => :robber_rolled?
-      transition :robber => :after_roll, :if => :event_authorized?
-      transition :before_roll => :after_roll, :if => :event_authorized?
-      transition :after_roll => :before_roll, :if => :event_authorized?
+      transition :before_roll => :after_roll
+      transition :robber => :after_roll
+      transition :after_roll => :before_roll
     end
 
+    before_transition all => all, :do => :event_authorized?
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
     before_transition :after_roll => :before_roll, :do => :next_turn
-
-  end
-
-  def self.dupa
-    errorize
   end
 
   def current_player_number
@@ -147,10 +143,5 @@ class Game < ActiveRecord::Base
     players.each do |player|
       errors.add :players, "are not ready" unless player.ready?
     end
-  end
-
-  def event=(event)
-    self.start if event == "start"
-    self.end_phase if event == "end_phase"
   end
 end
