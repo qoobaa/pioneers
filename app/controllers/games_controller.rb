@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class GamesController < ApplicationController
-  before_filter :require_user, :only => :update
+  before_filter :require_user, :only => :end_phase
 
   def index
     @games = Game.all
