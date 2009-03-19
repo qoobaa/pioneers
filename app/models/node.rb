@@ -37,7 +37,7 @@ class Node < ActiveRecord::Base
 
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
-  delegate :players, :first_settlement?, :second_settlement?, :after_roll?, :current_player, :to => :game, :prefix => true
+  delegate :players, :phase_first_settlement?, :phase_second_settlement?, :phase_after_roll?, :current_player, :to => :game, :prefix => true
   delegate :nodes, :number, :to => :player, :prefix => true
 
   def self.find_by_position(position)
@@ -123,11 +123,11 @@ class Node < ActiveRecord::Base
   end
 
   def first_settlement?
-    player_nodes.with_state(:settlement).count < 1 and game_first_settlement? and player == game_current_player
+    player_nodes.with_state(:settlement).count < 1 and game_phase_first_settlement? and player == game_current_player
   end
 
   def second_settlement?
-    player_nodes.with_state(:settlement).count < 2 and game_second_settlement? and player == game_current_player
+    player_nodes.with_state(:settlement).count < 2 and game_phase_second_settlement? and player == game_current_player
   end
 
   def development_phase?
@@ -135,7 +135,7 @@ class Node < ActiveRecord::Base
   end
 
   def build_phase?
-    game_after_roll? and player == game_current_player
+    game_phase_after_roll? and player == game_current_player
   end
 
   def state_of_game
@@ -158,8 +158,8 @@ class Node < ActiveRecord::Base
 
   def build_settlement
     player.settlements -= 1
-    add_resources_from_neighbours if game_second_settlement?
-    charge_for_settlement if game_after_roll?
+    add_resources_from_neighbours if game_phase_second_settlement?
+    charge_for_settlement if game_phase_after_roll?
     add_victory_point
   end
 

@@ -23,7 +23,7 @@ class Game < ActiveRecord::Base
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :to => :map, :prefix => true
 
-  after_update :save_players
+  after_update :save_players, :end
   attr_accessor :current_user
 
   state_machine :initial => :preparing do
@@ -38,20 +38,21 @@ class Game < ActiveRecord::Base
     state :playing do
       validates_length_of :players, :in => 2..4
       validates_presence_of :map
+      validate :players_ready
     end
 
     after_transition :on => :start, :do => :deal_resources
   end
 
   state_machine :phase, :namespace => :phase, :initial => :first_settlement do
-    event :next do
+    event :end do
       transition :first_settlement => :first_road
       transition :first_road => :first_settlement, :if => :next_player?
       transition :first_road => :second_settlement
       transition :second_settlement => :second_road
       transition :second_road => :second_settlement, :if => :previous_player?
       transition :second_road => :before_roll
-      transition :before_roll => :robber, :if => :robber_rolled? #lambda { |game| game.robber_rolled? and game.event_authorized? }
+      transition :before_roll => :robber, :if => :robber_rolled?
       transition :robber => :after_roll, :if => :event_authorized?
       transition :before_roll => :after_roll, :if => :event_authorized?
       transition :after_roll => :before_roll, :if => :event_authorized?
@@ -60,6 +61,11 @@ class Game < ActiveRecord::Base
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
     before_transition :after_roll => :before_roll, :do => :next_turn
+
+  end
+
+  def self.dupa
+    errorize
   end
 
   def current_player_number
@@ -137,8 +143,14 @@ class Game < ActiveRecord::Base
     players.each(&:save)
   end
 
+  def players_ready
+    players.each do |player|
+      errors.add :players, "are not ready" unless player.ready?
+    end
+  end
+
   def event=(event)
     self.start if event == "start"
-    self.end if event == "end"
+    self.end_phase if event == "end_phase"
   end
 end

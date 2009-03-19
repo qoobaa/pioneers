@@ -36,6 +36,8 @@ class Player < ActiveRecord::Base
     event :start do
       transition :preparing => :ready
     end
+
+    after_transition :on => :start, :do => lambda { |player| player.game_start }
   end
 
   def event=(event)

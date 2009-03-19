@@ -29,7 +29,7 @@ class Edge < ActiveRecord::Base
 
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
-  delegate :first_road?, :second_road?, :after_roll?, :current_player, :to => :game, :prefix => true
+  delegate :phase_first_road?, :phase_second_road?, :phase_after_roll?, :current_player, :to => :game, :prefix => true
   delegate :edges, :number, :to => :player, :prefix => true
 
   before_validation_on_create :build_road
@@ -106,11 +106,11 @@ class Edge < ActiveRecord::Base
   end
 
   def first_road?
-    player_edges.count < 1 and game_first_road? and player == game_current_player
+    player_edges.count < 1 and game_phase_first_road? and player == game_current_player
   end
 
   def second_road?
-    player_edges.count < 2 and game_second_road? and player == game_current_player
+    player_edges.count < 2 and game_phase_second_road? and player == game_current_player
   end
 
   def development_phase?
@@ -118,7 +118,7 @@ class Edge < ActiveRecord::Base
   end
 
   def build_phase?
-    game_after_roll? and player == game_current_player
+    game_phase_after_roll? and player == game_current_player
   end
 
   def state_of_game
@@ -157,7 +157,7 @@ class Edge < ActiveRecord::Base
 
   def build_road
     player.roads -= 1
-    charge_for_road if game_after_roll?
+    charge_for_road if game_phase_after_roll?
   end
 
   def charge_for_road

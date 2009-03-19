@@ -1,0 +1,158 @@
+--- !ruby/object:Gem::Specification 
+name: test-unit
+version: !ruby/object:Gem::Version 
+  version: 2.0.2
+platform: ruby
+authors: 
+- Kouhei Sutou
+- Ryan Davis
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2008-12-20 00:00:00 +01:00
+default_executable: testrb
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: hoe
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 1.8.2
+    version: 
+description: Test::Unit 2.x - Improved version of Test::Unit bundled in Ruby 1.8.x.  Ruby 1.9.x bundles miniunit not Test::Unit. Test::Unit bundled in Ruby 1.8.x had not been improved but unbundled Test::Unit (Test::Unit 2.x) will be improved actively.
+email: 
+- kou@cozmixng.org
+- ryand-ruby@zenspider.com
+executables: 
+- testrb
+extensions: []
+
+extra_rdoc_files: 
+- History.txt
+- Manifest.txt
+- README.txt
+files: 
+- History.txt
+- Manifest.txt
+- README.txt
+- Rakefile
+- TODO
+- bin/testrb
+- html/classic.html
+- html/index.html
+- html/index.html.ja
+- html/test-unit-classic.png
+- lib/test/unit.rb
+- lib/test/unit/assertionfailederror.rb
+- lib/test/unit/assertions.rb
+- lib/test/unit/attribute.rb
+- lib/test/unit/autorunner.rb
+- lib/test/unit/collector.rb
+- lib/test/unit/collector/descendant.rb
+- lib/test/unit/collector/dir.rb
+- lib/test/unit/collector/load.rb
+- lib/test/unit/collector/objectspace.rb
+- lib/test/unit/color-scheme.rb
+- lib/test/unit/color.rb
+- lib/test/unit/diff.rb
+- lib/test/unit/error.rb
+- lib/test/unit/exceptionhandler.rb
+- lib/test/unit/failure.rb
+- lib/test/unit/fixture.rb
+- lib/test/unit/notification.rb
+- lib/test/unit/omission.rb
+- lib/test/unit/pending.rb
+- lib/test/unit/priority.rb
+- lib/test/unit/runner/console.rb
+- lib/test/unit/runner/emacs.rb
+- lib/test/unit/testcase.rb
+- lib/test/unit/testresult.rb
+- lib/test/unit/testsuite.rb
+- lib/test/unit/ui/console/outputlevel.rb
+- lib/test/unit/ui/console/testrunner.rb
+- lib/test/unit/ui/emacs/testrunner.rb
+- lib/test/unit/ui/testrunner.rb
+- lib/test/unit/ui/testrunnermediator.rb
+- lib/test/unit/ui/testrunnerutilities.rb
+- lib/test/unit/util/backtracefilter.rb
+- lib/test/unit/util/method-owner-finder.rb
+- lib/test/unit/util/observable.rb
+- lib/test/unit/util/procwrapper.rb
+- lib/test/unit/version.rb
+- sample/adder.rb
+- sample/subtracter.rb
+- sample/tc_adder.rb
+- sample/tc_subtracter.rb
+- sample/test_user.rb
+- sample/ts_examples.rb
+- test/collector/test-descendant.rb
+- test/collector/test-load.rb
+- test/collector/test_dir.rb
+- test/collector/test_objectspace.rb
+- test/run-test.rb
+- test/test-attribute.rb
+- test/test-color-scheme.rb
+- test/test-color.rb
+- test/test-diff.rb
+- test/test-emacs-runner.rb
+- test/test-fixture.rb
+- test/test-notification.rb
+- test/test-omission.rb
+- test/test-pending.rb
+- test/test-priority.rb
+- test/test_assertions.rb
+- test/test_error.rb
+- test/test_failure.rb
+- test/test_testcase.rb
+- test/test_testresult.rb
+- test/test_testsuite.rb
+- test/testunit-test-util.rb
+- test/ui/test_testrunmediator.rb
+- test/util/test-method-owner-finder.rb
+- test/util/test_backtracefilter.rb
+- test/util/test_observable.rb
+- test/util/test_procwrapper.rb
+has_rdoc: true
+homepage: http://rubyforge.org/projects/test-unit/
+post_install_message: 
+rdoc_options: 
+- --main
+- README.txt
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+requirements: []
+
+rubyforge_project: test-unit
+rubygems_version: 1.3.1
+signing_key: 
+specification_version: 2
+summary: Test::Unit 2.x - Improved version of Test::Unit bundled in Ruby 1.8.x
+test_files: 
+- test/test_testcase.rb
+- test/test_failure.rb
+- test/collector/test_objectspace.rb
+- test/collector/test_dir.rb
+- test/test_testsuite.rb
+- test/test_assertions.rb
+- test/util/test_observable.rb
+- test/util/test_procwrapper.rb
+- test/util/test_backtracefilter.rb
+- test/ui/test_testrunmediator.rb
+- test/test_testresult.rb
+- test/test_error.rb

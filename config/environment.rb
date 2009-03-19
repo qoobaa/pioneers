@@ -27,6 +27,7 @@ Rails::Initializer.run do |config|
   config.gem "rspec", :lib => false
   config.gem "rspec-rails", :lib => false
   config.gem "state_machine"
+  config.gem "test-unit", :lib => false
   config.gem "thoughtbot-factory_girl", :lib => "factory_girl", :source => "http://gems.github.com"
   config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
 

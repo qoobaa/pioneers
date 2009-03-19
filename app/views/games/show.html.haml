@@ -88,9 +88,11 @@
   - form_tag game_path(@game), :method => :put do
     = hidden_field_tag "game[event]", "start"
     = submit_tag "Start"
+%p
+  %strong Phase manipulation
   - form_tag game_path(@game), :method => :put do
-    = hidden_field_tag "game[event]", "end"
-    = submit_tag "End turn"
+    = hidden_field_tag "game[event]", "end_phase"
+    = submit_tag "End phase"
 
 %p
   %strong Create nodes
