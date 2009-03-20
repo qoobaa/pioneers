@@ -27,6 +27,7 @@ class Player < ActiveRecord::Base
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
   validates_uniqueness_of :user_id, :scope => [:game_id]
 
+  before_save :sum_resources
   before_destroy :game_preparing?
 
   delegate :login, :to => :user, :prefix => true
@@ -42,5 +43,12 @@ class Player < ActiveRecord::Base
 
   def event=(event)
     self.start if event == "start"
+  end
+
+  protected
+
+  def sum_resources
+    return if bricks.nil? or lumber.nil? or ore.nil? or grain.nil? or wool.nil?
+    self.resources = bricks + lumber + ore + grain + wool
   end
 end

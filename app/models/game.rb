@@ -54,11 +54,19 @@ class Game < ActiveRecord::Base
       transition :second_road => :before_roll
       transition :before_roll => :robber, :if => :robber_rolled?
       transition :before_roll => :after_roll
-      transition :robber => :after_roll
+      transition :robber => :robber, :if => :next_player_to_rob?
+      transition :robber => :robber_move
+      transition :robber_move => :after_roll
       transition :after_roll => :before_roll
     end
 
-    before_transition all => all, :do => :event_authorized?
+    before_transition all - :robber => all, :do => :event_authorized?
+    before_transition :before_roll => all, :do => :replace_current_roll
+    before_transition :before_roll => :after_roll, :do => :add_resources
+    before_transition :robber => all, :do => :robber_authorized?
+    before_transition all => :robber, :do => :rob_next_player
+    before_transition :robber_move => :after_roll, :do => :robber_moved?
+    before_transition :robber_move => :after_roll, :do => :reset_robber
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
     before_transition :after_roll => :before_roll, :do => :next_turn
@@ -70,6 +78,10 @@ class Game < ActiveRecord::Base
 
   def event_authorized?
     current_user_player == current_player
+  end
+
+  def robber_authorized?
+    current_user_player == robber_player
   end
 
   def current_turn
@@ -102,6 +114,30 @@ class Game < ActiveRecord::Base
     self.current_player_number = players.count if current_player_number == 0
   end
 
+  def next_player_to_rob?
+    players.exists?([%Q(resources > 7 and number > ?), robber_player_number])
+  end
+
+  def robber_player
+    players[robber_player_number - 1]
+  end
+
+  def rob_next_player
+    player = players.find(:first, :conditions => [%Q(resources > 7 and number > ?), robber_player_number])
+    self.robber_player_number = player.number
+    self.robber_resource_limit = (player.resources + 1).div(2)
+  end
+
+  def reset_robber
+    self.robber_player_number = 0
+    self.robber_resource_limit = nil
+    self.robber_moved = nil
+  end
+
+  def player_robbed?
+    robber_player.resources <= robber_resource_limit
+  end
+
   def winner
     players.find(:first, :conditions => "players.points >= 10")
   end
@@ -111,13 +147,19 @@ class Game < ActiveRecord::Base
   end
 
   def roll_dice
-    self.current_roll = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
+    @roll = 7#[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
+  end
+
+  def replace_current_roll
+    self.current_roll = @roll
+  end
+
+  def add_resources
     map_hexes.roll(current_roll).each(&:rolled)
   end
 
   def robber_rolled?
-    roll_dice
-    self.current_roll == 7
+    roll_dice == 7
   end
 
   def next_turn
@@ -143,5 +185,9 @@ class Game < ActiveRecord::Base
     players.each do |player|
       errors.add :players, "are not ready" unless player.ready?
     end
+  end
+
+  def event=(event)
+    self.end_phase if event == "end_phase"
   end
 end

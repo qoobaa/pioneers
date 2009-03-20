@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class GamesController < ApplicationController
-  before_filter :require_user, :only => :end_phase
+  before_filter :require_user, :only => :update
 
   def index
     @games = Game.all
@@ -28,10 +28,10 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
-  def end_phase
+  def update
     @game = Game.find(params[:id])
     @game.current_user = @current_user
-    if @game.end_phase
+    if @game.update_attributes(params[:game])
       flash[:success] = "Success"
     else
       flash[:error] = "Error"
