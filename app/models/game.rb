@@ -54,26 +54,38 @@ class Game < ActiveRecord::Base
       transition :second_settlement => :second_road
       transition :second_road => :second_settlement, :if => :previous_player?
       transition :second_road => :before_roll
-      transition :before_roll => :robber, :if => lambda { |game| game.robber_rolled? and game.next_player_to_rob? }
-      transition :before_roll => :robber_move, :if => :robber_rolled?
+      transition :before_roll => :robber, :if => :robber_rolled?
       transition :before_roll => :after_roll
-      transition :robber => :robber, :if => :next_player_to_rob?
-      transition :robber => :robber_move
-      transition :robber_move => :after_roll
+      transition :robber => :after_roll, :if => :robber_ended?
       transition :after_roll => :before_roll
     end
 
-    before_transition all - :robber => all, :do => :event_authorized?
+    #before_transition all => all, :do => :event_authorized?
     before_transition :before_roll => all, :do => :replace_current_roll
+    before_transition :before_roll => :robber, :do => lambda { |game| game.reset_robber }
     before_transition :before_roll => :after_roll, :do => :add_resources
-    before_transition :robber => all, :do => :robber_authorized?
-    before_transition :robber => all, :do => :player_robbed?
-    before_transition all => :robber, :do => :rob_next_player
-    before_transition :robber_move => :after_roll, :do => lambda { |game| game.robber_moved? }
-    before_transition :robber_move => :after_roll, :do => :reset_robber
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
     before_transition :after_roll => :before_roll, :do => :next_turn
+  end
+
+  state_machine :robber_phase, :namespace => :robber, :initial => :ended do
+    event :reset do
+      transition :ended => :discard, :if => :next_player_to_rob?
+      transition :ended => :move
+    end
+
+    event :end do
+      transition :discard => :discard, :if => :next_player_to_rob?
+      transition :discard => :move
+      transition :move => :rob
+      transition :rob => :ended
+    end
+
+    before_transition all - :ended => all, :do => :phase_robber?
+    before_transition :discard => all, :do => :player_robbed?
+    before_transition :discard => :move, :do => :reset_robber_player_number
+    before_transition all => :discard, :do => :rob_next_player
   end
 
   def current_player_number
@@ -127,15 +139,12 @@ class Game < ActiveRecord::Base
   end
 
   def rob_next_player
-    return unless next_player_to_rob?
     player = players.find(:first, :conditions => [%Q(resources > 7 and number > ?), robber_player_number])
     self.robber_player_number = player.number
     self.robber_resource_limit = (player.resources + 1).div(2)
   end
 
-  def reset_robber
-    self.robber_resource_limit = nil
-    self.robber_moved = false
+  def reset_robber_player_number
     self.robber_player_number = 0
   end
 

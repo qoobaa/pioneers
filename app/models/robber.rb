@@ -21,13 +21,13 @@ class Robber < ActiveRecord::Base
   belongs_to :map
 
   validates_numericality_of :row, :col, :only_integer => true
-  validate :already_moved, :position_settleable, :phase_of_game
-
-  before_update :set_moved
+  validate :position_settleable, :phase_of_game, :moved
 
   delegate :game, :to => :map
   delegate :hexes, :to => :map, :prefix => true
-  delegate :phase_robber_move?, :current_player, :id, :to => :game, :prefix => true
+  delegate :robber_move?, :end_robber, :current_user=, :event_authorized?, :to => :game, :prefix => true
+
+  after_update :game_end_robber
 
   attr_accessor :current_user
 
@@ -47,22 +47,10 @@ class Robber < ActiveRecord::Base
     map_hexes.find_by_position(position)
   end
 
-  def current_user_player
-    current_user.players.find_by_game_id(game_id) if current_user
-  end
-
   protected
 
   def position_changed?
     position != position_was
-  end
-
-  def set_moved
-    self.moved = position_changed?
-  end
-
-  def already_moved
-    errors.add_to_base "has been already moved" if moved?
   end
 
   def position_settleable
@@ -70,6 +58,11 @@ class Robber < ActiveRecord::Base
   end
 
   def phase_of_game
-    errors.add_to_base "you cannot move robber at the moment" unless game_phase_robber_move? and current_user_player == game_current_player
+    self.game_current_user = current_user
+    errors.add_to_base "you cannot move robber at the moment" unless game_robber_move? and game_event_authorized?
+  end
+
+  def moved
+    errors.add :position, "must be changed" unless position_changed?
   end
 end
