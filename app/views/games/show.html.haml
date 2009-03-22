@@ -5,8 +5,13 @@
         %ul
           - hexes.each do |hex|
             %li{ :class => "col-#{hex.col} #{hex.hex_type}" }
-              %strong{ :class => "roll-#{hex.roll}" }
-                = hex.roll
+              - if hex.robber?
+                %strong{ :class => "robber" }
+                  robber
+              - else
+                %strong{ :class => "roll-#{hex.roll}" }
+                  = hex.roll
+
   %ul#nodes
     - @game.map_nodes_groupped.each_with_index do |nodes, row|
       %li{ :class => "row-#{row}" }
@@ -29,6 +34,9 @@
 %p
   %strong Current player
   = @game.current_player_number
+%p
+  %strong Robber player
+  = @game.robber_player_number
 %p
   %strong Current roll
   = @game.current_roll
@@ -106,3 +114,11 @@
     = label_tag "edge[col]", "Column"
     = text_field_tag "edge[col]"
     = submit_tag "Create"
+%p
+  %strong Move robber
+  - form_tag game_robber_path(@game), :method => :put do
+    = label_tag "robber[row]", "Row"
+    = text_field_tag "robber[row]"
+    = label_tag "robber[col]", "Column"
+    = text_field_tag "robber[col]"
+    = submit_tag "Move"

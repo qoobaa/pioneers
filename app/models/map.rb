@@ -18,11 +18,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Map < ActiveRecord::Base
+  has_one :robber
   belongs_to :game
 
   validates_numericality_of :width, :height, :greater_than => 0
   validates_presence_of :hexes_attributes, :on => :create
-  # validates_numericality_of :robber_row, :robber_col, :only_integer => true
+  validates_presence_of :robber
+
+  delegate :position, :to => :robber, :prefix => true
 
   has_many :hexes, :dependent => :destroy
   has_many :nodes, :dependent => :destroy
@@ -38,14 +41,6 @@ class Map < ActiveRecord::Base
 
   def size=(size)
     self.width, self.height = size
-  end
-
-  def robber_position
-    [robber_row, robber_col]
-  end
-
-  def robber_position=(robber_position)
-    self.robber_row, self.robber_col = robber_position
   end
 
   def hexes_groupped

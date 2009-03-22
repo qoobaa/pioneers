@@ -21,9 +21,11 @@ class Game < ActiveRecord::Base
   has_many :players, :order => "number"
   has_one :map
 
-  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :to => :map, :prefix => true
+  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
+  delegate :robber, :to => :map
+  delegate :moved=, :moved?, :to => :robber, :prefix => true
 
-  after_update :save_players, :end
+  after_update :save_players, :save_robber, :end
   attr_accessor :current_user
 
   state_machine :initial => :preparing do
@@ -52,7 +54,8 @@ class Game < ActiveRecord::Base
       transition :second_settlement => :second_road
       transition :second_road => :second_settlement, :if => :previous_player?
       transition :second_road => :before_roll
-      transition :before_roll => :robber, :if => :robber_rolled?
+      transition :before_roll => :robber, :if => lambda { |game| game.robber_rolled? and game.next_player_to_rob? }
+      transition :before_roll => :robber_move, :if => :robber_rolled?
       transition :before_roll => :after_roll
       transition :robber => :robber, :if => :next_player_to_rob?
       transition :robber => :robber_move
@@ -64,8 +67,9 @@ class Game < ActiveRecord::Base
     before_transition :before_roll => all, :do => :replace_current_roll
     before_transition :before_roll => :after_roll, :do => :add_resources
     before_transition :robber => all, :do => :robber_authorized?
+    before_transition :robber => all, :do => :player_robbed?
     before_transition all => :robber, :do => :rob_next_player
-    before_transition :robber_move => :after_roll, :do => :robber_moved?
+    before_transition :robber_move => :after_roll, :do => lambda { |game| game.robber_moved? }
     before_transition :robber_move => :after_roll, :do => :reset_robber
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
@@ -114,24 +118,25 @@ class Game < ActiveRecord::Base
     self.current_player_number = players.count if current_player_number == 0
   end
 
-  def next_player_to_rob?
-    players.exists?([%Q(resources > 7 and number > ?), robber_player_number])
-  end
-
   def robber_player
     players[robber_player_number - 1]
   end
 
+  def next_player_to_rob?
+    players.exists?([%Q(resources > 7 and number > ?), robber_player_number])
+  end
+
   def rob_next_player
+    return unless next_player_to_rob?
     player = players.find(:first, :conditions => [%Q(resources > 7 and number > ?), robber_player_number])
     self.robber_player_number = player.number
     self.robber_resource_limit = (player.resources + 1).div(2)
   end
 
   def reset_robber
-    self.robber_player_number = 0
     self.robber_resource_limit = nil
-    self.robber_moved = nil
+    self.robber_moved = false
+    self.robber_player_number = 0
   end
 
   def player_robbed?
@@ -147,7 +152,7 @@ class Game < ActiveRecord::Base
   end
 
   def roll_dice
-    @roll = 7#[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
+    @roll ||= 7#[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
   end
 
   def replace_current_roll
@@ -179,6 +184,10 @@ class Game < ActiveRecord::Base
 
   def save_players
     players.each(&:save)
+  end
+
+  def save_robber
+    robber.save
   end
 
   def players_ready
