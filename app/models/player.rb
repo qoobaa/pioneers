@@ -28,7 +28,14 @@ class Player < ActiveRecord::Base
   validates_uniqueness_of :user_id, :scope => [:game_id]
 
   delegate :login, :to => :user, :prefix => true
-  delegate :start, :discard_robber, :to => :game, :prefix => true
+  delegate :start_game, :preparing?, :to => :game, :prefix => true
+  validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points,
+                            :discard_lumber, :discard_grain, :discard_ore, :discard_wool, :discard_bricks,
+                            :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
+
+  before_destroy :game_preparing?
+
+  attr_accessor :discard_lumber, :discard_grain, :discard_ore, :discard_wool, :discard_bricks, :event
 
   state_machine :initial => :preparing do
     event :start do
@@ -40,18 +47,7 @@ class Player < ActiveRecord::Base
     end
 
     after_transition :on => :start do |player|
-      player.game_start
-    end
-
-    state :playing do
-      validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points, :greater_than_or_equal_to => 0, :only_integer => true
-      validates_numericality_of :discard_lumber, :discard_grain, :discard_ore, :discard_wool, :discard_bricks, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
-      validate :phase_of_game
-
-      before_validation :discard_resources, :sum_resources
-      before_destroy { false }
-
-      attr_accessor :discard_lumber, :discard_grain, :discard_ore, :discard_wool, :discard_bricks
+      player.game_start_game
     end
   end
 

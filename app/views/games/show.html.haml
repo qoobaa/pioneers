@@ -87,14 +87,15 @@
     = submit_tag "Join"
   - form_tag game_player_path(@game), :method => :delete do
     = submit_tag "Quit"
-  - form_tag game_player_path(@game), :method => :put do
+  - form_tag start_game_player_path(@game), :method => :put do
     = submit_tag "Start"
 
 %p
   %strong Phase manipulation
-  - form_tag game_path(@game), :method => :put do
-    = hidden_field_tag "game[event]", "end_phase"
-    = submit_tag "End phase"
+  - form_tag roll_dice_game_path(@game), :method => :put do
+    = submit_tag "Roll dice"
+  - form_tag end_turn_game_path(@game), :method => :put do
+    = submit_tag "End turn"
 
 %p
   %strong Create nodes

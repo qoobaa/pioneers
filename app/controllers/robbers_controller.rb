@@ -3,7 +3,7 @@ class RobbersController < ApplicationController
 
   def update
     @robber = @game.map_robber
-    @robber.current_user = @current_user
+    @robber.user = @current_user
     if @robber.update_attributes(params[:robber])
       flash[:success] = "Successfully updated"
     else

@@ -25,15 +25,22 @@ class Edge < ActiveRecord::Base
   belongs_to :map
   belongs_to :player
 
-  after_save :save_player
+  after_save :save_player, :road_built
 
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
-  delegate :phase_first_road?, :phase_second_road?, :phase_after_roll?, :current_player, :to => :game, :prefix => true
+  delegate :players, :first_road?, :second_road?, :after_roll?, :road_built!, :to => :game, :prefix => true
   delegate :edges, :number, :to => :player, :prefix => true
 
   before_validation_on_create :build_road
-  validate :state_of_game, :proximity_of_land, :position_of_development_road, :position_of_road
+  validate :proximity_of_land, :position_of_development_road, :position_of_road
+
+  attr_reader :user
+
+  def user=(user)
+    @user = user
+    self.player = game_players.find_by_user_id(user.id)
+  end
 
   def self.find_by_position(position)
     find(:first, :conditions => { :row => position.first, :col => position.second })
@@ -105,24 +112,8 @@ class Edge < ActiveRecord::Base
     hexes.detect { |hex| hex.settleable? if hex } != nil
   end
 
-  def first_road?
-    player_edges.count < 1 and game_phase_first_road? and player == game_current_player
-  end
-
-  def second_road?
-    player_edges.count < 2 and game_phase_second_road? and player == game_current_player
-  end
-
-  def development_phase?
-    first_road? or second_road?
-  end
-
-  def build_phase?
-    game_phase_after_roll? and player == game_current_player
-  end
-
-  def state_of_game
-    errors.add_to_base "you cannot build at the moment" unless development_phase? or build_phase?
+  def setup_phase?
+    game_first_road? or game_second_road?
   end
 
   def proximity_of_land
@@ -134,7 +125,7 @@ class Edge < ActiveRecord::Base
   end
 
   def position_of_development_road
-    errors.add :position, "is invalid, no settlements without roads in neighbourhood" if development_phase? and not has_settlement_without_road?
+    errors.add :position, "is invalid, no settlements without roads in neighbourhood" if setup_phase? and not has_settlement_without_road?
   end
 
   def has_settlement?
@@ -150,18 +141,22 @@ class Edge < ActiveRecord::Base
   end
 
   def position_of_road
-    errors.add :position, "is invalid, no roads nor settlements in neighbourhood" if build_phase? and not has_settlement? and not has_road?
+    errors.add :position, "is invalid, no roads nor settlements in neighbourhood" if game_after_roll? and not has_settlement? and not has_road?
   end
 
   # before validation
 
   def build_road
     player.roads -= 1
-    charge_for_road if game_phase_after_roll?
+    charge_for_road if game_after_roll?
   end
 
   def charge_for_road
     player.bricks -= 1
     player.lumber -= 1
+  end
+
+  def road_built
+    game_road_built!(user)
   end
 end

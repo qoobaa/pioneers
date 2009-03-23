@@ -22,7 +22,7 @@ class EdgesController < ApplicationController
 
   def create
     @edge = @game.map_edges.build(params[:edge])
-    @edge.player = @game.players.find_by_user_id(@current_user.id)
+    @edge.user = @current_user
     if @edge.save
       flash[:success] = "Successfully created"
     else

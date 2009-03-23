@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class GamesController < ApplicationController
-  before_filter :require_user, :only => :update
+  before_filter :require_user, :except => [:index, :show]
 
   def index
     @games = Game.all
@@ -30,8 +30,28 @@ class GamesController < ApplicationController
 
   def update
     @game = Game.find(params[:id])
-    @game.current_user = @current_user
+    @game.user = @current_user
     if @game.update_attributes(params[:game])
+      flash[:success] = "Success"
+    else
+      flash[:error] = "Error"
+    end
+    redirect_to game_path(@game)
+  end
+
+  def roll_dice
+    @game = Game.find(params[:id])
+    if @game.roll_dice(@current_user)
+      flash[:success] = "Success"
+    else
+      flash[:error] = "Error"
+    end
+    redirect_to game_path(@game)
+  end
+
+  def end_turn
+    @game = Game.find(params[:id])
+    if @game.end_turn(@current_user)
       flash[:success] = "Success"
     else
       flash[:error] = "Error"

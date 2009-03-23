@@ -27,18 +27,25 @@ class Node < ActiveRecord::Base
   validates_presence_of :player, :map
   validates_associated :player
   validates_uniqueness_of :map_id, :scope => [:row, :col]
-  validate :proximity_of_land, :proximity_of_settlements, :state_of_game, :possesion_of_road
+  validate :proximity_of_land, :proximity_of_settlements, :possesion_of_road
 
   belongs_to :map
   belongs_to :player
 
   before_validation_on_create :build_settlement
-  after_save :save_player
+  after_save :save_player, :settlement_built
 
   delegate :game, :to => :map
   delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
-  delegate :players, :phase_first_settlement?, :phase_second_settlement?, :phase_after_roll?, :current_player, :to => :game, :prefix => true
+  delegate :players, :first_settlement?, :second_settlement?, :after_roll?, :settlement_built!, :to => :game, :prefix => true
   delegate :nodes, :number, :to => :player, :prefix => true
+
+  attr_reader :user
+
+  def user=(user)
+    @user = user
+    self.player = game_players.find_by_user_id(user.id)
+  end
 
   def self.find_by_position(position)
     find(:first, :conditions => { :row => position.first, :col => position.second })
@@ -122,28 +129,12 @@ class Node < ActiveRecord::Base
     hexes.detect { |hex| hex.settleable? if hex } != nil
   end
 
-  def first_settlement?
-    player_nodes.with_state(:settlement).count < 1 and game_phase_first_settlement? and player == game_current_player
-  end
-
-  def second_settlement?
-    player_nodes.with_state(:settlement).count < 2 and game_phase_second_settlement? and player == game_current_player
-  end
-
-  def development_phase?
-    first_settlement? or second_settlement?
-  end
-
-  def build_phase?
-    game_phase_after_roll? and player == game_current_player
-  end
-
-  def state_of_game
-    errors.add_to_base "you cannot build at the moment" unless development_phase? or build_phase?
+  def setup_phase?
+    game_first_settlement? or game_second_settlement?
   end
 
   def possesion_of_road
-    errors.add :position, "has no road" unless development_phase? or has_road?
+    errors.add :position, "has no road" unless setup_phase? or has_road?
   end
 
   def proximity_of_land
@@ -158,8 +149,8 @@ class Node < ActiveRecord::Base
 
   def build_settlement
     player.settlements -= 1
-    add_resources_from_neighbours if game_phase_second_settlement?
-    charge_for_settlement if game_phase_after_roll?
+    add_resources_from_neighbours if game_second_settlement?
+    charge_for_settlement if game_after_roll?
     add_victory_point
   end
 
@@ -182,5 +173,9 @@ class Node < ActiveRecord::Base
   def charge_for_city
     player.ore -= 3
     player.grain -= 2
+  end
+
+  def settlement_built
+    game_settlement_built!(user)
   end
 end

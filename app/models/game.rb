@@ -22,87 +22,101 @@ class Game < ActiveRecord::Base
   has_one :map
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
-  delegate :robber, :to => :map
-  delegate :moved=, :moved?, :to => :robber, :prefix => true
 
-  after_update :save_players, :end
+  after_update :save_players, :end_game
 
   state_machine :initial => :preparing do
-    event :start do
+    event :start_game do
       transition :preparing => :playing
     end
 
-    event :end do
-      transition :playing => :ended, :if => :end_of_game?
+    event :end_game do
+      transition :playing => :ended, :if => :winner?
     end
 
     state :playing do
-#       validates_length_of :players, :in => 2..4
-#       validates_presence_of :map
-#       validate :players_ready
+      validates_length_of :players, :in => 2..4
+      validates_presence_of :map
+      validate :players_ready
     end
 
-    after_transition :on => :start, :do => :deal_resources
+    before_transition :on => :start_game do |game|
+      game.deal_resources
+      game.current_turn = 1
+      game.current_player_number = 1
+    end
   end
 
-  state_machine :phase, :namespace => :phase, :initial => :first_settlement do
-    event :end do
+  state_machine :phase, :initial => :first_settlement do
+    before_transition all => all do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    event :settlement_built do
       transition :first_settlement => :first_road
+      transition :second_settlement => :second_road
+      transition :after_roll => :after_roll # dummy
+    end
+
+    event :road_built do
       transition :first_road => :first_settlement, :if => :next_player?
       transition :first_road => :second_settlement
-      transition :second_settlement => :second_road
       transition :second_road => :second_settlement, :if => :previous_player?
       transition :second_road => :before_roll
-      transition :before_roll => :robber, :if => :robber_rolled?
+      transition :road_building_first_road => :road_building_second_road
+      transition :road_building_second_road => :after_roll
+      transition :after_roll => :after_roll # dummy
+    end
+
+    before_transition :first_road => :first_settlement, :do => :next_player
+    before_transition :second_road => :second_settlement, :do => :previous_player
+
+    event :roll_dice do
+      transition :before_roll => :discard_resources, :if => lambda { |game| game.robber_rolled? and game.next_player_to_rob? }
+      transition :before_roll => :robber_movement, :if => :robber_rolled?
       transition :before_roll => :after_roll
-      transition :robber => :after_roll, :if => :robber_ended?
+    end
+
+    before_transition :on => :roll_dice, :do => :set_current_roll
+
+    event :end_turn do
       transition :after_roll => :before_roll
     end
 
-    before_transition :on => :end, :do => lambda { |game, transition| game.event_authorized?(*transition.args) }
-    before_transition :before_roll => all, :do => :replace_current_roll
-    before_transition :before_roll => :robber, :do => lambda { |game| game.reset_robber }
-    before_transition :before_roll => :after_roll, :do => :add_resources
-    before_transition :first_road => :first_settlement, :do => :next_player
-    before_transition :second_road => :second_settlement, :do => :previous_player
-    before_transition :after_roll => :before_roll, :do => :next_turn
+    before_transition :on => :end_turn, :do => :next_turn
+
+    event :resources_discarded do
+      transition :discard_resources => :discard_resources, :if => :next_player_to_rob?
+      transition :discard_resources => :robber_movement
+    end
+
+    event :robber_moved do
+      transition :robber_movement => :robbery
+    end
+
+    event :robbed do
+      transition :robbery => :after_roll, :if => :rolled?
+      transition :robbery => :before_roll
+    end
+
+    event :play_army_card do
+      transition [:before_roll, :after_roll] => :robber_movement
+    end
+
+    event :play_road_building_card do
+      transition :after_roll => :road_building_first_road
+    end
+
+    event :road_building_first_road_built do
+    end
+
+    event :end_road_building do
+      transition [:road_building_first_road, :road_building_second_road] => :after_roll
+    end
   end
 
-  state_machine :robber_phase, :namespace => :robber, :initial => :ended do
-    event :reset do
-      transition :ended => :discarding, :if => :next_player_to_rob?
-      transition :ended => :moving
-    end
-
-    event :discard do
-      transition :discarding => :discarding, :if => :next_player_to_rob?
-      transition :discarding => :moving
-    end
-
-    event :move do
-      transition :moving => :robbing
-    end
-
-    event :rob do
-      transition :robbing => :ended
-    end
-
-    before_transition :on => :discard, :do => lambda { |game, transition| game.player_robbed?(*transition.args) }
-    before_transition all - :ended => all, :do => :phase_robber?
-    before_transition :discarding => :moving, :do => :reset_robber_player_number
-    before_transition all => :discarding, :do => :rob_next_player
-  end
-
-  def current_player_number
-    self[:current_player_number] or 1
-  end
-
-  def event_authorized?(user)
+  def current_user_turn?(user)
     user.players.find_by_game_id(id) == current_player
-  end
-
-  def current_turn
-    self[:current_turn] or 1
   end
 
   def current_player
@@ -141,27 +155,27 @@ class Game < ActiveRecord::Base
     self.robber_resource_limit = (player.resources + 1).div(2)
   end
 
-  def reset_robber_player_number
+  def reset_robber
     self.robber_player_number = 0
   end
 
-  def player_robbed?(player)
+  def resources_discarded?(player)
     player == robber_player and player.resources == robber_resource_limit
+  end
+
+  def winner?
+    players.exists?([%Q(points >= 10)])
   end
 
   def winner
     players.find(:first, :conditions => "players.points >= 10")
   end
 
-  def end_of_game?
-    !winner.nil?
-  end
-
-  def roll_dice
+  def roll
     @roll ||= 7#[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
   end
 
-  def replace_current_roll
+  def set_current_roll
     self.current_roll = @roll
   end
 
@@ -170,7 +184,11 @@ class Game < ActiveRecord::Base
   end
 
   def robber_rolled?
-    roll_dice == 7
+    roll == 7
+  end
+
+  def rolled?
+    not current_roll.nil?
   end
 
   def next_turn
@@ -185,12 +203,6 @@ class Game < ActiveRecord::Base
       player.cities = 5
       player.roads = 15
       player.points = 0
-    end
-  end
-
-  def play_players
-    players.each do |player|
-      player.play
     end
   end
 

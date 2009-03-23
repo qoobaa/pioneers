@@ -18,14 +18,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Map < ActiveRecord::Base
-  has_one :robber
   belongs_to :game
+  has_one :robber
+
+  delegate :position, :to => :robber, :prefix => true
 
   validates_numericality_of :width, :height, :greater_than => 0
   validates_presence_of :hexes_attributes, :on => :create
-  validates_presence_of :robber
-
-  delegate :position, :to => :robber, :prefix => true
 
   has_many :hexes, :dependent => :destroy
   has_many :nodes, :dependent => :destroy

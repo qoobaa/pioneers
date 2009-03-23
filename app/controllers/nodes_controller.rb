@@ -22,7 +22,7 @@ class NodesController < ApplicationController
 
   def create
     @node = @game.map_nodes.build(params[:node])
-    @node.player = @game.players.find_by_user_id(@current_user.id)
+    @node.user = @current_user
     if @node.save
       flash[:success] = "Successfully created"
     else

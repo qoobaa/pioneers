@@ -21,11 +21,13 @@ class Robber < ActiveRecord::Base
   belongs_to :map
 
   validates_numericality_of :row, :col, :only_integer => true
-  validate :position_settleable, :position_changed, :phase_of_game
+  validate :position_settleable, :position_changed
 
   delegate :game, :to => :map
   delegate :hexes, :to => :map, :prefix => true
-  delegate :move_robber, :to => :game, :prefix => true
+  delegate :robber_moved!, :to => :game, :prefix => true
+
+  after_update :robber_moved
 
   attr_accessor :user
 
@@ -61,8 +63,7 @@ class Robber < ActiveRecord::Base
     errors.add :position, "must be changed" unless position_changed?
   end
 
-  def phase_of_game
-    return if new_record?
-    errors.add_to_base "you cannot move robber at the moment" unless game_move_robber(user)
+  def robber_moved
+    game_robber_moved!(user)
   end
 end
