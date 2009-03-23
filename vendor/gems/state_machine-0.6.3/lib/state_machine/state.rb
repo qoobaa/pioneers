@@ -19,6 +19,10 @@ module StateMachine
     # The unique identifier for the state used in event and callback definitions
     attr_reader :name
     
+    # The fully-qualified identifier for the state, scoped by the machine's
+    # namespace
+    attr_reader :qualified_name
+    
     # The value that is written to a machine's attribute when an object
     # transitions into this state
     attr_writer :value
@@ -52,6 +56,7 @@ module StateMachine
       
       @machine = machine
       @name = name
+      @qualified_name = name && machine.namespace ? :"#{machine.namespace}_#{name}" : name
       @value = options.include?(:value) ? options[:value] : name && name.to_s
       @matcher = options[:if]
       @methods = {}
@@ -151,7 +156,7 @@ module StateMachine
           # not possible with lambdas in Ruby 1.8.6.
           owner_class.class_eval <<-end_eval, __FILE__, __LINE__
             def #{method}(*args, &block)
-              self.class.state_machines[#{attribute.inspect}].state_for(self).call(self, #{method.inspect}, *args, &block)
+              self.class.state_machine(#{attribute.inspect}).states.match(self).call(self, #{method.inspect}, *args, &block)
             end
           end_eval
         end
@@ -181,7 +186,7 @@ module StateMachine
         context_method.bind(object).call(*args, &block)
       else
         # Raise exception as if the method never existed on the original object
-        raise NoMethodError, "undefined method '#{method}' for #{object} in state #{machine.state_for(object).name.inspect}"
+        raise NoMethodError, "undefined method '#{method}' for #{object} in state #{machine.states.match(object).name.inspect}"
       end
     end
     
@@ -225,12 +230,9 @@ module StateMachine
       def add_predicate
         return unless name
         
-        qualified_name = name = self.name
-        qualified_name = "#{machine.namespace}_#{name}" if machine.namespace
-        
         # Checks whether the current value matches this state
         machine.define_instance_method("#{qualified_name}?") do |machine, object|
-          machine.state?(object, name)
+          machine.states.matches?(object, name)
         end
       end
   end

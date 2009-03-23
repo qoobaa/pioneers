@@ -79,6 +79,14 @@ class MachineByDefaultTest < Test::Unit::TestCase
     assert @object.respond_to?(:state_name)
   end
   
+  def test_should_define_an_event_reader_for_the_attribute
+    assert @object.respond_to?(:state_events)
+  end
+  
+  def test_should_define_a_transition_reader_for_the_attribute
+    assert @object.respond_to?(:state_transitions)
+  end
+  
   def test_should_not_define_singular_with_scope
     assert !@klass.respond_to?(:with_state)
   end
@@ -134,6 +142,14 @@ class MachineWithCustomAttributeTest < Test::Unit::TestCase
   
   def test_should_define_a_name_reader_for_the_attribute
     assert @object.respond_to?(:status_name)
+  end
+  
+  def test_should_define_an_event_reader_for_the_attribute
+    assert @object.respond_to?(:status_events)
+  end
+  
+  def test_should_define_a_transition_reader_for_the_attribute
+    assert @object.respond_to?(:status_transitions)
   end
 end
 
@@ -667,6 +683,14 @@ class MachineWithConflictingHelpersTest < Test::Unit::TestCase
       def state_name
         :parked
       end
+      
+      def state_events
+        [:ignite]
+      end
+      
+      def state_transitions
+        [{:parked => :idling}]
+      end
     end
     
     StateMachine::Integrations.const_set('Custom', Module.new do
@@ -717,6 +741,14 @@ class MachineWithConflictingHelpersTest < Test::Unit::TestCase
     assert_equal :parked, @object.state_name
   end
   
+  def test_should_not_redefine_attribute_events_reader
+    assert_equal [:ignite], @object.state_events
+  end
+  
+  def test_should_not_redefine_attribute_transitions_reader
+    assert_equal [{:parked => :idling}], @object.state_transitions
+  end
+  
   def test_should_allow_super_chaining
     @klass.class_eval do
       def self.with_state(*states)
@@ -753,6 +785,14 @@ class MachineWithConflictingHelpersTest < Test::Unit::TestCase
       def state_name
         super == :parked ? 1 : 0
       end
+      
+      def state_events
+        super == []
+      end
+      
+      def state_transitions
+        super == []
+      end
     end
     
     assert_equal true, @klass.with_state
@@ -765,6 +805,8 @@ class MachineWithConflictingHelpersTest < Test::Unit::TestCase
     assert_equal 'idling', @object.status
     assert_equal 0, @object.state?(:parked)
     assert_equal 0, @object.state_name
+    assert_equal true, @object.state_events
+    assert_equal true, @object.state_transitions
   end
   
   def teardown
@@ -860,6 +902,23 @@ class MachineWithCustomInitializeTest < Test::Unit::TestCase
   end
 end
 
+class MachinePersistenceTest < Test::Unit::TestCase
+  def setup
+    @klass = Class.new
+    @machine = StateMachine::Machine.new(@klass, :initial => :parked)
+    @object = @klass.new
+  end
+  
+  def test_should_allow_reading_state
+    assert_equal 'parked', @machine.read(@object)
+  end
+  
+  def test_should_allow_writing_state
+    @machine.write(@object, 'idling')
+    assert_equal 'idling', @object.state
+  end
+end
+
 class MachineWithStatesTest < Test::Unit::TestCase
   def setup
     @klass = Class.new
@@ -893,30 +952,6 @@ class MachineWithStatesTest < Test::Unit::TestCase
     exception = assert_raise(ArgumentError) {@machine.state(:first_gear, :invalid => true)}
     assert_equal 'Invalid key(s): invalid', exception.message
   end
-  
-  def test_should_not_be_in_state_if_value_does_not_match
-    assert !@machine.state?(@object, :parked)
-    assert !@machine.state?(@object, :idling)
-  end
-  
-  def test_should_be_in_state_if_value_matches
-    assert @machine.state?(@object, nil)
-  end
-  
-  def test_raise_exception_if_checking_invalid_state
-    assert_raise(ArgumentError) { @machine.state?(@object, :invalid) }
-  end
-  
-  def test_should_find_state_for_object_if_value_is_known
-    @object.state = 'parked'
-    assert_equal @parked, @machine.state_for(@object)
-  end
-  
-  def test_should_raise_exception_if_finding_state_for_object_with_unknown_value
-    @object.state = 'invalid'
-    exception = assert_raise(ArgumentError) { @machine.state_for(@object) }
-    assert_equal '"invalid" is not a known state value', exception.message
-  end
 end
 
 class MachineWithStatesWithCustomValuesTest < Test::Unit::TestCase
@@ -936,19 +971,6 @@ class MachineWithStatesWithCustomValuesTest < Test::Unit::TestCase
   def test_should_allow_lookup_by_custom_value
     assert_equal @state, @machine.states[1, :value]
   end
-  
-  def test_should_be_in_state_if_value_matches
-    assert @machine.state?(@object, :parked)
-  end
-  
-  def test_should_not_be_in_state_if_value_does_not_match
-    @object.state = 2
-    assert !@machine.state?(@object, :parked)
-  end
-  
-  def test_should_find_state_for_object_if_value_is_known
-    assert_equal @state, @machine.state_for(@object)
-  end
 end
 
 class MachineWithStateWithMatchersTest < Test::Unit::TestCase
@@ -965,19 +987,6 @@ class MachineWithStateWithMatchersTest < Test::Unit::TestCase
     assert_not_nil @state.matcher
     assert @state.matches?(1)
     assert !@state.matches?(nil)
-  end
-  
-  def test_should_be_in_state_if_value_matches
-    assert @machine.state?(@object, :parked)
-  end
-  
-  def test_should_not_be_in_state_if_value_does_not_match
-    @object.state = nil
-    assert !@machine.state?(@object, :parked)
-  end
-  
-  def test_should_find_state_for_object_if_value_is_known
-    assert_equal @state, @machine.state_for(@object)
   end
 end
 
@@ -1050,7 +1059,8 @@ end
 
 class MachineWithEventsTest < Test::Unit::TestCase
   def setup
-    @machine = StateMachine::Machine.new(Class.new)
+    @klass = Class.new
+    @machine = StateMachine::Machine.new(@klass)
   end
   
   def test_should_return_the_created_event
@@ -1309,44 +1319,44 @@ end
 class MachineWithNamespaceTest < Test::Unit::TestCase
   def setup
     @klass = Class.new
-    @machine = StateMachine::Machine.new(@klass, :namespace => 'car', :initial => :parked) do
-      event :ignite do
-        transition :parked => :idling
+    @machine = StateMachine::Machine.new(@klass, :namespace => 'alarm', :initial => :active) do
+      event :enable do
+        transition :off => :active
       end
       
-      event :park do
-        transition :idling => :parked
+      event :disable do
+        transition :active => :off
       end
     end
     @object = @klass.new
   end
   
   def test_should_namespace_state_predicates
-    [:car_parked?, :car_idling?].each do |name|
+    [:alarm_active?, :alarm_off?].each do |name|
       assert @object.respond_to?(name)
     end
   end
   
   def test_should_namespace_event_checks
-    [:can_ignite_car?, :can_park_car?].each do |name|
+    [:can_enable_alarm?, :can_disable_alarm?].each do |name|
       assert @object.respond_to?(name)
     end
   end
   
   def test_should_namespace_event_transition_readers
-    [:next_ignite_car_transition, :next_park_car_transition].each do |name|
+    [:enable_alarm_transition, :disable_alarm_transition].each do |name|
       assert @object.respond_to?(name)
     end
   end
   
   def test_should_namespace_events
-    [:ignite_car, :park_car].each do |name|
+    [:enable_alarm, :disable_alarm].each do |name|
       assert @object.respond_to?(name)
     end
   end
   
   def test_should_namespace_bang_events
-    [:ignite_car!, :park_car!].each do |name|
+    [:enable_alarm!, :disable_alarm!].each do |name|
       assert @object.respond_to?(name)
     end
   end
@@ -1413,7 +1423,7 @@ class MachineFinderWithExistingMachineOnSuperclassTest < Test::Unit::TestCase
     @base_machine.after_transition(lambda {})
     
     @klass = Class.new(@base_class)
-    @machine = StateMachine::Machine.find_or_create(@klass, :status)
+    @machine = StateMachine::Machine.find_or_create(@klass, :status) {}
   end
   
   def test_should_accept_a_block
@@ -1425,7 +1435,20 @@ class MachineFinderWithExistingMachineOnSuperclassTest < Test::Unit::TestCase
     assert called
   end
   
-  def test_should_create_a_new_machine
+  def test_should_not_create_a_new_machine_if_no_block_or_options
+    machine = StateMachine::Machine.find_or_create(Class.new(@base_class), :status)
+    
+    assert_same machine, @base_machine
+  end
+  
+  def test_should_create_a_new_machine_if_given_options
+    machine = StateMachine::Machine.find_or_create(@klass, :status, :initial => :parked)
+    
+    assert_not_nil machine
+    assert_not_same machine, @base_machine
+  end
+  
+  def test_should_create_a_new_machine_if_given_block
     assert_not_nil @machine
     assert_not_same @machine, @base_machine
   end

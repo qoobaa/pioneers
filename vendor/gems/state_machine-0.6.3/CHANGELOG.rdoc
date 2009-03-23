@@ -1,5 +1,17 @@
 == master
 
+* Simplify reading/writing of attributes
+* Simplify access to state machines via #state_machine(:attribute) without generating dupes
+* Fix assumptions that dm-validations is always available in DataMapper integration
+* Automatically define DataMapper properties for machine attributes if they don't exist
+* Add Transition#qualified_event, #qualified_from_name, and #qualified_to_name
+* Add #fire_events / #fire_events! for running events on multiple state machines in parallel
+* Rename next_#{event}_transition to #{event}_transition
+* Add #{attribute}_transitions for getting the list of transitions that can be run on an object
+* Add #{attribute}_events for getting the list of events that can be fired on an object
+* Use generated non-bang event when running bang version so that overriding one affects the other
+* Provide access to arguments passed into an event from transition callbacks via Transition#args
+
 == 0.6.3 / 2008-03-10
 
 * Add support for customizing the graph's orientation

@@ -196,7 +196,7 @@ module StateMachine
         if Object.const_defined?(:I18n)
           object.errors.add(attribute, :invalid_transition,
             :event => event.name,
-            :value => state_for(object).name,
+            :value => states.match(object).name,
             :default => @invalid_message
           )
         else
@@ -231,20 +231,20 @@ module StateMachine
         end
         
         # Skips defining reader/writer methods since this is done automatically
-        def define_attribute_accessor
+        def define_state_accessor
         end
         
         # Adds support for defining the attribute predicate, while providing
         # compatibility with the default predicate which determines whether
         # *anything* is set for the attribute's value
-        def define_attribute_predicate
+        def define_state_predicate
           attribute = self.attribute
           
           # Still use class_eval here instance of define_instance_method since
-          # we need to directly override the method defined in the model
+          # we need to be able to call +super+
           owner_class.class_eval do
             define_method("#{attribute}?") do |*args|
-              args.empty? ? super(*args) : self.class.state_machines[attribute].state?(self, *args)
+              args.empty? ? super(*args) : self.class.state_machine(attribute).states.matches?(self, *args)
             end
           end
         end
@@ -288,7 +288,7 @@ module StateMachine
           # Created the scope and then override it with state translation
           owner_class.named_scope(name)
           owner_class.scopes[name] = lambda do |klass, *states|
-            machine_states = klass.state_machines[attribute].states
+            machine_states = klass.state_machine(attribute).states
             values = states.flatten.map {|state| machine_states.fetch(state).value}
             
             ::ActiveRecord::NamedScope::Scope.new(klass, scope.call(values))

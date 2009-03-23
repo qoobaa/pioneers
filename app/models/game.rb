@@ -25,8 +25,7 @@ class Game < ActiveRecord::Base
   delegate :robber, :to => :map
   delegate :moved=, :moved?, :to => :robber, :prefix => true
 
-  after_update :save_players, :save_robber, :end
-  attr_accessor :current_user
+  after_update :save_players, :end
 
   state_machine :initial => :preparing do
     event :start do
@@ -38,9 +37,9 @@ class Game < ActiveRecord::Base
     end
 
     state :playing do
-      validates_length_of :players, :in => 2..4
-      validates_presence_of :map
-      validate :players_ready
+#       validates_length_of :players, :in => 2..4
+#       validates_presence_of :map
+#       validate :players_ready
     end
 
     after_transition :on => :start, :do => :deal_resources
@@ -60,7 +59,7 @@ class Game < ActiveRecord::Base
       transition :after_roll => :before_roll
     end
 
-    #before_transition all => all, :do => :event_authorized?
+    before_transition :on => :end, :do => lambda { |game, transition| game.event_authorized?(*transition.args) }
     before_transition :before_roll => all, :do => :replace_current_roll
     before_transition :before_roll => :robber, :do => lambda { |game| game.reset_robber }
     before_transition :before_roll => :after_roll, :do => :add_resources
@@ -71,41 +70,39 @@ class Game < ActiveRecord::Base
 
   state_machine :robber_phase, :namespace => :robber, :initial => :ended do
     event :reset do
-      transition :ended => :discard, :if => :next_player_to_rob?
-      transition :ended => :move
+      transition :ended => :discarding, :if => :next_player_to_rob?
+      transition :ended => :moving
     end
 
-    event :end do
-      transition :discard => :discard, :if => :next_player_to_rob?
-      transition :discard => :move
-      transition :move => :rob
-      transition :rob => :ended
+    event :discard do
+      transition :discarding => :discarding, :if => :next_player_to_rob?
+      transition :discarding => :moving
     end
 
+    event :move do
+      transition :moving => :robbing
+    end
+
+    event :rob do
+      transition :robbing => :ended
+    end
+
+    before_transition :on => :discard, :do => lambda { |game, transition| game.player_robbed?(*transition.args) }
     before_transition all - :ended => all, :do => :phase_robber?
-    before_transition :discard => all, :do => :player_robbed?
-    before_transition :discard => :move, :do => :reset_robber_player_number
-    before_transition all => :discard, :do => :rob_next_player
+    before_transition :discarding => :moving, :do => :reset_robber_player_number
+    before_transition all => :discarding, :do => :rob_next_player
   end
 
   def current_player_number
     self[:current_player_number] or 1
   end
 
-  def event_authorized?
-    current_user_player == current_player
-  end
-
-  def robber_authorized?
-    current_user_player == robber_player
+  def event_authorized?(user)
+    user.players.find_by_game_id(id) == current_player
   end
 
   def current_turn
     self[:current_turn] or 1
-  end
-
-  def current_user_player
-    current_user.players.find_by_game_id(id) if current_user
   end
 
   def current_player
@@ -148,8 +145,8 @@ class Game < ActiveRecord::Base
     self.robber_player_number = 0
   end
 
-  def player_robbed?
-    robber_player.resources <= robber_resource_limit
+  def player_robbed?(player)
+    player == robber_player and player.resources == robber_resource_limit
   end
 
   def winner
@@ -191,21 +188,19 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def save_players
-    players.each(&:save)
+  def play_players
+    players.each do |player|
+      player.play
+    end
   end
 
-  def save_robber
-    robber.save
+  def save_players
+    players.each(&:save)
   end
 
   def players_ready
     players.each do |player|
       errors.add :players, "are not ready" unless player.ready?
     end
-  end
-
-  def event=(event)
-    self.end_phase if event == "end_phase"
   end
 end

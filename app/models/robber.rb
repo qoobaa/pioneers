@@ -21,15 +21,13 @@ class Robber < ActiveRecord::Base
   belongs_to :map
 
   validates_numericality_of :row, :col, :only_integer => true
-  validate :position_settleable, :phase_of_game, :moved
+  validate :position_settleable, :position_changed, :phase_of_game
 
   delegate :game, :to => :map
   delegate :hexes, :to => :map, :prefix => true
-  delegate :robber_move?, :end_robber, :current_user=, :event_authorized?, :to => :game, :prefix => true
+  delegate :move_robber, :to => :game, :prefix => true
 
-  after_update :game_end_robber
-
-  attr_accessor :current_user
+  attr_accessor :user
 
   def position_was
     [row_was, col_was]
@@ -54,15 +52,17 @@ class Robber < ActiveRecord::Base
   end
 
   def position_settleable
+    return if new_record?
     errors.add :position, "hex is not settleable" unless hex and hex.settleable?
   end
 
-  def phase_of_game
-    self.game_current_user = current_user
-    errors.add_to_base "you cannot move robber at the moment" unless game_robber_move? and game_event_authorized?
+  def position_changed
+    return if new_record?
+    errors.add :position, "must be changed" unless position_changed?
   end
 
-  def moved
-    errors.add :position, "must be changed" unless position_changed?
+  def phase_of_game
+    return if new_record?
+    errors.add_to_base "you cannot move robber at the moment" unless game_move_robber(user)
   end
 end

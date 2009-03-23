@@ -5,7 +5,7 @@ class AutoShop
   
   def initialize
     @num_customers = 0
-    super()
+    super
   end
   
   state_machine :initial => :available do
@@ -245,8 +245,8 @@ class VehicleUnsavedTest < Test::Unit::TestCase
     assert !@vehicle.can_park?
   end
   
-  def test_should_not_have_a_next_transition_for_park
-    assert_nil @vehicle.next_park_transition
+  def test_should_not_have_a_transition_for_park
+    assert_nil @vehicle.park_transition
   end
   
   def test_should_not_allow_park
@@ -257,14 +257,22 @@ class VehicleUnsavedTest < Test::Unit::TestCase
     assert @vehicle.can_ignite?
   end
   
-  def test_should_have_a_next_transition_for_ignite
-    transition = @vehicle.next_ignite_transition
+  def test_should_have_a_transition_for_ignite
+    transition = @vehicle.ignite_transition
     assert_not_nil transition
     assert_equal 'parked', transition.from
     assert_equal 'idling', transition.to
     assert_equal :ignite, transition.event
     assert_equal :state, transition.attribute
     assert_equal @vehicle, transition.object
+  end
+  
+  def test_should_have_a_list_of_possible_events
+    assert_equal [:ignite], @vehicle.state_events
+  end
+  
+  def test_should_have_a_list_of_possible_transitions
+    assert_equal [{:object => @vehicle, :attribute => :state, :event => :ignite, :from => 'parked', :to => 'idling'}], @vehicle.state_transitions.map {|transition| transition.attributes}
   end
   
   def test_should_allow_ignite
@@ -412,6 +420,16 @@ class VehicleIdlingTest < Test::Unit::TestCase
   
   def test_should_allow_park
     assert @vehicle.park
+  end
+  
+  def test_should_call_park_with_bang_action
+    class << @vehicle
+      def park
+        super && 1
+      end
+    end
+    
+    assert_equal 1, @vehicle.park!
   end
   
   def test_should_not_allow_idle
@@ -633,6 +651,38 @@ class VehicleRepairedTest < Test::Unit::TestCase
   
   def test_should_not_have_a_busy_auto_shop
     assert @vehicle.auto_shop.available?
+  end
+end
+
+class VehicleWithParallelEventsTest < Test::Unit::TestCase
+  def setup
+    @vehicle = Vehicle.new
+  end
+  
+  def test_should_fail_if_any_event_cannot_transition
+    assert !@vehicle.fire_events(:ignite, :cancel_insurance)
+  end
+  
+  def test_should_be_successful_if_all_events_transition
+    assert @vehicle.fire_events(:ignite, :buy_insurance)
+  end
+  
+  def test_should_not_save_if_skipping_action
+    assert @vehicle.fire_events(:ignite, :buy_insurance, false)
+    assert !@vehicle.saved
+  end
+  
+  def test_should_raise_exception_if_any_event_cannot_transition_on_bang
+    assert_raise(StateMachine::InvalidTransition) { @vehicle.fire_events!(:ignite, :cancel_insurance) }
+  end
+  
+  def test_should_not_raise_exception_if_all_events_transition_on_bang
+    assert @vehicle.fire_events!(:ignite, :buy_insurance)
+  end
+  
+  def test_should_not_save_if_skipping_action_on_bang
+    assert @vehicle.fire_events!(:ignite, :buy_insurance, false)
+    assert !@vehicle.saved
   end
 end
 

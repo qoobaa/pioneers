@@ -143,24 +143,6 @@ begin
         assert_equal 1, @resource.all.size
       end
       
-      def test_should_invalidate_using_errors
-        record = @resource.new
-        record.state = 'parked'
-        
-        @machine.invalidate(record, StateMachine::Event.new(@machine, :park))
-        
-        assert_equal ['cannot be transitioned via :park from :parked'], record.errors.on(:state)
-      end
-      
-      def test_should_clear_errors_on_reset
-        record = @resource.new
-        record.state = 'parked'
-        record.errors.add(:state, 'is invalid')
-        
-        @machine.reset(record)
-        assert_nil record.errors.on(:id)
-      end
-      
       def test_should_not_override_the_column_reader
         record = @resource.new
         record.attribute_set(:state, 'parked')
@@ -208,16 +190,10 @@ begin
         @record = @resource.new
       end
       
-      def test_should_not_define_a_reader_attribute_for_the_attribute
-        assert !@record.respond_to?(:status)
-      end
-      
-      def test_should_not_define_a_writer_attribute_for_the_attribute
-        assert !@record.respond_to?(:status=)
-      end
-      
-      def test_should_define_an_attribute_predicate
-        assert @record.respond_to?(:status?)
+      def test_should_define_a_new_property_for_the_attribute
+        assert_not_nil @resource.properties[:status]
+        assert @record.respond_to?(:status)
+        assert @record.respond_to?(:status=)
       end
     end
     
@@ -256,6 +232,7 @@ begin
         @resource = new_resource
         @machine = StateMachine::Machine.new(@resource)
         @machine.state :parked, :idling
+        @machine.event :ignite
         @record = @resource.new(:state => 'parked')
         @transition = StateMachine::Transition.new(@record, @machine, :ignite, :parked, :idling)
       end
@@ -351,6 +328,7 @@ begin
           @resource = new_resource
           @machine = StateMachine::Machine.new(@resource)
           @machine.state :parked, :idling
+          @machine.event :ignite
           @record = @resource.new(:state => 'parked')
           @transition = StateMachine::Transition.new(@record, @machine, :ignite, :parked, :idling)
         end
@@ -471,6 +449,7 @@ begin
           @resource = new_resource
           @machine = StateMachine::Machine.new(@resource)
           @machine.state :parked, :idling
+          @machine.event :ignite
           @record = @resource.new(:state => 'parked')
           @transition = StateMachine::Transition.new(@record, @machine, :ignite, :parked, :idling)
           
@@ -511,6 +490,32 @@ begin
     begin
       gem 'dm-validations', ENV['DM_VERSION'] ? "=#{ENV['DM_VERSION']}" : '>=0.9.0'
       require 'dm-validations'
+      
+      class MachineWithValidationsTest < BaseTestCase
+        def setup
+          @resource = new_resource
+          @machine = StateMachine::Machine.new(@resource)
+          @machine.state :parked
+        end
+        
+        def test_should_invalidate_using_errors
+          record = @resource.new
+          record.state = 'parked'
+          
+          @machine.invalidate(record, StateMachine::Event.new(@machine, :park))
+          
+          assert_equal ['cannot be transitioned via :park from :parked'], record.errors.on(:state)
+        end
+        
+        def test_should_clear_errors_on_reset
+          record = @resource.new
+          record.state = 'parked'
+          record.errors.add(:state, 'is invalid')
+          
+          @machine.reset(record)
+          assert_nil record.errors.on(:id)
+        end
+      end
       
       class MachineWithStateDrivenValidationsTest < BaseTestCase
         def setup

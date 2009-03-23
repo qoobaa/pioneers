@@ -4,6 +4,10 @@ require 'state_machine/assertions'
 require 'state_machine/matcher_helpers'
 
 module StateMachine
+  # An invalid event was specified
+  class InvalidEvent < StandardError
+  end
+  
   # An event defines an action that transitions an attribute from one state to
   # another.  The state that an attribute is transitioned to depends on the
   # guards configured for the event.
@@ -14,8 +18,11 @@ module StateMachine
     # The state machine for which this event is defined
     attr_accessor :machine
     
-    # The name of the action that fires the event
+    # The name of the event
     attr_reader :name
+    
+    # The fully-qualified name of the event, scoped by the machine's namespace 
+    attr_reader :qualified_name
     
     # The list of guards that determine what state this event transitions
     # objects to when fired
@@ -29,6 +36,7 @@ module StateMachine
     def initialize(machine, name) #:nodoc:
       @machine = machine
       @name = name
+      @qualified_name = machine.namespace ? :"#{name}_#{machine.namespace}" : name
       @guards = []
       @known_states = []
       
@@ -149,13 +157,13 @@ module StateMachine
     # 
     # If the event can't be fired, then this will return false, otherwise true.
     def can_fire?(object)
-      !next_transition(object).nil?
+      !transition_for(object).nil?
     end
     
     # Finds and builds the next transition that can be performed on the given
     # object.  If no transitions can be made, then this will return nil.
-    def next_transition(object)
-      from = machine.state_for(object).name
+    def transition_for(object)
+      from = machine.states.match(object).name
       
       guards.each do |guard|
         if match = guard.match(object, :from => from)
@@ -179,19 +187,12 @@ module StateMachine
     def fire(object, *args)
       machine.reset(object)
       
-      if transition = next_transition(object)
+      if transition = transition_for(object)
         transition.perform(*args)
       else
         machine.invalidate(object, self)
         false
       end
-    end
-    
-    # Attempts to perform the next available transition on the given object.
-    # If no transitions can be made, then a StateMachine::InvalidTransition
-    # exception will be raised, otherwise true will be returned.
-    def fire!(object, *args)
-      fire(object, *args) || raise(StateMachine::InvalidTransition, "Cannot transition #{machine.attribute} via :#{name} from #{machine.state_for(object).name.inspect}")
     end
     
     # Draws a representation of this event on the given graph.  This will
@@ -225,9 +226,6 @@ module StateMachine
       # Add the various instance methods that can transition the object using
       # the current event
       def add_actions
-        qualified_name = name = self.name
-        qualified_name = "#{name}_#{machine.namespace}" if machine.namespace
-        
         # Checks whether the event can be fired on the current object
         machine.define_instance_method("can_#{qualified_name}?") do |machine, object|
           machine.event(name).can_fire?(object)
@@ -235,8 +233,8 @@ module StateMachine
         
         # Gets the next transition that would be performed if the event were
         # fired now
-        machine.define_instance_method("next_#{qualified_name}_transition") do |machine, object|
-          machine.event(name).next_transition(object)
+        machine.define_instance_method("#{qualified_name}_transition") do |machine, object|
+          machine.event(name).transition_for(object)
         end
         
         # Fires the event
@@ -246,7 +244,7 @@ module StateMachine
         
         # Fires the event, raising an exception if it fails
         machine.define_instance_method("#{qualified_name}!") do |machine, object, *args|
-          machine.event(name).fire!(object, *args)
+          object.send(qualified_name, *args) || raise(StateMachine::InvalidTransition, "Cannot transition #{machine.attribute} via :#{name} from #{machine.states.match(object).name.inspect}")
         end
       end
   end

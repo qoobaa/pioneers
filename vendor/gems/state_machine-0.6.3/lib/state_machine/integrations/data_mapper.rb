@@ -184,7 +184,7 @@ module StateMachine
       
       # Resets an errors previously added when invalidating the given object
       def reset(object)
-        object.errors.clear
+        object.errors.clear if object.respond_to?(:errors)
       end
       
       # Runs a new database transaction, rolling back any changes if the
@@ -200,7 +200,8 @@ module StateMachine
         end
         
         # Skips defining reader/writer methods since this is done automatically
-        def define_attribute_accessor
+        def define_state_accessor
+          owner_class.property(attribute, String) unless owner_class.properties.has_property?(attribute)
         end
         
         # Creates a scope for finding records *with* a particular state or

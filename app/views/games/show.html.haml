@@ -88,7 +88,6 @@
   - form_tag game_player_path(@game), :method => :delete do
     = submit_tag "Quit"
   - form_tag game_player_path(@game), :method => :put do
-    = hidden_field_tag "player[event]", "start"
     = submit_tag "Start"
 
 %p
