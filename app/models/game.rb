@@ -19,9 +19,11 @@
 
 class Game < ActiveRecord::Base
   has_many :players, :order => "number"
+  has_many :dice_rolls, :order => "turn DESC"
   has_one :map
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
+  delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
 
   after_update :save_players, :end_game
 
@@ -71,13 +73,11 @@ class Game < ActiveRecord::Base
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
 
-    event :roll_dice do
-      transition :before_roll => :discard_resources, :if => lambda { |game| game.robber_rolled? and game.next_player_to_rob? }
-      transition :before_roll => :robber_movement, :if => :robber_rolled?
+    event :dice_rolled do
+      transition :before_roll => :discard_resources, :if => lambda { |game| game.current_dice_roll_robber? and game.next_player_to_rob? }
+      transition :before_roll => :robber_movement, :if => :current_dice_roll_robber?
       transition :before_roll => :after_roll
     end
-
-    before_transition :on => :roll_dice, :do => :set_current_roll
 
     event :end_turn do
       transition :after_roll => :before_roll
@@ -95,7 +95,7 @@ class Game < ActiveRecord::Base
     end
 
     event :robbed do
-      transition :robbery => :after_roll, :if => :rolled?
+      transition :robbery => :after_roll, :if => :current_dice_roll?
       transition :robbery => :before_roll
     end
 
@@ -171,24 +171,16 @@ class Game < ActiveRecord::Base
     players.find(:first, :conditions => "players.points >= 10")
   end
 
-  def roll
-    @roll ||= 7#[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
-  end
-
-  def set_current_roll
-    self.current_roll = @roll
-  end
-
   def add_resources
     map_hexes.roll(current_roll).each(&:rolled)
   end
 
-  def robber_rolled?
-    roll == 7
+  def current_dice_roll
+    dice_rolls.find_by_turn(current_turn)
   end
 
-  def rolled?
-    not current_roll.nil?
+  def current_dice_roll?
+    dice_rolls.exists?(:turn => current_turn)
   end
 
   def next_turn

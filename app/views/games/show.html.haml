@@ -39,7 +39,7 @@
   = @game.robber_player_number
 %p
   %strong Current roll
-  = @game.current_roll
+  = @game.current_dice_roll_value if @game.current_dice_roll?
 %p
   %strong Current turn
   = @game.current_turn
@@ -92,10 +92,13 @@
 
 %p
   %strong Phase manipulation
-  - form_tag roll_dice_game_path(@game), :method => :put do
-    = submit_tag "Roll dice"
   - form_tag end_turn_game_path(@game), :method => :put do
     = submit_tag "End turn"
+
+%p
+  %strong Dice
+  - form_tag game_dice_rolls_path(@game) do
+    = submit_tag "Roll"
 
 %p
   %strong Create nodes

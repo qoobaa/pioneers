@@ -6,5 +6,6 @@ ActionController::Routing::Routes.draw do |map|
     games.resource :robber
     games.resources :nodes
     games.resources :edges
+    games.resources :dice_rolls
   end
 end

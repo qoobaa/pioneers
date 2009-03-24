@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  game_id: 1
+  roll: 1
+  turn: 1
+
+two:
+  game_id: 1
+  roll: 1
+  turn: 1

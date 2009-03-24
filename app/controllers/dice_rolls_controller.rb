@@ -17,45 +17,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class GamesController < ApplicationController
-  before_filter :require_user, :except => [:index, :show]
+class DiceRollsController < ApplicationController
+  before_filter :require_user, :fetch_game
 
-  def index
-    @games = Game.all
-  end
-
-  def show
-    @game = Game.find(params[:id])
-  end
-
-  def update
-    @game = Game.find(params[:id])
-    @game.user = @current_user
-    if @game.update_attributes(params[:game])
-      flash[:success] = "Success"
+  def create
+    @dice_roll = @game.dice_rolls.build(params[:dice_roll])
+    @dice_roll.user = @current_user
+    if @dice_roll.save
+      flash[:success] = "Successfully created"
     else
-      flash[:error] = "Error"
+      flash[:error] = "Could not create"
     end
     redirect_to game_path(@game)
   end
 
-#   def roll_dice
-#     @game = Game.find(params[:id])
-#     if @game.roll_dice(@current_user)
-#       flash[:success] = "Success"
-#     else
-#       flash[:error] = "Error"
-#     end
-#     redirect_to game_path(@game)
-#   end
+  protected
 
-  def end_turn
-    @game = Game.find(params[:id])
-    if @game.end_turn(@current_user)
-      flash[:success] = "Success"
-    else
-      flash[:error] = "Error"
-    end
-    redirect_to game_path(@game)
+  def fetch_game
+    @game = Game.find(params[:game_id])
   end
 end
