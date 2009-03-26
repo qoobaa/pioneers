@@ -51,6 +51,10 @@ class Player < ActiveRecord::Base
     end
   end
 
+  def rob_resource
+    ([:bricks] * bricks + [:lumber] * lumber + [:ore] * ore + [:grain] * grain + [:wool] * wool).rand
+  end
+
   protected
 
   def sum_resources

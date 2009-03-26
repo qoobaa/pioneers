@@ -75,7 +75,7 @@ class Game < ActiveRecord::Base
 
     event :dice_rolled do
       transition :before_roll => :discard_resources, :if => lambda { |game| game.current_dice_roll_robber? and game.next_player_to_rob? }
-      transition :before_roll => :robber_movement, :if => :current_dice_roll_robber?
+      transition :before_roll => :robber, :if => :current_dice_roll_robber?
       transition :before_roll => :after_roll
     end
 
@@ -87,20 +87,16 @@ class Game < ActiveRecord::Base
 
     event :resources_discarded do
       transition :discard_resources => :discard_resources, :if => :next_player_to_rob?
-      transition :discard_resources => :robber_movement
-    end
-
-    event :robber_moved do
-      transition :robber_movement => :robbery
+      transition :discard_resources => :robber
     end
 
     event :robbed do
-      transition :robbery => :after_roll, :if => :current_dice_roll?
-      transition :robbery => :before_roll
+      transition :robber => :after_roll, :if => :current_dice_roll?
+      transition :robber => :before_roll
     end
 
     event :play_army_card do
-      transition [:before_roll, :after_roll] => :robber_movement
+      transition [:before_roll, :after_roll] => :robber
     end
 
     event :play_road_building_card do
