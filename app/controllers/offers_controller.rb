@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class NodesController < ApplicationController
+class OffersController < ApplicationController
   before_filter :require_user, :fetch_game
 
   def create
-    @node = @game.map_nodes.build(params[:node])
-    @node.user = @current_user
-    if @node.save
+    @offer = @game.offers.build(params[:offer])
+    @offer.user = @current_user
+    if @offer.save
       flash[:success] = "Successfully created"
     else
       flash[:error] = "Could not create"
@@ -32,12 +32,23 @@ class NodesController < ApplicationController
   end
 
   def update
-    @node = @game.map_nodes.find(params[:id])
-    @node.user = @current_user
-    if @node.expand
-      flash[:success] = "Successfully expanded"
+    @offer = @game.offers.first
+    @offer.user = @current_user
+    if @offer.accept
+      flash[:success] = "Successfully accepted"
     else
-      flash[:error] = "Could not expand"
+      flash[:error] = "Could not accept"
+    end
+    redirect_to game_path(@game)
+  end
+
+  def destroy
+    @offer = @game.offers.first
+    @offer.user = @current_user
+    if @offer.decline
+      flash[:success] = "Successfully declined"
+    else
+      flash[:error] = "Could not decline"
     end
     redirect_to game_path(@game)
   end

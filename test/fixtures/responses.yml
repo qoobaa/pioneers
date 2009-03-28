@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  player_id: 1
+  offer_id: 1
+  agreed: false
+
+two:
+  player_id: 1
+  offer_id: 1
+  agreed: false

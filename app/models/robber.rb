@@ -80,7 +80,7 @@ class Robber < ActiveRecord::Base
   end
 
   def player_in_neighbourhood
-    return unless player_number
+    return if player_number.blank?
     errors.add :player, "must be in neighbourhood" unless players.include? player
   end
 

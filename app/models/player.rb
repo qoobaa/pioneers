@@ -30,12 +30,10 @@ class Player < ActiveRecord::Base
   delegate :login, :to => :user, :prefix => true
   delegate :start_game, :preparing?, :to => :game, :prefix => true
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points,
-                            :discard_lumber, :discard_grain, :discard_ore, :discard_wool, :discard_bricks,
                             :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
 
   before_destroy :game_preparing?
-
-  attr_accessor :discard_lumber, :discard_grain, :discard_ore, :discard_wool, :discard_bricks, :event
+  before_save :sum_resources
 
   state_machine :initial => :preparing do
     event :start do
@@ -59,41 +57,5 @@ class Player < ActiveRecord::Base
 
   def sum_resources
     self.resources = bricks + lumber + ore + grain + wool
-  end
-
-  def discarding?
-    discard_lumber or discard_grain or discard_ore or discard_wool or discard_bricks
-  end
-
-  def discard_resources
-    self.lumber -= (discard_lumber or 0)
-    self.grain -= (discard_grain or 0)
-    self.ore -= (discard_ore or 0)
-    self.wool -= (discard_wool or 0)
-    self.bricks -= (discard_bricks or 0)
-  end
-
-  def phase_of_game
-    errors.add_to_base "you cannot discard resources at the moment" if discarding? and not game_discard_robber(self)
-  end
-
-  def discard_lumber_before_type_cast
-    discard_lumber
-  end
-
-  def discard_grain_before_type_cast
-    discard_grain
-  end
-
-  def discard_ore_before_type_cast
-    discard_ore
-  end
-
-  def discard_wool_before_type_cast
-    discard_wool
-  end
-
-  def discard_bricks_before_type_cast
-    discard_bricks
   end
 end

@@ -27,7 +27,7 @@ class Node < ActiveRecord::Base
   validates_presence_of :player, :map
   validates_associated :player
   validates_uniqueness_of :map_id, :scope => [:row, :col]
-  validate :proximity_of_land, :proximity_of_settlements, :possesion_of_road
+  validate :proximity_of_land, :proximity_of_settlements, :possesion_of_road, :player_not_changed
 
   belongs_to :map
   belongs_to :player
@@ -44,7 +44,11 @@ class Node < ActiveRecord::Base
 
   def user=(user)
     @user = user
-    self.player = game_players.find_by_user_id(user.id)
+    self.player ||= user_player
+  end
+
+  def user_player
+    game_players.find_by_user_id(user.id)
   end
 
   def self.find_by_position(position)
@@ -124,6 +128,10 @@ class Node < ActiveRecord::Base
   end
 
   # validations
+
+  def player_not_changed
+    errors.add :player, "cannot be changed" if player != user_player
+  end
 
   def position_settleable?
     hexes.detect { |hex| hex.settleable? if hex } != nil

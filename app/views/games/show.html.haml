@@ -35,9 +35,6 @@
   %strong Current player
   = @game.current_player_number
 %p
-  %strong Robber player
-  = @game.robber_player_number
-%p
   %strong Current roll
   = @game.current_dice_roll_value if @game.current_dice_roll?
 %p
@@ -99,7 +96,6 @@
   %strong Dice
   - form_tag game_dice_rolls_path(@game) do
     = submit_tag "Roll"
-
 %p
   %strong Create nodes
   - form_tag game_nodes_path(@game) do
@@ -108,7 +104,12 @@
     = label_tag "node[col]", "Column"
     = text_field_tag "node[col]"
     = submit_tag "Create"
-
+%p
+  %strong Expand nodes
+  - form_tag game_nodes_path(@game) do
+    = label_tag "node[col]", "Column"
+    = text_field_tag "node[col]"
+    = submit_tag "Create"
 %p
   %strong Create edges
   - form_tag game_edges_path(@game) do
@@ -127,3 +128,17 @@
     = label_tag "robber[player_number]", "Player number to rob"
     = text_field_tag "robber[player_number]"
     = submit_tag "Move"
+%p
+  %strong Discard resources
+  - form_tag game_discards_path(@game) do
+    = label_tag "discard[bricks]", "Bricks"
+    = text_field_tag "discard[bricks]"
+    = label_tag "discard[grain]", "Grain"
+    = text_field_tag "discard[grain]"
+    = label_tag "discard[lumber]", "Lumber"
+    = text_field_tag "discard[lumber]"
+    = label_tag "discard[ore]", "Ore"
+    = text_field_tag "discard[ore]"
+    = label_tag "discard[wool]", "Wool"
+    = text_field_tag "discard[wool]"
+    = submit_tag "Discard"

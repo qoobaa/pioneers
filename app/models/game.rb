@@ -20,10 +20,13 @@
 class Game < ActiveRecord::Base
   has_many :players, :order => "number"
   has_many :dice_rolls, :order => "turn DESC"
+  has_many :discards
+  has_many :offers
   has_one :map
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
+  delegate :resources, :to => :current_discard_player, :prefix => true
 
   after_update :save_players, :end_game
 
@@ -43,6 +46,7 @@ class Game < ActiveRecord::Base
     end
 
     before_transition :on => :start_game do |game|
+      game.reset_robber
       game.deal_resources
       game.current_turn = 1
       game.current_player_number = 1
@@ -50,8 +54,12 @@ class Game < ActiveRecord::Base
   end
 
   state_machine :phase, :initial => :first_settlement do
-    before_transition all => all do |game, transition|
+    before_transition :on => [:settlement_built, :road_built, :dice_rolled, :end_turn, :robbed] do |game, transition|
       game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    before_transition :on => :discarded do |game, transition|
+      game.playing? and game.current_user_discard?(*transition.args)
     end
 
     event :settlement_built do
@@ -74,9 +82,23 @@ class Game < ActiveRecord::Base
     before_transition :second_road => :second_settlement, :do => :previous_player
 
     event :dice_rolled do
-      transition :before_roll => :discard_resources, :if => lambda { |game| game.current_dice_roll_robber? and game.next_player_to_rob? }
+      transition :before_roll => :discard, :if => lambda { |game| game.current_dice_roll_robber? and game.next_player_to_discard? }
       transition :before_roll => :robber, :if => :current_dice_roll_robber?
       transition :before_roll => :after_roll
+    end
+
+    event :discarded do
+      transition :discard => :discard, :if => :next_player_to_discard?
+      transition :discard => :robber
+    end
+
+    before_transition :discard => all, :do => :player_resources_discarded?
+    before_transition all => :discard, :do => :next_player_discard
+    before_transition :discard => :robber, :do => :reset_robber
+
+    event :robbed do
+      transition :robber => :after_roll, :if => :current_dice_roll?
+      transition :robber => :before_roll
     end
 
     event :end_turn do
@@ -84,16 +106,6 @@ class Game < ActiveRecord::Base
     end
 
     before_transition :on => :end_turn, :do => :next_turn
-
-    event :resources_discarded do
-      transition :discard_resources => :discard_resources, :if => :next_player_to_rob?
-      transition :discard_resources => :robber
-    end
-
-    event :robbed do
-      transition :robber => :after_roll, :if => :current_dice_roll?
-      transition :robber => :before_roll
-    end
 
     event :play_army_card do
       transition [:before_roll, :after_roll] => :robber
@@ -110,6 +122,8 @@ class Game < ActiveRecord::Base
       transition [:road_building_first_road, :road_building_second_road] => :after_roll
     end
   end
+
+  # turn
 
   def current_user_turn?(user)
     user.players.find_by_game_id(id) == current_player
@@ -137,27 +151,36 @@ class Game < ActiveRecord::Base
     self.current_player_number = players.count if current_player_number == 0
   end
 
-  def robber_player
-    players[robber_player_number - 1]
+  # discard
+
+  def current_user_discard?(user)
+    user.players.find_by_game_id(id) == current_discard_player
   end
 
-  def next_player_to_rob?
-    players.exists?([%Q(resources > 7 and number > ?), robber_player_number])
+  def current_discard_player
+    players[current_discard_player_number - 1]
   end
 
-  def rob_next_player
-    player = players.find(:first, :conditions => [%Q(resources > 7 and number > ?), robber_player_number])
-    self.robber_player_number = player.number
-    self.robber_resource_limit = (player.resources + 1).div(2)
+  def next_player_to_discard?
+    players.exists?([%Q(resources > 7 and number > ?), current_discard_player_number])
+  end
+
+  def player_resources_discarded?
+    current_discard_player_resources == current_discard_resource_limit
+  end
+
+  def next_player_discard
+    player = players.find(:first, :conditions => [%Q(resources > 7 and number > ?), current_discard_player_number])
+    self.current_discard_player_number = player.number
+    self.current_discard_resource_limit = (player.resources + 1).div(2)
   end
 
   def reset_robber
-    self.robber_player_number = 0
+    self.current_discard_player_number = 0
+    self.current_discard_resource_limit = 0
   end
 
-  def resources_discarded?(player)
-    player == robber_player and player.resources == robber_resource_limit
-  end
+  # end game
 
   def winner?
     players.exists?([%Q(points >= 10)])
