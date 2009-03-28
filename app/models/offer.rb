@@ -35,6 +35,7 @@ class Offer < ActiveRecord::Base
   validates_associated :sender, :recipient
 
   before_validation :sum_sender_resources, :sum_recipient_resources
+  before_update :trade
 
   delegate :players, :to => :game, :prefix => true
 
@@ -45,8 +46,6 @@ class Offer < ActiveRecord::Base
       transition :awaiting => :accepted
     end
 
-    before_transition :on => :accept, :do => :trade
-
     event :decline do
       transition :awaiting => :declined
     end
@@ -54,7 +53,7 @@ class Offer < ActiveRecord::Base
 
   def user=(user)
     @user = user
-    self.sender ||= user_player
+    self.sender = user_player
   end
 
   def user_player
@@ -85,9 +84,8 @@ class Offer < ActiveRecord::Base
   end
 
   def trade
-    sum_sender_resources
+    return unless accepted?
     sender.save
-    sum_recipient_resources
     recipient.save
   end
 end
