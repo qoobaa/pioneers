@@ -187,7 +187,7 @@ class Game < ActiveRecord::Base
   end
 
   def winner
-    players.find(:first, :conditions => "players.points >= 10")
+    players.find(:first, :conditions => "points >= 10")
   end
 
   def add_resources

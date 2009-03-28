@@ -142,3 +142,53 @@
     = label_tag "discard[wool]", "Wool"
     = text_field_tag "discard[wool]"
     = submit_tag "Discard"
+%p
+  %strong Create offer
+  - form_tag game_offer_path(@game) do
+    = label_tag "offer[bricks]", "Bricks"
+    = text_field_tag "offer[bricks]"
+    = label_tag "offer[grain]", "Grain"
+    = text_field_tag "offer[grain]"
+    = label_tag "offer[lumber]", "Lumber"
+    = text_field_tag "offer[lumber]"
+    = label_tag "offer[ore]", "Ore"
+    = text_field_tag "offer[ore]"
+    = label_tag "offer[wool]", "Wool"
+    = text_field_tag "offer[wool]"
+    = submit_tag "Create"
+%p
+  %strong Delete offer
+  - form_tag game_offer_path(@game), :method => :delete do
+    = submit_tag "Delete"
+%p
+  %strong Current offer
+  - if @game.offers.first
+    %strong Bricks
+    = @game.offers.first.bricks
+    %strong Grain
+    = @game.offers.first.grain
+    %strong Lumber
+    = @game.offers.first.lumber
+    %strong Ore
+    = @game.offers.first.ore
+    %strong Wool
+    = @game.offers.first.wool
+    - form_tag game_offer_response_path(@game) do
+      = hidden_field_tag "response[agreed]", "1"
+      = submit_tag "Agree"
+    - form_tag game_offer_response_path(@game) do
+      = hidden_field_tag "response[agreed]", "0"
+      = submit_tag "Decline"
+    %p
+      %strong Responses
+      %ul
+        - @game.offers.first.responses.each do |response|
+          %li
+            Player number
+            = response.player.number
+            = response.agreed
+            - form_tag game_offer_path(@game), :method => :put do
+              = hidden_field_tag "offer[recipient_number]", response.player.number
+              = submit_tag "Trade"
+  - else
+    no offer

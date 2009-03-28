@@ -33,6 +33,7 @@ class OffersController < ApplicationController
 
   def update
     @offer = @game.offers.first
+    @offer.attributes = params[:offer]
     @offer.user = @current_user
     if @offer.accept
       flash[:success] = "Successfully accepted"

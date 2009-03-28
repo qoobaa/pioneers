@@ -24,8 +24,8 @@ class Offer < ActiveRecord::Base
 
   has_many :responses
   has_many :players, :through => :responses
-  has_many :agreed_players, :through => :responses, :source => :player, :conditions => { "responses.agreed" => true }
-  has_many :declined_players, :through => :responses, :source => :player, :conditions => { "responses.agreed" => false }
+  has_many :agreed_players, :through => :responses, :source => :player, :conditions => { :responses => { :agreed => true } }
+  has_many :declined_players, :through => :responses, :source => :player, :conditions => { :responses => { :agreed => false } }
 
   default_scope :conditions => { :state => "awaiting" }
 
@@ -36,12 +36,16 @@ class Offer < ActiveRecord::Base
 
   before_validation :sum_sender_resources, :sum_recipient_resources
 
+  delegate :players, :to => :game, :prefix => true
+
   attr_reader :user
 
   state_machine :initial => :awaiting do
     event :accept do
       transition :awaiting => :accepted
     end
+
+    before_transition :on => :accept, :do => :trade
 
     event :decline do
       transition :awaiting => :declined
@@ -78,5 +82,12 @@ class Offer < ActiveRecord::Base
     recipient.lumber -= (lumber or 0)
     recipient.ore -= (ore or 0)
     recipient.wool -= (wool or 0)
+  end
+
+  def trade
+    sum_sender_resources
+    sender.save
+    sum_recipient_resources
+    recipient.save
   end
 end
