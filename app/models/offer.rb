@@ -27,17 +27,17 @@ class Offer < ActiveRecord::Base
   has_many :agreed_players, :through => :responses, :source => :player, :conditions => { :responses => { :agreed => true } }
   has_many :declined_players, :through => :responses, :source => :player, :conditions => { :responses => { :agreed => false } }
 
-  default_scope :conditions => { :state => "awaiting" }
-
   validates_uniqueness_of :state, :scope => :game_id, :if => :awaiting?
   validates_numericality_of :bricks, :grain, :lumber, :ore, :wool, :only_integer => true, :allow_nil => true
   validates_presence_of :sender
   validates_associated :sender, :recipient
 
   before_validation :sum_sender_resources, :sum_recipient_resources
-  before_update :trade
 
-  delegate :players, :to => :game, :prefix => true
+  after_update :trade
+  after_save :offer_saved
+
+  delegate :players, :offer_saved!, :to => :game, :prefix => true
 
   attr_reader :user
 
@@ -87,5 +87,9 @@ class Offer < ActiveRecord::Base
     return unless accepted?
     sender.save
     recipient.save
+  end
+
+  def offer_saved
+    game_offer_saved!(user)
   end
 end

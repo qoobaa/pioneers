@@ -54,7 +54,7 @@ class Game < ActiveRecord::Base
   end
 
   state_machine :phase, :initial => :first_settlement do
-    before_transition :on => [:settlement_built, :road_built, :dice_rolled, :end_turn, :robbed] do |game, transition|
+    before_transition :on => [:settlement_built, :road_built, :dice_rolled, :end_turn, :robbed, :offer_saved] do |game, transition|
       game.playing? and game.current_user_turn?(*transition.args)
     end
 
@@ -121,6 +121,14 @@ class Game < ActiveRecord::Base
     event :end_road_building do
       transition [:road_building_first_road, :road_building_second_road] => :after_roll
     end
+
+    event :offer_saved do
+      transition :after_roll => :after_roll
+    end
+  end
+
+  def offer
+    offers.with_state(:awaiting).first
   end
 
   # turn

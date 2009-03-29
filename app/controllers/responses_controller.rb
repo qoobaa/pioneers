@@ -21,7 +21,7 @@ class ResponsesController < ApplicationController
   before_filter :require_user, :fetch_game
 
   def create
-    @response = @game.offers.first.responses.build(params[:response])
+    @response = @game.offer.responses.build(params[:response])
     @response.user = @current_user
     if @response.save!
       flash[:success] = "Successfully created"

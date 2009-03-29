@@ -32,7 +32,7 @@ class OffersController < ApplicationController
   end
 
   def update
-    @offer = @game.offers.first
+    @offer = @game.offer
     @offer.attributes = params[:offer]
     @offer.user = @current_user
     if @offer.accept
@@ -44,12 +44,12 @@ class OffersController < ApplicationController
   end
 
   def destroy
-    @offer = @game.offers.first
+    @offer = @game.offer
     @offer.user = @current_user
     if @offer.decline
-      flash[:success] = "Successfully declined"
+      flash[:success] = "Successfully delete"
     else
-      flash[:error] = "Could not decline"
+      flash[:error] = "Could not delete"
     end
     redirect_to game_path(@game)
   end
