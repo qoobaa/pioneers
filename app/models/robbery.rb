@@ -18,21 +18,30 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Robber < ActiveRecord::Base
-  belongs_to :map
+  belongs_to :game
+  belongs_to :sender, :class_name => "Player"
+  belongs_to :recipient, :class_name => "Player"
 
+  validates_numericality_of :bricks, :grain, :lumber, :ore, :wool, :only_integer => true, :allow_nil => true
   validates_numericality_of :row, :col, :only_integer => true
   validate :position_settleable, :position_changed, :player_in_neighbourhood
 
   delegate :game, :to => :map
-  delegate :hexes, :to => :map, :prefix => true
+  delegate :hexes, :robber_position, :robber_position=, :to => :map, :prefix => true
   delegate :robbed!, :players, :to => :game, :prefix => true
 
-  after_update :rob_player, :robbed
+  after_update :rob_player, :robbed, :update_map_robber_position
 
-  attr_accessor :user, :player_number
+  attr_reader :user
+  attr_accessor :player_number
 
-  def position_was
-    [row_was, col_was]
+  def user=(user)
+    @user = user
+    self.player = user_player
+  end
+
+  def user_player
+    game_players.find_by_user_id(user.id)
   end
 
   def position
@@ -62,16 +71,14 @@ class Robber < ActiveRecord::Base
   protected
 
   def position_changed?
-    position != position_was
+    position != map_robber_position
   end
 
   def position_settleable
-    return if new_record?
     errors.add :position, "hex is not settleable" unless hex and hex.settleable?
   end
 
   def position_changed
-    return if new_record?
     errors.add :position, "must be changed" unless position_changed?
   end
 
@@ -80,7 +87,6 @@ class Robber < ActiveRecord::Base
   end
 
   def player_in_neighbourhood
-    return if player_number.blank?
     errors.add :player, "must be in neighbourhood" unless players.include? player
   end
 
@@ -92,5 +98,10 @@ class Robber < ActiveRecord::Base
     robbing_player[resource_type] += 1 if type
     robbed_player.save
     robbing_player.save
+  end
+
+  def update_map_robber_position
+    map_robber_position = position
+    map.save
   end
 end

@@ -19,11 +19,9 @@
 
 class Map < ActiveRecord::Base
   belongs_to :game
-  has_one :robber
 
-  delegate :position, :to => :robber, :prefix => true
-
-  validates_numericality_of :width, :height, :greater_than => 0
+  validates_numericality_of :width, :height, :greater_than => 0, :only_integer => true
+  validates_numericality_of :robber_row, :robber_col, :only_integer => true
   validates_presence_of :hexes_attributes, :on => :create
 
   has_many :hexes, :dependent => :destroy
@@ -52,6 +50,14 @@ class Map < ActiveRecord::Base
 
   def edges_groupped
     (0..height).map { |row| edges.find_all_by_row(row) }
+  end
+
+  def robber_position
+    [robber_row, robber_col]
+  end
+
+  def robber_position=(position)
+    self.robber_row, self.robber_col = position
   end
 
   protected

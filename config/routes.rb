@@ -22,8 +22,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :user_session
   map.resources :games, :member => { :end_turn => :put } do |games|
     games.resource :player, :member => { :start => :put }
-    games.resource :robber
     games.resource :offer, :has_one => :response
+    games.resources :robberies
     games.resources :exchanges
     games.resources :cards
     games.resources :nodes

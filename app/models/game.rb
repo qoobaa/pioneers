@@ -24,6 +24,7 @@ class Game < ActiveRecord::Base
   has_many :offers
   has_many :cards
   has_many :exchanges
+  has_many :robberies
   has_one :map
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
@@ -372,6 +373,7 @@ class Game < ActiveRecord::Base
     end
   end
 
+  # TODO: longest road calculations
   def longest_road
 
   end
