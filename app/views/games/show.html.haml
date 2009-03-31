@@ -146,6 +146,20 @@
     = text_field_tag "discard[wool]"
     = submit_tag "Discard"
 %p
+  %strong Create exchange (with bank)
+  - form_tag game_exchanges_path(@game) do
+    = label_tag "exchange[bricks]", "Bricks"
+    = text_field_tag "exchange[bricks]"
+    = label_tag "exchange[grain]", "Grain"
+    = text_field_tag "exchange[grain]"
+    = label_tag "exchange[lumber]", "Lumber"
+    = text_field_tag "exchange[lumber]"
+    = label_tag "exchange[ore]", "Ore"
+    = text_field_tag "exchange[ore]"
+    = label_tag "exchange[wool]", "Wool"
+    = text_field_tag "exchange[wool]"
+    = submit_tag "Create"
+%p
   %strong Create offer
   - form_tag game_offer_path(@game) do
     = label_tag "offer[bricks]", "Bricks"

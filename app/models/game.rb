@@ -23,6 +23,7 @@ class Game < ActiveRecord::Base
   has_many :discards
   has_many :offers
   has_many :cards
+  has_many :exchanges
   has_one :map
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
@@ -216,6 +217,16 @@ class Game < ActiveRecord::Base
     before_transition :on => :offer_expired do |game, transition|
       game.playing? and game.current_user_turn?(*transition.args)
     end
+
+    # exchanged
+
+    event :exchanged do
+      transition :after_roll => :after_roll
+    end
+
+    before_transition :on => :exchanged do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
   end
 
   def offer
@@ -332,10 +343,9 @@ class Game < ActiveRecord::Base
       [:road_building] * road_building_cards +
       [:victory_point] * victory_point_cards +
       [:year_of_plenty] * year_of_plenty_cards
-    if random_card = cards.rand
-      self["#{random_card}_cards"] -= 1
-      random_card
-    end
+    card_type = cards.rand
+    self["#{card_type}_cards"] -= 1 if card_type
+    card_type
   end
 
   # other
@@ -343,6 +353,7 @@ class Game < ActiveRecord::Base
   def deal_resources
     players.each do |player|
       player.bricks = player.lumber = player.ore = player.grain = player.wool = 0
+      player.bricks_exchange_rate = player.grain_exchange_rate = player.lumber_exchange_rate = player.ore_exchange_rate = player.wool_exchange_rate = 4
       player.settlements = 5
       player.cities = 5
       player.roads = 15

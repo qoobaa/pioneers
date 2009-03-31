@@ -17,18 +17,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ActionController::Routing::Routes.draw do |map|
-  map.resource :user
-  map.resource :user_session
-  map.resources :games, :member => { :end_turn => :put } do |games|
-    games.resource :player, :member => { :start => :put }
-    games.resource :robber
-    games.resource :offer, :has_one => :response
-    games.resources :exchanges
-    games.resources :cards
-    games.resources :nodes
-    games.resources :edges
-    games.resources :dice_rolls
-    games.resources :discards
+class ExchangesController < ApplicationController
+  before_filter :require_user, :fetch_game
+
+  def create
+    @exchange = @game.exchanges.build(params[:exchange])
+    @exchange.user = @current_user
+    if @exchange.save
+      flash[:success] = "Successfully created"
+    else
+      flash[:error] = "Could not create"
+    end
+    redirect_to game_path(@game)
+  end
+
+  protected
+
+  def fetch_game
+    @game = Game.find(params[:game_id])
   end
 end

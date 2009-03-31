@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  player_id: 1
+  game_id: 1
+  bricks: 1
+  grain: 1
+  ore: 1
+  wool: 1
+  lumber: 1
+
+two:
+  player_id: 1
+  game_id: 1
+  bricks: 1
+  grain: 1
+  ore: 1
+  wool: 1
+  lumber: 1

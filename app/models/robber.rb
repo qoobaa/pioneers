@@ -88,11 +88,8 @@ class Robber < ActiveRecord::Base
     return unless player
     robbed_player = self.player
     robbing_player = self.user_player
-    type = robbed_player.rob_resource
-    if type
-      robbed_player[type] -= 1
-      robbing_player[type] += 1
-    end
+    resource_type = robbed_player.rob_resource
+    robbing_player[resource_type] += 1 if type
     robbed_player.save
     robbing_player.save
   end

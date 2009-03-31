@@ -23,6 +23,7 @@ class Player < ActiveRecord::Base
   has_many :nodes
   has_many :edges
   has_many :cards
+  has_many :exchanges
 
   acts_as_list :scope => :game, :column => "number"
 
@@ -32,6 +33,9 @@ class Player < ActiveRecord::Base
   delegate :start_game, :preparing?, :to => :game, :prefix => true
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points,
                             :visible_points, :hidden_points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
+  validates_numericality_of :bricks_exchange_rate, :grain_exchange_rate, :lumber_exchange_rate,
+                            :ore_exchange_rate, :wool_exchange_rate, :allow_nil => true,
+                            :greater_than => 0, :only_integer => true
 
   before_destroy :game_preparing?
   before_save :sum_resources, :sum_points
@@ -51,7 +55,9 @@ class Player < ActiveRecord::Base
   end
 
   def rob_resource
-    ([:bricks] * bricks + [:lumber] * lumber + [:ore] * ore + [:grain] * grain + [:wool] * wool).rand
+    resource_type = ([:bricks] * bricks + [:lumber] * lumber + [:ore] * ore + [:grain] * grain + [:wool] * wool).rand
+    self[resource_type] -= 1 if resource_type
+    resource_type
   end
 
   protected
