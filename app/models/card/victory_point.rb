@@ -17,19 +17,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ActionController::Routing::Routes.draw do |map|
-  map.resource :user
-  map.resource :user_session
-  map.resources :games, :member => { :end_turn => :put } do |games|
-    games.resource :player, :member => { :start => :put }
-    games.resource :robber
-    games.resource :offer do |offer|
-      offer.resource :response
-    end
-    games.resources :cards
-    games.resources :nodes
-    games.resources :edges
-    games.resources :dice_rolls
-    games.resources :discards
+class Card::VictoryPoint < Card
+
+  protected
+
+  def before_untap
+    player.hidden_points += 1
+  end
+
+  def before_play
+    false
   end
 end

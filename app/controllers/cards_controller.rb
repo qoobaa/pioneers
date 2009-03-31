@@ -17,19 +17,35 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ActionController::Routing::Routes.draw do |map|
-  map.resource :user
-  map.resource :user_session
-  map.resources :games, :member => { :end_turn => :put } do |games|
-    games.resource :player, :member => { :start => :put }
-    games.resource :robber
-    games.resource :offer do |offer|
-      offer.resource :response
+class CardsController < ApplicationController
+  before_filter :require_user, :fetch_game
+
+  def create
+    @card = @game.cards.build(params[:card])
+    @card.user = @current_user
+    if @card.save
+      flash[:success] = "Successfully created"
+    else
+      flash[:error] = "Could not create"
     end
-    games.resources :cards
-    games.resources :nodes
-    games.resources :edges
-    games.resources :dice_rolls
-    games.resources :discards
+    redirect_to game_path(@game)
+  end
+
+  def update
+    @card = @game.cards.find(params[:id])
+    @card.attributes = params[:card]
+    @card.user = @current_user
+    if @card.play
+      flash[:success] = "Successfully played"
+    else
+      flash[:error] = "Could not played"
+    end
+    redirect_to game_path(@game)
+  end
+
+  protected
+
+  def fetch_game
+    @game = Game.find(params[:game_id])
   end
 end

@@ -47,7 +47,8 @@ class Edge < ActiveRecord::Base
   end
 
   def self.find_by_positions(positions)
-    positions.map { |position| find_by_position(position) }
+    #positions.map { |position| find_by_position(position) }
+    find(:all, :conditions => [%Q{(row = ? AND col = ?) OR } * positions.size + %Q{ 0 = 1}, *positions.flatten])
   end
 
   def position
@@ -100,6 +101,21 @@ class Edge < ActiveRecord::Base
     map_edges.find_by_positions(edge_positions)
   end
 
+  def roads
+    edges = self.edges.select { |edge| not edge.nil? and edge.player == player }
+    nodes = self.nodes.select { |node| not node.nil? and node.player != player }
+    edges_to_remove = nodes.map(&:edges).flatten
+    edges - edges_to_remove
+  end
+
+  def longest_road(visited_roads = [])
+    visited_roads << self
+    unvisited_roads = roads - visited_roads
+    visited_roads += unvisited_roads
+    roads_lenghts = unvisited_roads.map { |road| road.longest_road(visited_roads) }
+    return 1 + (roads_lenghts.max or 0)
+  end
+
   protected
 
   def save_player
@@ -133,11 +149,7 @@ class Edge < ActiveRecord::Base
   end
 
   def has_road?
-    edges = self.edges.select { |edge| not edge.nil? and edge.player == player }
-    nodes = self.nodes.select { |node| not node.nil? and node.player != player }
-    edges_to_remove = nodes.map(&:edges).flatten
-    edges -= edges_to_remove
-    !edges.empty?
+    !roads.empty?
   end
 
   def position_of_road

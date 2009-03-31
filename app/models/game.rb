@@ -22,6 +22,7 @@ class Game < ActiveRecord::Base
   has_many :dice_rolls, :order => "turn DESC"
   has_many :discards
   has_many :offers
+  has_many :cards
   has_one :map
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
@@ -47,6 +48,7 @@ class Game < ActiveRecord::Base
 
     before_transition :on => :start_game do |game|
       game.reset_robber
+      game.reset_current_turn_card_played
       game.deal_resources
       game.current_turn = 1
       game.current_player_number = 1
@@ -54,19 +56,20 @@ class Game < ActiveRecord::Base
   end
 
   state_machine :phase, :initial => :first_settlement do
-    before_transition :on => [:settlement_built, :road_built, :dice_rolled, :end_turn, :robbed, :offer_saved] do |game, transition|
-      game.playing? and game.current_user_turn?(*transition.args)
-    end
 
-    before_transition :on => :discarded do |game, transition|
-      game.playing? and game.current_user_discard?(*transition.args)
-    end
+    # settlement built
 
     event :settlement_built do
       transition :first_settlement => :first_road
       transition :second_settlement => :second_road
       transition :after_roll => :after_roll # dummy
     end
+
+    before_transition :on => :settlement_built do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    # road built
 
     event :road_built do
       transition :first_road => :first_settlement, :if => :next_player?
@@ -78,8 +81,14 @@ class Game < ActiveRecord::Base
       transition :after_roll => :after_roll # dummy
     end
 
+    before_transition :on => :road_built do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
+
+    # dice rolled
 
     event :dice_rolled do
       transition :before_roll => :discard, :if => lambda { |game| game.current_dice_roll_robber? and game.next_player_to_discard? }
@@ -87,43 +96,125 @@ class Game < ActiveRecord::Base
       transition :before_roll => :after_roll
     end
 
+    before_transition :on => :dice_rolled do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    # discarded
+
     event :discarded do
       transition :discard => :discard, :if => :next_player_to_discard?
       transition :discard => :robber
+    end
+
+    before_transition :on => :discarded do |game, transition|
+      game.playing? and game.current_user_discard?(*transition.args)
     end
 
     before_transition :discard => all, :do => :player_resources_discarded?
     before_transition all => :discard, :do => :next_player_discard
     before_transition :discard => :robber, :do => :reset_robber
 
+    # robbed
+
     event :robbed do
       transition :robber => :after_roll, :if => :current_dice_roll?
       transition :robber => :before_roll
     end
 
+    before_transition :on => :robbed do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    # end turn
+
     event :end_turn do
       transition :after_roll => :before_roll
     end
 
+    before_transition :on => :end_turn do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
     before_transition :on => :end_turn, :do => :next_turn
 
-    event :play_army_card do
+    # card bought
+
+    event :card_bought do
+      transition :after_roll => :after_roll
+    end
+
+    before_transition :on => :card_bought do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    # army card played
+
+    event :army_card_played do
       transition [:before_roll, :after_roll] => :robber
     end
 
-    event :play_road_building_card do
+    before_transition :on => :army_card_played do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    before_transition :on => :army_card_played, :do => :current_turn_card_not_played?
+    before_transition :on => :army_card_played, :do => :set_current_turn_card_played
+
+    # road building card played
+
+    event :road_building_card_played do
       transition :after_roll => :road_building_first_road
     end
 
-    event :road_building_first_road_built do
+    before_transition :on => :road_building_card_played do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
     end
+
+    before_transition :on => :road_building_card_played, :do => :current_turn_card_not_played?
+    before_transition :on => :road_building_card_played, :do => :set_current_turn_card_played
+
+    # card played
+
+    event :card_played do
+      transition :after_roll => :after_roll
+    end
+
+    before_transition :on => :card_played do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    before_transition :on => :card_played, :do => :current_turn_card_not_played?
+    before_transition :on => :card_played, :do => :set_current_turn_card_played
+
+    # TODO: end road building - event is not used
 
     event :end_road_building do
       transition [:road_building_first_road, :road_building_second_road] => :after_roll
     end
 
-    event :offer_saved do
-      transition :after_roll => :after_roll
+    before_transition :on => :end_road_building do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    # offer created
+
+    event :offer_created do
+      transition :after_roll => :offer
+    end
+
+    before_transition :on => :offer_created do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
+    end
+
+    # offer expired
+
+    event :offer_expired do
+      transition :offer => :after_roll
+    end
+
+    before_transition :on => :offer_expired do |game, transition|
+      game.playing? and game.current_user_turn?(*transition.args)
     end
   end
 
@@ -212,8 +303,42 @@ class Game < ActiveRecord::Base
 
   def next_turn
     self.current_turn += 1
+    reset_current_turn_card_played
+    untap_cards
     next_player
   end
+
+  # cards
+
+  def reset_current_turn_card_played
+    self.current_turn_card_played = false
+  end
+
+  def current_turn_card_not_played?
+    not current_turn_card_played
+  end
+
+  def set_current_turn_card_played
+    self.current_turn_card_played = true
+  end
+
+  def untap_cards
+    cards.with_state(:tapped).each(&:untap)
+  end
+
+  def take_random_card
+    cards = [:army] * army_cards +
+      [:monopoly] * monopoly_cards +
+      [:road_building] * road_building_cards +
+      [:victory_point] * victory_point_cards +
+      [:year_of_plenty] * year_of_plenty_cards
+    if random_card = cards.rand
+      self["#{random_card}_cards"] -= 1
+      random_card
+    end
+  end
+
+  # other
 
   def deal_resources
     players.each do |player|
@@ -221,7 +346,8 @@ class Game < ActiveRecord::Base
       player.settlements = 5
       player.cities = 5
       player.roads = 15
-      player.points = 0
+      player.hidden_points = 0
+      player.visible_points = 0
     end
   end
 
@@ -233,5 +359,9 @@ class Game < ActiveRecord::Base
     players.each do |player|
       errors.add :players, "are not ready" unless player.ready?
     end
+  end
+
+  def longest_road
+
   end
 end

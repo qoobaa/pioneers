@@ -39,16 +39,6 @@ class GamesController < ApplicationController
     redirect_to game_path(@game)
   end
 
-#   def roll_dice
-#     @game = Game.find(params[:id])
-#     if @game.roll_dice(@current_user)
-#       flash[:success] = "Success"
-#     else
-#       flash[:error] = "Error"
-#     end
-#     redirect_to game_path(@game)
-#   end
-
   def end_turn
     @game = Game.find(params[:id])
     if @game.end_turn(@current_user)

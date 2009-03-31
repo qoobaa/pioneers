@@ -22,6 +22,7 @@ class Player < ActiveRecord::Base
   belongs_to :user
   has_many :nodes
   has_many :edges
+  has_many :cards
 
   acts_as_list :scope => :game, :column => "number"
 
@@ -30,10 +31,10 @@ class Player < ActiveRecord::Base
   delegate :login, :to => :user, :prefix => true
   delegate :start_game, :preparing?, :to => :game, :prefix => true
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points,
-                            :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
+                            :visible_points, :hidden_points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
 
   before_destroy :game_preparing?
-  before_save :sum_resources
+  before_save :sum_resources, :sum_points
 
   state_machine :initial => :preparing do
     event :start do
@@ -57,5 +58,9 @@ class Player < ActiveRecord::Base
 
   def sum_resources
     self.resources = bricks + lumber + ore + grain + wool
+  end
+
+  def sum_points
+    self.points = visible_points + hidden_points
   end
 end

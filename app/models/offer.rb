@@ -35,9 +35,11 @@ class Offer < ActiveRecord::Base
   before_validation :sum_sender_resources, :sum_recipient_resources
 
   after_update :trade
-  after_save :offer_saved
 
-  delegate :players, :offer_saved!, :to => :game, :prefix => true
+  after_create :offer_created
+  after_update :offer_expired
+
+  delegate :players, :offer_created!, :offer_expired!, :to => :game, :prefix => true
 
   attr_reader :user
 
@@ -89,7 +91,11 @@ class Offer < ActiveRecord::Base
     recipient.save
   end
 
-  def offer_saved
-    game_offer_saved!(user)
+  def offer_created
+    game_offer_created!(user)
+  end
+
+  def offer_expired
+    game_offer_expired!(user)
   end
 end

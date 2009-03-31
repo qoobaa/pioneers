@@ -40,6 +40,9 @@
 %p
   %strong Current turn
   = @game.current_turn
+%p
+  %strong Current turn card played?
+  = @game.current_turn_card_played?
 
 %p
   %strong Players
@@ -77,8 +80,8 @@
           %strong Roads
           = player.roads
         %li
-          %strong Points
-          = player.points
+          %strong Visible points
+          = player.visible_points
 
   - form_tag game_player_path(@game) do
     = submit_tag "Join"
@@ -192,3 +195,28 @@
               = submit_tag "Trade"
   - else
     no offer
+%p
+  %strong Buy cards
+  - form_tag game_cards_path(@game) do
+    = submit_tag "Create"
+%p
+  %strong Cards
+  %ul
+    - @game.cards.each do |card|
+      %li
+        = card.class
+        = card.state
+        - form_tag game_card_path(@game, card), :method => :put do
+          = label_tag "card[bricks]", "Bricks"
+          = text_field_tag "card[bricks]"
+          = label_tag "card[grain]", "Grain"
+          = text_field_tag "card[grain]"
+          = label_tag "card[lumber]", "Lumber"
+          = text_field_tag "card[lumber]"
+          = label_tag "card[ore]", "Ore"
+          = text_field_tag "card[ore]"
+          = label_tag "card[wool]", "Wool"
+          = text_field_tag "card[wool]"
+          = label_tag "card[resource_type]", "Resource type"
+          = text_field_tag "card[resource_type]"
+          = submit_tag "Play"

@@ -17,19 +17,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ActionController::Routing::Routes.draw do |map|
-  map.resource :user
-  map.resource :user_session
-  map.resources :games, :member => { :end_turn => :put } do |games|
-    games.resource :player, :member => { :start => :put }
-    games.resource :robber
-    games.resource :offer do |offer|
-      offer.resource :response
+class Card::Monopoly < Card
+  validates_inclusion_of :resource_type, :in => ["bricks", "grain", "lumber", "ore", "wool"], :if => :graveyard?
+
+  delegate :card_played!, :to => :game, :prefix => true
+  before_update :rob_resources
+  after_update :card_played
+
+  protected
+
+  def rob_resources
+    return unless graveyard?
+    self[resource_type] = 0
+    game_players.each do |player|
+      next if player == self.player
+      self[resource_type] += player[resource_type]
+      player[resource_type] = 0
+      player.save
     end
-    games.resources :cards
-    games.resources :nodes
-    games.resources :edges
-    games.resources :dice_rolls
-    games.resources :discards
+    player[resource_type] += self[resource_type]
+  end
+
+  def card_played
+    return unless graveyard?
+    game_card_played!(user)
   end
 end

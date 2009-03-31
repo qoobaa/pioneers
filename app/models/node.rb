@@ -56,7 +56,8 @@ class Node < ActiveRecord::Base
   end
 
   def self.find_by_positions(positions)
-    positions.map { |position| find_by_position(position) }
+    #positions.map { |position| find_by_position(position) }
+    find(:all, :conditions => [%Q{(row = ? AND col = ?) OR } * positions.size + %Q{ 0 = 1}, *positions.flatten])
   end
 
   def position
@@ -120,7 +121,7 @@ class Node < ActiveRecord::Base
   end
 
   def add_victory_point
-    player.points += 1
+    player.visible_points += 1
   end
 
   def save_player
