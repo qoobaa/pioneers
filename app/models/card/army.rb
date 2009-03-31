@@ -19,9 +19,14 @@
 
 class Card::Army < Card
   delegate :army_card_played!, :to => :game, :prefix => true
-  after_update :army_card_played
+  after_update :increase_army_size, :army_card_played
 
   protected
+
+  def increase_army_size
+    player.army_size += 1
+    player.save
+  end
 
   def army_card_played
     return unless graveyard?

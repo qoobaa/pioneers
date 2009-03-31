@@ -122,15 +122,15 @@
     = text_field_tag "edge[col]"
     = submit_tag "Create"
 %p
-  %strong Move robber
-  - form_tag game_robber_path(@game), :method => :put do
-    = label_tag "robber[row]", "Row"
-    = text_field_tag "robber[row]"
-    = label_tag "robber[col]", "Column"
-    = text_field_tag "robber[col]"
-    = label_tag "robber[player_number]", "Player number to rob"
-    = text_field_tag "robber[player_number]"
-    = submit_tag "Move"
+  %strong Create robbery
+  - form_tag game_robberies_path(@game) do
+    = label_tag "robbery[row]", "Row"
+    = text_field_tag "robbery[row]"
+    = label_tag "robbery[col]", "Column"
+    = text_field_tag "robbery[col]"
+    = label_tag "robbery[sender_number]", "Player number to rob"
+    = text_field_tag "robbery[sender_number]"
+    = submit_tag "Create"
 %p
   %strong Discard resources
   - form_tag game_discards_path(@game) do

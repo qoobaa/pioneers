@@ -1,2 +1,2 @@
-module RobbersHelper
+module RobberiesHelper
 end

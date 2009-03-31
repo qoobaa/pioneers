@@ -19,15 +19,25 @@
 
 class DiceRoll < ActiveRecord::Base
   belongs_to :game
+  belongs_to :player
 
   validates_uniqueness_of :turn, :scope => :game_id
 
   before_validation :roll_dice, :set_turn
   after_create :dice_rolled
 
-  delegate :dice_rolled!, :current_turn, :to => :game, :prefix => true
+  delegate :players, :dice_rolled!, :current_turn, :to => :game, :prefix => true
 
-  attr_accessor :user
+  attr_reader :user
+
+  def user=(user)
+    @user = user
+    self.player = user_player
+  end
+
+  def user_player
+    game_players.find_by_user_id(user.id)
+  end
 
   def robber?
     value == 7
@@ -36,7 +46,7 @@ class DiceRoll < ActiveRecord::Base
   protected
 
   def roll_dice
-    self.value = 2 #[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
+    self.value = 7 #[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].rand
   end
 
   def set_turn

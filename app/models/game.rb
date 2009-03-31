@@ -27,6 +27,8 @@ class Game < ActiveRecord::Base
   has_many :robberies
   has_one :map
 
+  belongs_to :largest_army_player, :class_name => "Player"
+
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
   delegate :resources, :to => :current_discard_player, :prefix => true
@@ -52,6 +54,7 @@ class Game < ActiveRecord::Base
       game.reset_robber
       game.reset_current_turn_card_played
       game.deal_resources
+      game.largest_army_size = 2
       game.current_turn = 1
       game.current_player_number = 1
     end
@@ -162,6 +165,7 @@ class Game < ActiveRecord::Base
 
     before_transition :on => :army_card_played, :do => :current_turn_card_not_played?
     before_transition :on => :army_card_played, :do => :set_current_turn_card_played
+    before_transition :on => :army_card_played, :do => :largest_army
 
     # road building card played
 
@@ -355,6 +359,7 @@ class Game < ActiveRecord::Base
     players.each do |player|
       player.bricks = player.lumber = player.ore = player.grain = player.wool = 0
       player.bricks_exchange_rate = player.grain_exchange_rate = player.lumber_exchange_rate = player.ore_exchange_rate = player.wool_exchange_rate = 4
+      player.army_size = 0
       player.settlements = 5
       player.cities = 5
       player.roads = 15
@@ -373,7 +378,29 @@ class Game < ActiveRecord::Base
     end
   end
 
+  # largest army
+
+  def largest_army_player?
+    players.exists?([%Q(army_size > ?), largest_army_size])
+  end
+
+  def largest_army
+    return unless largest_army_player?
+    player = players.find(:first, :conditions => [%Q{army_size > ?}, largest_army_size])
+    self.largest_army_size = player.army_size
+    if largest_army_player != player
+      if largest_army_player
+        self.largest_army_player.visible_points -= 2
+        largest_army_player.save
+      end
+      self.largest_army_player = player
+      self.largest_army_player.visible_points += 2
+      largest_army_player.save
+    end
+  end
+
   # TODO: longest road calculations
+
   def longest_road
 
   end

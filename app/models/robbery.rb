@@ -17,27 +17,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class Robber < ActiveRecord::Base
+class Robbery < ActiveRecord::Base
   belongs_to :game
   belongs_to :sender, :class_name => "Player"
   belongs_to :recipient, :class_name => "Player"
 
   validates_numericality_of :bricks, :grain, :lumber, :ore, :wool, :only_integer => true, :allow_nil => true
   validates_numericality_of :row, :col, :only_integer => true
-  validate :position_settleable, :position_changed, :player_in_neighbourhood
+  validate :position_settleable, :position_changed, :sender_in_neighbourhood
 
-  delegate :game, :to => :map
+  delegate :map, :to => :game
   delegate :hexes, :robber_position, :robber_position=, :to => :map, :prefix => true
   delegate :robbed!, :players, :to => :game, :prefix => true
 
-  after_update :rob_player, :robbed, :update_map_robber_position
+  before_validation :associate_sender
+  before_save :rob_player
+  after_save :robbed, :update_map_robber_position
 
   attr_reader :user
-  attr_accessor :player_number
+  attr_accessor :sender_number
 
   def user=(user)
     @user = user
-    self.player = user_player
+    self.recipient = user_player
   end
 
   def user_player
@@ -60,12 +62,12 @@ class Robber < ActiveRecord::Base
     hex.nodes.compact.map(&:player)
   end
 
-  def player
-    game_players.find_by_number(@player_number)
-  end
-
   def user_player
     game_players.find_by_user_id(user.id)
+  end
+
+  def associate_sender
+    self.sender = game_players.find_by_number(sender_number)
   end
 
   protected
@@ -86,22 +88,22 @@ class Robber < ActiveRecord::Base
     game_robbed!(user)
   end
 
-  def player_in_neighbourhood
-    errors.add :player, "must be in neighbourhood" unless players.include? player
+  def sender_in_neighbourhood
+    errors.add :sender, "must be in neighbourhood" unless players.include? sender
   end
 
   def rob_player
-    return unless player
-    robbed_player = self.player
-    robbing_player = self.user_player
-    resource_type = robbed_player.rob_resource
-    robbing_player[resource_type] += 1 if type
-    robbed_player.save
-    robbing_player.save
+    resource_type = sender.rob_resource
+    if resource_type
+      self[resource_type] = 1
+      recipient[resource_type] += 1
+      sender.save
+      recipient.save
+    end
   end
 
   def update_map_robber_position
-    map_robber_position = position
-    map.save
+    self.map_robber_position = position
+    map.save!
   end
 end
