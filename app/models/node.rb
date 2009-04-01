@@ -114,7 +114,19 @@ class Node < ActiveRecord::Base
     edges.detect { |edge| not edge.nil? and edge.player == player } != nil
   end
 
+  def harbor?
+    harbor_hex != nil
+  end
+
+  def harbor_type
+    harbor_hex.harbor_type if harbor?
+  end
+
   protected
+
+  def harbor_hex
+    hexes.detect { |hex| hex.harbor_on? position }
+  end
 
   def add_resources_from_neighbours
     hexes.compact.each { |hex| add_resources(hex.resource_type) }
@@ -126,6 +138,15 @@ class Node < ActiveRecord::Base
 
   def save_player
     player.save
+  end
+
+  def update_exchange_rates
+    harbor_types = %w(bricks grain lumber ore wool)
+    if harbor_types.include? harbor_type
+      player["#{harbor_type}_exchange_rate"] = 2
+    else
+      harbor_types.each { |harbor_type| player["#{harbor_type}_exchange_rate"] = 3 }
+    end
   end
 
   # validations
@@ -160,6 +181,7 @@ class Node < ActiveRecord::Base
     player.settlements -= 1
     add_resources_from_neighbours if game_second_settlement?
     charge_for_settlement if game_after_roll?
+    update_exchange_rates if harbor?
     add_victory_point
   end
 

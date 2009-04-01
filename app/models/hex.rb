@@ -24,6 +24,8 @@ class Hex < ActiveRecord::Base
 
   validates_inclusion_of :roll, :in => [2, 3, 4, 5, 6, 8, 9, 10, 11, 12], :allow_nil => true
   validates_uniqueness_of :map_id, :scope => [:row, :col]
+  validates_inclusion_of :harbor_type, :in => %w(bricks grain lumber ore wool generic), :allow_nil => true
+  validates_inclusion_of :harbor_position, :in => 0..5, :allow_nil => true
 
   extend EnumField
   enum_field :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
@@ -87,5 +89,13 @@ class Hex < ActiveRecord::Base
 
   def edges
     map_edges.find_by_position(edge_positions)
+  end
+
+  def harbor?
+    harbor_position != nil
+  end
+
+  def harbor_on?(position)
+    node_positions[harbor_position] == position or node_positions[(harbor_position + 1) % 6] == position unless harbor_position.nil?
   end
 end

@@ -1,0 +1,5 @@
+$("dsa").each(
+  function() {
+  lskajd;
+  }
+);
