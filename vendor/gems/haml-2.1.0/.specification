@@ -10,7 +10,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-02-12 00:00:00 +01:00
+date: 2009-04-01 00:00:00 +02:00
 default_executable: 
 dependencies: []
 
@@ -106,6 +106,7 @@ files:
 - test/haml/templates/whitespace_handling.haml
 - test/haml/templates/helpers.haml
 - test/haml/templates/content_for_layout.haml
+- test/haml/templates/render_layout.haml
 - test/haml/templates/just_stuff.haml
 - test/haml/templates/_text_area.haml
 - test/haml/templates/list.haml
@@ -120,6 +121,7 @@ files:
 - test/haml/templates/action_view_ugly.haml
 - test/haml/templates/very_basic.haml
 - test/haml/templates/_partial.haml
+- test/haml/templates/_layout.erb
 - test/haml/templates/_av_partial_1_ugly.haml
 - test/haml/templates/_av_partial_2_ugly.haml
 - test/haml/templates/filters.haml
@@ -146,11 +148,13 @@ files:
 - test/haml/results/very_basic.xhtml
 - test/haml/results/just_stuff.xhtml
 - test/haml/results/eval_suppressed.xhtml
+- test/haml/results/render_layout.xhtml
 - test/haml/results/tag_parsing.xhtml
 - test/haml/results/nuke_inner_whitespace.xhtml
 - test/haml/results/nuke_outer_whitespace.xhtml
 - test/haml/results/filters.xhtml
 - test/haml/helper_test.rb
+- test/haml/util_test.rb
 - test/haml/markaby
 - test/haml/markaby/standard.mab
 - test/haml/mocks
@@ -159,6 +163,7 @@ files:
 - test/test_helper.rb
 - test/benchmark.rb
 - test/sass
+- test/sass/css2sass_test.rb
 - test/sass/script_test.rb
 - test/sass/templates
 - test/sass/templates/line_numbers.sass
@@ -261,7 +266,9 @@ test_files:
 - test/haml/template_test.rb
 - test/haml/html2haml_test.rb
 - test/haml/helper_test.rb
+- test/haml/util_test.rb
 - test/haml/engine_test.rb
+- test/sass/css2sass_test.rb
 - test/sass/script_test.rb
 - test/sass/functions_test.rb
 - test/sass/plugin_test.rb

@@ -13,16 +13,8 @@ class SassEngineTest < Test::Unit::TestCase
     "!a = 1 + 2 +" => 'Expected expression, was end of text.',
     "!a = 1 + 2 + %" => 'Expected expression, was mod token.',
     "!a = foo(\"bar\"" => 'Expected rparen token, was end of text.',
-    "!a = 1 }" => 'Unexpected right_bracket token.',
-    "!a = 1 }foo\"" => 'Unexpected right_bracket token.',
-    "!a = #aaa - \"a\"" => 'Undefined operation: "#aaaaaa minus a".',
-    "!a = #aaa / \"a\"" => 'Undefined operation: "#aaaaaa div a".',
-    "!a = #aaa * \"a\"" => 'Undefined operation: "#aaaaaa times a".',
-    "!a = #aaa % \"a\"" => 'Undefined operation: "#aaaaaa mod a".',
-    "!a = 1 - \"a\"" => 'Undefined operation: "1 minus a".',
-    "!a = 1 * \"a\"" => 'Undefined operation: "1 times a".',
-    "!a = 1 / \"a\"" => 'Undefined operation: "1 div a".',
-    "!a = 1 % \"a\"" => 'Undefined operation: "1 mod a".',
+    "!a = 1 }" => 'Unexpected end_interpolation token.',
+    "!a = 1 }foo\"" => 'Unexpected end_interpolation token.',
     ":" => 'Invalid attribute: ":".',
     ": a" => 'Invalid attribute: ": a".',
     ":= a" => 'Invalid attribute: ":= a".',
@@ -72,7 +64,7 @@ class SassEngineTest < Test::Unit::TestCase
     "=a(!)" => "Mixin arguments can't be empty.",
     "=a(!foo bar)" => "Invalid variable \"!foo bar\".",
     "=foo\n  bar: baz\n+foo" => ["Attributes aren't allowed at the root of a document.", 2],
-    "a-\#{!b\n  c: d" => ["Expected right_bracket token, was end of text.", 1],
+    "a-\#{!b\n  c: d" => ["Expected end_interpolation token, was end of text.", 1],
     "=a(!b = 1, !c)" => "Required arguments must not follow optional arguments \"!c\".",
     "=a(!b = 1)\n  :a= !b\ndiv\n  +a(1,2)" => "Mixin a takes 1 argument but 2 were passed.",
     "=a(!b)\n  :a= !b\ndiv\n  +a" => "Mixin a is missing parameter !b.",
@@ -137,7 +129,13 @@ class SassEngineTest < Test::Unit::TestCase
   end
 
   def test_exception_line
-    to_render = "rule\n  :attr val\n// comment!\n\n  :broken\n"
+    to_render = <<SASS
+rule
+  :attr val
+  // comment!
+
+  :broken
+SASS
     begin
       Sass::Engine.new(to_render).render
     rescue Sass::SyntaxError => err
@@ -437,96 +435,13 @@ SASS
   end
 
   def test_interpolation
-    assert_equal("a-1 {\n  b-2: c-3; }\n", render(<<SASS))
+    assert_equal("a-1 {\n  b-2-3: c-3; }\n", render(<<SASS))
 !a = 1
 !b = 2
+!c = 3
 a-\#{!a}
-  b-\#{!b}: c-\#{!a + !b}
+  b-\#{!b}-\#{!c}: c-\#{!a + !b}
 SASS
-  end
-
-  def test_booleans
-    assert_equal(<<CSS, render(<<SASS))
-a {
-  b: true;
-  c: false;
-  t1: true;
-  t2: true;
-  t3: true;
-  t4: true;
-  f1: false;
-  f2: false;
-  f3: false;
-  f4: false; }
-CSS
-a
-  b = true
-  c = false
-  t1 = true and true
-  t2 = false or true
-  t3 = true or false
-  t4 = true or true
-  f1 = false or false
-  f2 = false and true
-  f3 = true and false
-  f4 = false and false
-SASS
-    assert_equal(<<CSS, render(<<SASS))
-a {
-  b: true;
-  c: false; }
-CSS
-!var = true
-a
-  b = not not !var
-  c = not !var
-SASS
-  end
-
-  def test_boolean_ops
-    assert_equal("a {\n  b: 1;\n  c: 2;\n  d: 3; }\n", render(<<SASS))
-a
-  b = false or 1
-  c = 2 or 3
-  d = 2 and 3
-SASS
-  end
-
-  def test_relational_ops
-    assert_equal(<<CSS, render(<<SASS))
-a {
-  gt1: false;
-  gt2: false;
-  gt3: true;
-  gte1: false;
-  gte2: true;
-  gte3: true;
-  lt1: true;
-  lt2: false;
-  lt3: false;
-  lte1: true;
-  lte2: true;
-  lte3: false; }
-CSS
-a
-  gt1 = 1 > 2
-  gt2 = 2 > 2
-  gt3 = 3 > 2
-  gte1 = 1 >= 2
-  gte2 = 2 >= 2
-  gte3 = 3 >= 2
-  lt1 = 1 < 2
-  lt2 = 2 < 2
-  lt3 = 3 < 2
-  lte1 = 1 <= 2
-  lte2 = 2 <= 2
-  lte3 = 3 <= 2
-SASS
-  end
-
-  def test_functions
-    assert_equal("a {\n  b: #80ff80; }\n", render("a\n  b = hsl(120, 100%, 75%)"))
-    assert_equal("a {\n  b: #81ff81; }\n", render("a\n  b = hsl(120, 100%, 75%) + #010001"))
   end
 
   def test_if_directive
@@ -537,25 +452,6 @@ a
     b: 1
   @if not !var
     b: 2
-SASS
-  end
-
-  def test_equals
-    assert_equal(<<CSS, render(<<SASS))
-a {
-  t1: true;
-  t2: true;
-  t3: true;
-  f1: false;
-  f2: false; }
-CSS
-!foo = "foo"
-a
-  t1 = "foo" == !foo
-  t2 = 1 == 1.0
-  t3 = false != true
-  f1 = 1em == 1px
-  f2 = 12 != 12
 SASS
   end
 
@@ -661,26 +557,6 @@ a
 SASS
   end
 
-  def test_operation_precedence
-    assert_equal(<<CSS, render(<<SASS))
-a {
-  p1: false true;
-  p2: true;
-  p3: true;
-  p4: true;
-  p5: true;
-  p6: 11; }
-CSS
-a
-  p1 = true and false false or true
-  p2 = false and true or true and true
-  p3 = 1 == 2 or 3 == 3
-  p4 = 1 < 2 == 3 >= 3
-  p5 = 1 + 3 > 4 - 2
-  p6 = 1 + 2 * 3 + 4
-SASS
-  end
-
   def test_variable_reassignment
     assert_equal(<<CSS, render(<<SASS))
 a {
@@ -722,6 +598,66 @@ SASS
 
   def test_argument_error
     assert_raise(Sass::SyntaxError) { render("a\n  b = hsl(1)") }
+  end
+
+  def test_comments_at_the_top_of_a_document
+    render(<<SASS)
+//
+  This is a comment that
+  continues to the second line.
+foo
+  bar: baz
+SASS
+  end
+
+  def test_loud_comments_containing_a_comment_close
+    actual_css = render(<<SASS)
+/*
+  This is a comment that
+  continues to the second line. */
+foo
+  bar: baz
+SASS
+assert_equal(<<CSS, actual_css)
+/* 
+ * This is a comment that
+ * continues to the second line. */
+foo {
+  bar: baz; }
+CSS
+  end
+
+  def test_quoted_colon
+    assert_equal(<<CSS, render(<<SASS))
+a b[foo="bar: baz"] {
+  c: d; }
+CSS
+a
+  b[foo="bar: baz"]
+    c: d
+SASS
+  end
+
+  def test_quoted_comma
+    assert_equal(<<CSS, render(<<SASS))
+a b[foo="bar, baz"] {
+  c: d; }
+CSS
+a
+  b[foo="bar, baz"]
+    c: d
+SASS
+  end
+
+  def test_quoted_ampersand
+    assert_equal(<<CSS, render(<<SASS))
+a b[foo="bar & baz"] {
+  c: d; }
+CSS
+a
+  b[foo="bar & baz"]
+    c: d
+SASS
   end
 
   private

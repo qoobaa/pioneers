@@ -289,6 +289,10 @@ require 'haml/version'
 #
 #   @import red.sass
 #
+# Some directives can also control whether or how many times
+# a chunk of Sass is output.
+# Those are documented under Control Structures.
+#
 # === import
 #
 # The "@import" directive works in a very similar way to the CSS import directive,
@@ -334,10 +338,24 @@ require 'haml/version'
 #
 # Finally,
 #
-#  @import foo
+#   @import foo
 #
 # might compile to either,
 # depending on whether a file called "foo.sass" existed.
+#
+# === @debug
+#
+# The "@debug" directive prints the value of a SassScript expression
+# to standard error.
+# It's useful for debugging Sass files
+# that have complicated SassScript going on.
+# For example:
+#
+#   @debug 10em + 12em
+#
+# outputs:
+#
+#   Line 1 DEBUG: 22em
 #
 # === @font-face, @media, etc.
 #

@@ -3,56 +3,47 @@ module Sass::Tree
     # The character used to include the parent selector
     PARENT = '&'
 
-    attr_accessor :rule
+    attr_accessor :rules
 
     def initialize(rule, options)
-      @rule = rule
+      @rules = [rule]
       super(options)
     end
 
-    def rules
-      Array(rule)
+    def rule
+      rules.first
+    end
+
+    def rule=(rule)
+      self.rules = [rule]
+    end
+
+    def ==(other)
+      self.class == other.class && rules == other.rules && super
     end
 
     def add_rules(node)
-      self.rule = rules
-      self.rule += node.rules
+      @rules += node.rules
     end
 
     def continued?
-      rule[-1] == ?,
+      @rules.last[-1] == ?,
     end
 
     def to_s(tabs, super_rules = nil)
+      resolve_parent_refs!(super_rules)
+
       attributes = []
       sub_rules = []
 
-      rule_split = /\s*,\s*/
       rule_separator = @style == :compressed ? ',' : ', '
       line_separator = [:nested, :expanded].include?(@style) ? ",\n" : rule_separator
       rule_indent = '  ' * (tabs - 1)
-      total_rule = if super_rules
-        super_rules.split(",\n").map do |super_line|
-          super_line.strip.split(rule_split).map do |super_rule|
-            self.rules.map do |line|
-              rule_indent + line.gsub(/,$/, '').split(rule_split).map do |rule|
-                if rule.include?(PARENT)
-                  rule.gsub(PARENT, super_rule)
-                else
-                  "#{super_rule} #{rule}"
-                end
-              end.join(rule_separator)
-            end.join(line_separator)
-          end.join(rule_separator)
-        end.join(line_separator)
-      elsif self.rules.any? { |r| r.include?(PARENT) }
-        raise Sass::SyntaxError.new("Base-level rules cannot contain the parent-selector-referencing character '#{PARENT}'.", line)
-      else
-        per_rule_indent, total_indent = [:nested, :expanded].include?(@style) ? [rule_indent, ''] : ['', rule_indent]
-        total_indent + self.rules.map do |r|
-          per_rule_indent + r.gsub(/,$/, '').gsub(rule_split, rule_separator).rstrip
-        end.join(line_separator)
-      end
+      per_rule_indent, total_indent = [:nested, :expanded].include?(@style) ? [rule_indent, ''] : ['', rule_indent]
+
+      total_rule = total_indent + @rules.map do |line|
+        per_rule_indent + line.join(rule_separator)
+      end.join(line_separator)
 
       children.each do |child|
         if child.is_a? RuleNode
@@ -86,13 +77,13 @@ module Sass::Tree
         end
 
         if @style == :compact
-          attributes = attributes.map { |a| a.to_s(1) }.join(' ')
+          attributes = attributes.map { |a| a.to_s(1) }.select{|a| a && a.length > 0}.join(' ')
           to_return << "#{total_rule} { #{attributes} }\n"
         elsif @style == :compressed
-          attributes = attributes.map { |a| a.to_s(1) }.join(';')
+          attributes = attributes.map { |a| a.to_s(1) }.select{|a| a && a.length > 0}.join(';')
           to_return << "#{total_rule}{#{attributes}}"
         else
-          attributes = attributes.map { |a| a.to_s(tabs + 1) }.join("\n")
+          attributes = attributes.map { |a| a.to_s(tabs + 1) }.select{|a| a && a.length > 0}.join("\n")
           end_attrs = (@style == :expanded ? "\n" + old_spaces : ' ')
           to_return << "#{total_rule} {\n#{attributes}#{end_attrs}}\n"
         end
@@ -100,7 +91,7 @@ module Sass::Tree
 
       tabs += 1 unless attributes.empty? || @style != :nested
       sub_rules.each do |sub|
-        to_return << sub.to_s(tabs, total_rule)
+        to_return << sub.to_s(tabs, @rules)
       end
 
       to_return
@@ -108,9 +99,69 @@ module Sass::Tree
 
     protected
 
+    def resolve_parent_refs!(super_rules)
+      if super_rules.nil?
+        @rules.each do |line|
+          line.map! do |rule|
+            if rule.include?(:parent)
+              raise Sass::SyntaxError.new("Base-level rules cannot contain the parent-selector-referencing character '#{PARENT}'.", self.line)
+            end
+
+            rule.join
+          end.compact!
+        end
+        return
+      end
+
+      new_rules = []
+      super_rules.each do |super_line|
+        @rules.each do |line|
+          new_rules << []
+
+          super_line.each do |super_rule|
+            line.each do |rule|
+              rule.unshift(:parent, " ") unless rule.include?(:parent)
+
+              new_rules.last << rule.map do |segment|
+                next segment unless segment == :parent
+                super_rule
+              end.join
+            end
+          end
+        end
+      end
+      @rules = new_rules
+    end
+
     def perform!(environment)
-      self.rule = rules.map {|r| interpolate(r, environment)}
+      @rules = @rules.map {|r| parse_selector(interpolate(r, environment))}
       super
+    end
+
+    def parse_selector(text)
+      scanner = StringScanner.new(text)
+      rules = [[]]
+
+      while scanner.rest?
+        rules.last << scanner.scan(/[^",&]*/)
+        case scanner.scan(/./)
+        when '&'; rules.last << :parent
+        when ','
+          scanner.scan(/\s*/)
+          rules << [] if scanner.rest?
+        when '"'
+          rules.last << '"' << scanner.scan(/([^"\\]|\\.)*/)
+          # We don't want to enforce that strings are closed,
+          # but we do want to consume quotes or trailing backslashes.
+          rules.last << scanner.scan(/./) if scanner.rest?
+        end
+      end
+
+      rules.map! do |l|
+        Haml::Util.merge_adjacent_strings(l).reject {|r| r.is_a?(String) && r.empty?}
+      end
+
+      rules
     end
   end
 end

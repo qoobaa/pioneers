@@ -7,7 +7,11 @@ module Sass::Tree
       @value = value
       super(options)
     end
-    
+
+    def ==(other)
+      self.class == other.class && name == other.name && value == other.value && super
+    end
+
     def to_s(tabs, parent_name = nil)
       if value[-1] == ?;
         raise Sass::SyntaxError.new("Invalid attribute: #{declaration.dump} (This isn't CSS!).", @line)
@@ -31,7 +35,7 @@ module Sass::Tree
       end
       
       children.each do |kid|
-        to_return << "#{kid.to_s(tabs, real_name)}" << join_string
+        to_return << kid.to_s(tabs, real_name) << join_string
       end
       
       (@style == :compressed && parent_name) ? to_return : to_return[0...-1]

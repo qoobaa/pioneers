@@ -67,14 +67,14 @@ module Sass
 
     # The regex that matches and extracts data from
     # attributes of the form <tt>:name attr</tt>.
-    ATTRIBUTE = /^:([^\s=:]+)\s*(=?)(?:\s+|$)(.*)/
+    ATTRIBUTE = /^:([^\s=:"]+)\s*(=?)(?:\s+|$)(.*)/
 
     # The regex that matches attributes of the form <tt>name: attr</tt>.
-    ATTRIBUTE_ALTERNATE_MATCHER = /^[^\s:]+\s*[=:](\s|$)/
+    ATTRIBUTE_ALTERNATE_MATCHER = /^[^\s:"]+\s*[=:](\s|$)/
 
     # The regex that matches and extracts data from
     # attributes of the form <tt>name: attr</tt>.
-    ATTRIBUTE_ALTERNATE = /^([^\s=:]+)(\s*=|:)(?:\s+|$)(.*)/
+    ATTRIBUTE_ALTERNATE = /^([^\s=:"]+)(\s*=|:)(?:\s+|$)(.*)/
 
     # Creates a new instace of Sass::Engine that will compile the given
     # template string when <tt>render</tt> is called.
@@ -132,7 +132,7 @@ module Sass
       first = true
       enum_with_index(string.gsub(/\r|\n|\r\n|\r\n/, "\n").scan(/^.*?$/)).map do |line, index|
         index += 1
-        next if line.strip.empty? || line =~ /^\/\//
+        next if line.strip.empty?
 
         line_tab_str = line[/^\s*/]
         unless line_tab_str.empty?
@@ -308,10 +308,8 @@ END
     end
 
     def parse_comment(line)
-      if line[1] == SASS_COMMENT_CHAR
-        :comment
-      elsif line[1] == CSS_COMMENT_CHAR
-        Tree::CommentNode.new(line, @options)
+      if line[1] == CSS_COMMENT_CHAR || line[1] == SASS_COMMENT_CHAR
+        Tree::CommentNode.new(line, @options.merge(:silent => (line[1] == SASS_COMMENT_CHAR)))
       else
         Tree::RuleNode.new(line, @options)
       end

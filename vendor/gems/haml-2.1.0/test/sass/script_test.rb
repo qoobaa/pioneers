@@ -31,6 +31,7 @@ class SassScriptTest < Test::Unit::TestCase
   end
 
   def test_interpolation
+    assert_equal "foo bar, baz bang", resolve('"foo #{"bar"}, #{"baz"} bang"')
     assert_equal "foo bar baz bang", resolve('"foo #{"#{"ba" + "r"} baz"} bang"')
     assert_equal 'foo #{bar baz} bang', resolve('"foo \#{#{"ba" + "r"} baz} bang"')
     assert_equal 'foo #{baz bang', resolve('"foo #{"\#{" + "baz"} bang"')
@@ -107,14 +108,105 @@ WARN
     assert_not_equal eval('1'), eval('"1"')
   end
 
+  def test_booleans
+    assert_equal "true", resolve("true")
+    assert_equal "false", resolve("false")
+  end
+
+  def test_boolean_ops
+    assert_equal "true", resolve("true and true")
+    assert_equal "true", resolve("false or true")
+    assert_equal "true", resolve("true or false")
+    assert_equal "true", resolve("true or true")
+    assert_equal "false", resolve("false or false")
+    assert_equal "false", resolve("false and true")
+    assert_equal "false", resolve("true and false")
+    assert_equal "false", resolve("false and false")
+
+    assert_equal "true", resolve("not false")
+    assert_equal "false", resolve("not true")
+    assert_equal "true", resolve("not not true")
+
+    assert_equal "1", resolve("false or 1")
+    assert_equal "false", resolve("false and 1")
+    assert_equal "2", resolve("2 or 3")
+    assert_equal "3", resolve("2 and 3")
+  end
+
+  def test_arithmetic_ops
+    assert_equal "2", resolve("1 + 1")
+    assert_equal "0", resolve("1 - 1")
+    assert_equal "8", resolve("2 * 4")
+    assert_equal "0.5", resolve("2 / 4")
+    assert_equal "2", resolve("4 / 2")
+
+    assert_equal "-1", resolve("-1")
+  end
+
+  def test_string_ops
+    assert_equal "foo bar", resolve('"foo" "bar"')
+    assert_equal "true 1", resolve('true 1')
+    assert_equal "foo, bar", resolve('"foo" , "bar"')
+    assert_equal "true, 1", resolve('true , 1')
+    assert_equal "foobar", resolve('"foo" + "bar"')
+    assert_equal "true1", resolve('true + 1')
+    assert_equal "foo-bar", resolve('"foo" - "bar"')
+    assert_equal "true-1", resolve('true - 1')
+    assert_equal "foo/bar", resolve('"foo" / "bar"')
+    assert_equal "true/1", resolve('true / 1')
+
+    assert_equal "-bar", resolve('- "bar"')
+    assert_equal "-true", resolve('- true')
+    assert_equal "/bar", resolve('/ "bar"')
+    assert_equal "/true", resolve('/ true')
+  end
+
+  def test_relational_ops
+    assert_equal "false", resolve("1 > 2")
+    assert_equal "false", resolve("2 > 2")
+    assert_equal "true", resolve("3 > 2")
+    assert_equal "false", resolve("1 >= 2")
+    assert_equal "true", resolve("2 >= 2")
+    assert_equal "true", resolve("3 >= 2")
+    assert_equal "true", resolve("1 < 2")
+    assert_equal "false", resolve("2 < 2")
+    assert_equal "false", resolve("3 < 2")
+    assert_equal "true", resolve("1 <= 2")
+    assert_equal "true", resolve("2 <= 2")
+    assert_equal "false", resolve("3 <= 2")
+  end
+
+  def test_equals
+    assert_equal("true", resolve('"foo" == !foo', {},
+        env("foo" => Sass::Script::String.new("foo"))))
+    assert_equal "true", resolve("1 == 1.0")
+    assert_equal "true", resolve("false != true")
+    assert_equal "false", resolve("1em == 1px")
+    assert_equal "false", resolve("12 != 12")
+  end
+
+  def test_operation_precedence
+    assert_equal "false true", resolve("true and false false or true")
+    assert_equal "true", resolve("false and true or true and true")
+    assert_equal "true", resolve("1 == 2 or 3 == 3")
+    assert_equal "true", resolve("1 < 2 == 3 >= 3")
+    assert_equal "true", resolve("1 + 3 > 4 - 2")
+    assert_equal "11", resolve("1 + 2 * 3 + 4")
+  end
+
+  def test_functions
+    assert_equal "#80ff80", resolve("hsl(120, 100%, 75%)")
+    assert_equal "#81ff81", resolve("hsl(120, 100%, 75%) + #010001")
+  end
+
   private
 
-  def resolve(str, opts = {}, environment = {})
+  def resolve(str, opts = {}, environment = env)
     munge_filename opts
     eval(str, opts, environment).to_s
   end
 
-  def eval(str, opts = {}, environment = {})
+  def eval(str, opts = {}, environment = env)
     munge_filename opts
     Sass::Script.parse(str, opts[:line] || 1,
       opts[:offset] || 0, opts[:filename]).perform(environment)
@@ -138,6 +230,12 @@ WARN
     yield
   ensure
     $stderr = the_real_stderr
+  end
+
+  def env(hash = {})
+    env = Sass::Environment.new
+    hash.each {|k, v| env.set_var(k, v)}
+    env
   end
 
   def test_number_printing
