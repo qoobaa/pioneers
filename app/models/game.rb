@@ -105,6 +105,8 @@ class Game < ActiveRecord::Base
       game.playing? and game.current_user_turn?(*transition.args)
     end
 
+    before_transition :on => :dice_rolled, :do => :add_resources
+
     # discarded
 
     event :discarded do
@@ -306,7 +308,7 @@ class Game < ActiveRecord::Base
   end
 
   def add_resources
-    map_hexes.roll(current_roll).each(&:rolled)
+    map_hexes.roll(current_dice_roll_value).each(&:rolled)
   end
 
   def current_dice_roll
