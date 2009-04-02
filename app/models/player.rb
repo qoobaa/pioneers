@@ -63,10 +63,12 @@ class Player < ActiveRecord::Base
   protected
 
   def sum_resources
+    return unless bricks and lumber and ore and grain and wool
     self.resources = bricks + lumber + ore + grain + wool
   end
 
   def sum_points
+    return unless visible_points and hidden_points
     self.points = visible_points + hidden_points
   end
 end

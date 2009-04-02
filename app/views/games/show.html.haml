@@ -8,6 +8,9 @@
               - if hex.robber?
                 %strong{ :class => "robber" }
                   robber
+              - if hex.harbor?
+                %strong{ :class => "#{hex.harbor_type}" }
+                  1
               - else
                 %strong{ :class => "roll-#{hex.roll}" }
                   = hex.roll

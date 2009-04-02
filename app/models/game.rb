@@ -59,6 +59,11 @@ class Game < ActiveRecord::Base
       game.longest_road_length = 4
       game.current_turn = 1
       game.current_player_number = 1
+      game.army_cards = 14
+      game.monopoly_cards = 2
+      game.year_of_plenty_cards = 2
+      game.road_building_cards = 2
+      game.victory_point_cards = 5
     end
   end
 

@@ -65,9 +65,10 @@ class Map < ActiveRecord::Base
   def build_hexes
     return if hexes_attributes.blank?
     hexes.clear
-    hexes_attributes.each_with_index do |attributes, i|
-      hexes.build(attributes.merge(:position => i.divmod(width))) unless attributes.nil?
-    end
+#     hexes_attributes.each_with_index do |attributes, i|
+#       hexes.build(attributes.merge(:position => i.divmod(width))) unless attributes.nil?
+#     end
+    hexes_attributes.each { |attributes| hexes.build(attributes) }
   end
 end
 
