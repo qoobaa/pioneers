@@ -47,7 +47,7 @@ class Edge < ActiveRecord::Base
   end
 
   def self.find_by_positions(positions)
-    #positions.map { |position| find_by_position(position) }
+    #positions.map { |position| find_by_position(position) }.compact
     find(:all, :conditions => [%Q{(row = ? AND col = ?) OR } * positions.size + %Q{ 0 = 1}, *positions.flatten])
   end
 
@@ -74,13 +74,35 @@ class Edge < ActiveRecord::Base
   end
 
   def node_positions
+    [left_node_position, right_node_position]
+  end
+
+  def right_node_position
     if col % 3 == 0
-      [[row, 2 * col.div(3) - 1], [row + 1, 2 * col.div(3) - 2]]
+      [row, 2 * col.div(3) - 1]
     elsif col % 3 == 1
-      [[row, 2 * col.div(3)], [row, 2 * col.div(3) - 1]]
+      [row, 2 * col.div(3)]
     else
-      [[row, 2 * col.div(3) + 1], [row, 2 * col.div(3)]]
+      [row, 2 * col.div(3) + 1]
     end
+  end
+
+  def left_node_position
+    if col % 3 == 0
+      [row + 1, 2 * col.div(3) - 2]
+    elsif col % 3 == 1
+      [row, 2 * col.div(3) - 1]
+    else
+      [row, 2 * col.div(3)]
+    end
+  end
+
+  def left_node
+    map_nodes.find_by_position(left_node_position)
+  end
+
+  def right_node
+    map_nodes.find_by_position(right_node_position)
   end
 
   def nodes
@@ -88,12 +110,26 @@ class Edge < ActiveRecord::Base
   end
 
   def edge_positions
+    left_edge_positions + right_edge_positions
+  end
+
+  def left_edge_positions
     if col % 3 == 0
-      [[row, col + 1], [row, col - 1], [row + 1, col - 2], [row + 1, col - 1]]
+      [[row + 1, col - 2], [row + 1, col - 1]]
     elsif col % 3 == 1
-      [[row - 1, col + 2], [row, col - 2], [row, col - 1], [row, col + 1]]
+      [[row, col - 2], [row, col - 1]]
     else
-      [[row, col + 2], [row - 1, col + 1], [row, col - 1], [row, col + 1]]
+      [[row - 1, col + 1], [row, col - 1]]
+    end
+  end
+
+  def right_edge_positions
+    if col % 3 == 0
+      [[row, col + 1], [row, col - 1]]
+    elsif col % 3 == 1
+      [[row - 1, col + 2], [row, col + 1]]
+    else
+      [[row, col + 2], [row, col + 1]]
     end
   end
 
@@ -101,19 +137,55 @@ class Edge < ActiveRecord::Base
     map_edges.find_by_positions(edge_positions)
   end
 
-  def roads
-    edges = self.edges.select { |edge| not edge.nil? and edge.player == player }
-    nodes = self.nodes.select { |node| not node.nil? and node.player != player }
-    edges_to_remove = nodes.map(&:edges).flatten
-    edges - edges_to_remove
+  def left_edges
+    map_edges.find_by_positions(left_edge_positions)
   end
 
-  def longest_road(visited_roads = [])
+  def right_edges
+    map_edges.find_by_positions(right_edge_positions)
+  end
+
+  def left_roads
+    if left_node.nil? or left_node.player == player
+      left_edges.select { |edge| edge.player == player }
+    else
+      []
+    end
+  end
+
+  def right_roads
+    if right_node.nil? or right_node.player == player
+      right_edges.select { |edge| edge.player == player }
+    else
+      []
+    end
+  end
+
+  def roads
+    left_roads + right_roads
+  end
+
+  def longest_road(visited_roads = [], skip_roads = [])
     visited_roads << self
-    unvisited_roads = roads - visited_roads
-    visited_roads += unvisited_roads
-    roads_lenghts = unvisited_roads.map { |road| road.longest_road(visited_roads) }
-    return 1 + (roads_lenghts.max or 0)
+
+    # left roads
+    unvisited_left_roads = left_roads - visited_roads - skip_roads
+    left_road_lenghts = unvisited_left_roads.map do |road|
+      lenghts, new_visited_roads = road.longest_road(visited_roads, unvisited_left_roads)
+      visited_roads = (visited_roads + new_visited_roads).uniq
+      lenghts
+    end
+
+    # right roads
+    unvisited_right_roads = right_roads - visited_roads - skip_roads
+    right_road_lenghts = unvisited_right_roads.map do |road|
+      lenghts, new_visited_roads = road.longest_road(visited_roads, unvisited_right_roads)
+      visited_roads = (visited_roads + new_visited_roads).uniq
+      lenghts
+    end
+
+    longest_road = 1 + (left_road_lenghts.max or 0) + (right_road_lenghts.max or 0)
+    return [longest_road, visited_roads]
   end
 
   protected

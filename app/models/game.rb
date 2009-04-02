@@ -28,6 +28,7 @@ class Game < ActiveRecord::Base
   has_one :map
 
   belongs_to :largest_army_player, :class_name => "Player"
+  belongs_to :longest_road_player, :class_name => "Player"
 
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
@@ -55,6 +56,7 @@ class Game < ActiveRecord::Base
       game.reset_current_turn_card_played
       game.deal_resources
       game.largest_army_size = 2
+      game.longest_road_length = 4
       game.current_turn = 1
       game.current_player_number = 1
     end
@@ -74,6 +76,8 @@ class Game < ActiveRecord::Base
       game.playing? and game.current_user_turn?(*transition.args)
     end
 
+    before_transition :on => :settlement_built, :do => :longest_road
+
     # road built
 
     event :road_built do
@@ -90,6 +94,7 @@ class Game < ActiveRecord::Base
       game.playing? and game.current_user_turn?(*transition.args)
     end
 
+    before_transition :on => :road_built, :do => :longest_road
     before_transition :first_road => :first_settlement, :do => :next_player
     before_transition :second_road => :second_settlement, :do => :previous_player
 
@@ -388,8 +393,10 @@ class Game < ActiveRecord::Base
 
   def largest_army
     return unless largest_army_player?
+
     player = players.find(:first, :conditions => [%Q{army_size > ?}, largest_army_size])
     self.largest_army_size = player.army_size
+
     if largest_army_player != player
       if largest_army_player
         self.largest_army_player.visible_points -= 2
@@ -401,9 +408,34 @@ class Game < ActiveRecord::Base
     end
   end
 
-  # TODO: longest road calculations
+  # longest road
 
   def longest_road
+    new_longest_road_length = self.longest_road_length
+    new_longest_road_player = nil
+    edges = map_edges
 
+    until edges.empty?
+      length, visited_edges = edges.first.longest_road
+      if length > new_longest_road_length
+        new_longest_road_player = edges.first.player
+        new_longest_road_length = length
+      end
+      edges -= visited_edges
+    end
+
+    if new_longest_road_player != longest_road_player
+      if longest_road_player
+        longest_road_player.visible_points -= 2
+        longest_road_player.save
+      end
+
+      longest_road_player = new_longest_road_player
+
+      if longest_road_player
+        longest_road_player.visible_points += 2
+        longest_road_player.save
+      end
+    end
   end
 end

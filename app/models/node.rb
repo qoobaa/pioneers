@@ -56,7 +56,7 @@ class Node < ActiveRecord::Base
   end
 
   def self.find_by_positions(positions)
-    #positions.map { |position| find_by_position(position) }
+    #positions.map { |position| find_by_position(position) }.compact
     find(:all, :conditions => [%Q{(row = ? AND col = ?) OR } * positions.size + %Q{ 0 = 1}, *positions.flatten])
   end
 
