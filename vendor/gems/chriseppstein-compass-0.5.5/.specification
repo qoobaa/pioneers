@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: chriseppstein-compass
 version: !ruby/object:Gem::Version 
-  version: 0.5.4
+  version: 0.5.5
 platform: ruby
 authors: 
 - Chris Eppstein
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-03-16 00:00:00 +01:00
+date: 2009-04-01 00:00:00 +02:00
 default_executable: compass
 dependencies: 
 - !ruby/object:Gem::Dependency 
