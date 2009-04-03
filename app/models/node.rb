@@ -22,6 +22,8 @@ class Node < ActiveRecord::Base
     event :expand do
       transition :settlement => :city
     end
+
+    before_transition :on => :expand, :do => :build_city
   end
 
   validates_presence_of :player, :map

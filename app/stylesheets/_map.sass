@@ -29,11 +29,12 @@
 
 =map
   div#map
+    :overflow hidden
     :display block
     :float left
     :position relative
     :padding 50px
-    :background url("/images/sea.png")
+    :background url("/images/map-background.png")
     @for !row from 1 to 11
       @for !col from 1 to 11
         &.size-#{!row + "-" + !col}
@@ -43,35 +44,58 @@
       :position absolute
       li
         :list-style none
-        :line-height= 80px
-        :text-align center
         @for !row from 0 to 11
           &.row-#{!row}
             :position absolute
             :top= !row * 80px
         ul
           li
+            strong
+              :width 95px
+              :height 80px
+              :display block
+              :text-align center
+              :line-height 80px
+            @for !position from 0 to 6
+              strong.generic-#{!position}
+                :background= url("/images/harbor-generic-#{!position}.png")
+            @for !position from 0 to 6
+              strong.bricks-#{!position}
+                :background= url("/images/harbor-generic-#{!position}.png")
+            @for !position from 0 to 6
+              strong.grain-#{!position}
+                :background= url("/images/harbor-generic-#{!position}.png")
+            @for !position from 0 to 6
+              strong.lumber-#{!position}
+                :background= url("/images/harbor-generic-#{!position}.png")
+            @for !position from 0 to 6
+              strong.ore-#{!position}
+                :background= url("/images/harbor-generic-#{!position}.png")
+            @for !position from 0 to 6
+              strong.wool-#{!position}
+                :background= url("/images/harbor-generic-#{!position}.png")
             :list-style none
-            :width= 95px
-            :height= 80px
             @for !col from 0 to 11
               &.col-#{!col}
                 :position absolute
                 :top= !col * 40px
                 :left= !col * 70px
-            &.forest
+            div
+              :width= 95px
+              :height= 80px
+            div.forest
               :background url("/images/forest.png")
-            &.hill
+            div.hill
               :background url("/images/hill.png")
-            &.mountain
+            div.mountain
               :background url("/images/mountain.png")
-            &.pasture
+            div.pasture
               :background url("/images/pasture.png")
-            &.field
+            div.field
               :background url("/images/field.png")
-            &.sea
+            div.sea
               :background url("/images/sea.png")
-            &.desert
+            div.desert
               :background url("/images/desert.png")
     ul#nodes
       :position absolute
@@ -83,10 +107,10 @@
             :top= !row * 80px
         ul
           li
+            :width 24px
+            :height 24px
             :z-index 2
             :list-style none
-            :width= 24px
-            :height= 24px
             @for !col from 0 to 23
               &.col-#{!col}
                 :position absolute
@@ -95,17 +119,20 @@
                   :left= floor(!col / 2) * 70px - 12px
                 @else
                   :left= floor(!col / 2) * 70px - 12px + 25px
-            &.settlement.player-1
+            div
+              :width= 24px
+              :height= 24px
+            div.settlement.player-1
               :background url("/images/settlement-player-1.png")
-            &.settlement.player-2
+            div.settlement.player-2
               :background url("/images/settlement-player-2.png")
-            &.settlement.player-3
+            div.settlement.player-3
               :background url("/images/settlement-player-3.png")
-            &.city.player-1
+            div.city.player-1
               :background url("/images/city-player-1.png")
-            &.city.player-2
+            div.city.player-2
               :background url("/images/city-player-2.png")
-            &.city.player-3
+            div.city.player-3
               :background url("/images/city-player-3.png")
     ul#edges
       :position absolute
@@ -119,36 +146,39 @@
           li
             :z-index 1
             :list-style none
-            :width= 48px
-            :height= 48px
+            :width 48px
+            :height 48px
+            div
+              :width= 48px
+              :height= 48px
             @for !col from 0 to 40
               &.col-#{!col}
                 :position absolute
                 @if !col % 3 == 0
                   :left= floor(!col / 3) * 70px - 24px - 58px
                   :top= floor(!col / 3) * 40px - 40px - 24px + 20px
-                  &.road.player-1
+                  div.road.player-1
                     :background url("/images/road-0-player-1.png")
-                  &.road.player-2
+                  div.road.player-2
                     :background url("/images/road-0-player-2.png")
-                  &.road.player-3
+                  div.road.player-3
                     :background url("/images/road-0-player-3.png")
                 @else
                   @if !col % 3 == 1
                     :left= floor(!col / 3) * 70px - 24px - 24px
                     :top= floor(!col / 3) * 40px - 40px - 24px
-                    &.road.player-1
+                    div.road.player-1
                       :background url("/images/road-1-player-1.png")
-                    &.road.player-2
+                    div.road.player-2
                       :background url("/images/road-1-player-2.png")
-                    &.road.player-3
+                    div.road.player-3
                       :background url("/images/road-1-player-3.png")
                   @else
                     :left= floor(!col / 3) * 70px - 24px + 10px
                     :top= floor(!col / 3) * 40px - 40px - 24px + 20px
-                    &.road.player-1
+                    div.road.player-1
                       :background url("/images/road-2-player-1.png")
-                    &.road.player-2
+                    div.road.player-2
                       :background url("/images/road-2-player-2.png")
-                    &.road.player-3
+                    div.road.player-3
                       :background url("/images/road-2-player-3.png")

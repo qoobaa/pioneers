@@ -17,19 +17,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ActionController::Routing::Routes.draw do |map|
-  map.resource :user
-  map.resource :user_session
-  map.resources :games, :member => { :end_turn => :put } do |games|
-    games.resource :player, :member => { :start => :put }
-    games.resource :offer, :has_one => :response
-    games.resources :robberies
-    games.resources :exchanges
-    games.resources :cards
-    games.resources :nodes
-    games.resources :edges
-    games.resources :hexes
-    games.resources :dice_rolls
-    games.resources :discards
+class HexesController < ApplicationController
+  before_filter :fetch_game
+
+  def index
+    @hexes = @game.map_hexes
+    respond_to do |format|
+      format.json do
+        hexes = @hexes.map do |hex|
+          hash = {
+            type: hex.hex_type,
+            position: hex.position
+          }
+          hash.merge! harbor_position: hex.harbor_position, harbor_type: hex.harbor_type if hex.harbor?
+          hash
+        end
+        render :json => { hexes: hexes }
+      end
+    end
+  end
+
+  protected
+
+  def fetch_game
+    @game = Game.find(params[:game_id])
   end
 end

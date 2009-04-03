@@ -1,0 +1,10 @@
+%div{ :class => hex.hex_type }
+  - if hex.robber?
+    %strong{ :class => "robber" }
+      robber
+  - if hex.harbor?
+    %strong{ :class => "#{hex.harbor_type}-#{hex.harbor_position}" }
+      = hex.harbor_type
+  - else
+    %strong{ :class => "roll-#{hex.roll}" }
+      = hex.roll

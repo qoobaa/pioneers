@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Map < ActiveRecord::Base
+  extend ActiveSupport::Memoizable
+
   belongs_to :game
 
   validates_numericality_of :width, :height, :greater_than => 0, :only_integer => true
@@ -41,16 +43,31 @@ class Map < ActiveRecord::Base
   end
 
   def hexes_groupped
-    (0...height).map { |row| hexes.find_all_by_row(row) }
+    (0..10).map do |row|
+      (0..10).map do |col|
+        hexes.detect { |hex| hex.row == row and hex.col == col }
+      end
+    end
   end
+  memoize :hexes_groupped
 
   def nodes_groupped
-    (0..height).map { |row| nodes.find_all_by_row(row) }
+    (0..10).map do |row|
+      (0..22).map do |col|
+        nodes.detect { |node| node.row == row and node.col == col }
+      end
+    end
   end
+  memoize :nodes_groupped
 
   def edges_groupped
-    (0..height).map { |row| edges.find_all_by_row(row) }
+    (0..10).map do |row|
+      (0..29).map do |col|
+        edges.detect { |edge| edge.row == row and edge.col == col }
+      end
+    end
   end
+  memoize :edges_groupped
 
   def robber_position
     [robber_row, robber_col]

@@ -25,7 +25,46 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id])
+    current_user # fetch user
+    respond_to do |format|
+      format.html do
+        @game = Game.find(params[:id], include: { map: [:hexes, :nodes, :edges], players: [:user] })
+      end
+      format.json do
+        @game = Game.find(params[:id], include: { map: [:nodes, :edges], players: [:user] })
+        nodes = @game.map_nodes.map do |node|
+          { position: node.position,
+            player_id: node.player_id,
+            state: node.state }
+        end
+        edges = @game.map_edges.map do |edge|
+          { position: edge.position,
+            player_id: edge.player_id }
+        end
+        players = @game.players.map do |player|
+          { id: player.id,
+            number: player.number,
+            points: player.visible_points,
+            resources: player.resources,
+            name: player.user_login,
+            idle_time: player.idle_time }
+        end
+        game = {
+          nodes: nodes,
+          edges: edges,
+          players: players,
+          state: @game.state,
+          phase: @game.phase,
+          robber_position: @game.map_robber_position,
+          map_size: @game.map_size,
+          current_turn: @game.current_turn,
+          current_turn_card_played: @game.current_turn_card_played,
+          current_player_id: @game.current_player_id,
+          cards: @game.cards_count
+        }
+        render :json => { game: game }
+      end
+    end
   end
 
   def update

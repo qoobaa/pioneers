@@ -1,0 +1,22 @@
+%div#map{ :class => "size-#{map.height}-#{map.width}" }
+  %ul#hexes
+    - (0..10).each do |row|
+      %li{ :class => "row-#{row}" }
+        %ul
+          - (0..10).each do |col|
+            %li{ :class => "col-#{col}" }
+              = render map.hexes_groupped[row][col] if map.hexes_groupped[row][col]
+  %ul#nodes
+    - (0..10).each do |row|
+      %li{ :class => "row-#{row}" }
+        %ul
+          - (0..22).each do |col|
+            %li{ :class => "col-#{col}" }
+              = render map.nodes_groupped[row][col] if map.nodes_groupped[row][col]
+  %ul#edges
+    - (0..10).each do |row|
+      %li{ :class => "row-#{row}" }
+        %ul
+          - (0..39).each do |col|
+            %li{ :class => "col-#{col}" }
+              = render map.edges_groupped[row][col] if map.edges_groupped[row][col]

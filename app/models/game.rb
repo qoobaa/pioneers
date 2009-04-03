@@ -30,11 +30,12 @@ class Game < ActiveRecord::Base
   belongs_to :largest_army_player, :class_name => "Player"
   belongs_to :longest_road_player, :class_name => "Player"
 
-  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber, :to => :map, :prefix => true
+  delegate :id, :to => :current_player, :prefix => true
+  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber_position, :to => :map, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
   delegate :resources, :to => :current_discard_player, :prefix => true
 
-  after_update :save_players, :end_game
+  after_update :save_players, :sum_cards_count, :end_game
 
   state_machine :initial => :preparing do
     event :start_game do
@@ -363,6 +364,10 @@ class Game < ActiveRecord::Base
     card_type = cards.rand
     self["#{card_type}_cards"] -= 1 if card_type
     card_type
+  end
+
+  def sum_cards_count
+    self.cards_count = (army_cards or 0) + (monopoly_cards or 0) + (year_of_plenty_cards or 0) + (road_building_cards or 0) + (victory_point_cards or 0)
   end
 
   # other
