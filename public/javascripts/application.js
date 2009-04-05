@@ -1,54 +1,47 @@
-var Pioneers = {
-  loadHexes: function(game_id) {
-    $.getJSON("/games/" + game_id + "/hexes.json", null,
-              function(data) {
-                var hexes = data["hexes"];
+// Pioneers - web game based on the Settlers of Catan board game.
 
-                // init array
-                Pioneers.hexes = new Array(10);
-                for(var row = 0; row < 10; row++) {
-                  Pioneers.hexes[row] = new Array(10);
-                }
+// Copyright (C) 2009 Jakub Kuźma <qoobaa@gmail.com>
 
-                // set hexes
-                for(var i in hexes) {
-                  var hex = hexes[i];
-                  Pioneers.hexes[hex.position[0]][hex.position[1]] = hex;
-                }
-              }
-             );
-  },
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
 
-  loadGame: function(game_id) {
-    $.getJSON("/games/" + game_id + ".json", null,
-              function(data) {
-                Pioneers.game = data["game"];
-              }
-             );
-  },
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
 
-  updateGame: function(game_id) {
-    $.getJSON("/games/" + game_id + ".json", null,
-              function(data) {
-                Pioneers.game = data["game"];
-              }
-             );
-  },
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-  periodicallyLoadGame: function(game_id, interval) {
-    var loadGame = function() {
-      Pioneers.loadGame(game_id);
-      setTimeout(loadGame, interval || 3500);
-    };
-    loadGame();
-  }
+var Pioneers = Pioneers || {};
+
+Pioneers.initGame = function(gameId) {
+  $.getJSON("/games/" + gameId + ".json",
+            function(data) {
+              Pioneers.game = new Pioneers.Game(data.game);
+              Pioneers.timerId = setInterval(
+                function() {
+                  Pioneers.updateGame(gameId);
+                }, 5000);
+            }
+           );
+};
+
+Pioneers.updateGame = function(gameId) {
+  $.getJSON("/games/" + gameId + ".json",
+            function(data) {
+              Pioneers.game.update(data);
+            }
+           );
 };
 
 $(function() {
-    Pioneers.loadHexes(10);
+    Pioneers.initGame(10);
+
     // alert(document.location.pathname);
     // Pioneers.periodicallyLoadGame(10);
-
     // $("#map ul#nodes li ul li").hover(
     //   function() {
     //     var settlement = "<div class='settlement player-1'></div>";

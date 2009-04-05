@@ -29,8 +29,9 @@ class Player < ActiveRecord::Base
 
   validates_uniqueness_of :user_id, :scope => [:game_id]
 
+  delegate :count, :to => :cards, :prefix => true
   delegate :login, :last_request_at, :to => :user, :prefix => true
-  delegate :start_game, :preparing?, :to => :game, :prefix => true
+  delegate :start_game, :preparing?, :current_player, :to => :game, :prefix => true
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points,
                             :visible_points, :hidden_points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
   validates_numericality_of :bricks_exchange_rate, :grain_exchange_rate, :lumber_exchange_rate,
@@ -62,6 +63,10 @@ class Player < ActiveRecord::Base
 
   def idle_time
     (Time.now - user_last_request_at).floor
+  end
+
+  def current?
+    game_current_player == self
   end
 
   protected

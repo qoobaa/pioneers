@@ -1,1 +1,30 @@
 = render @game.map
+
+%dl#game
+  %dt.state State
+  %dd.state= @game.state
+  %dt.turn Turn
+  %dd.turn= @game.current_turn
+  %dt.roll Roll
+  %dd.roll= @game.current_dice_roll_value
+
+%ol#players
+  = render @game.players
+
+%dl#player
+  %dt.bricks Bricks
+  %dd.bricks n/a
+  %dt.grain Grain
+  %dd.grain n/a
+  %dt.lumber Lumber
+  %dd.lumber n/a
+  %dt.ore Ore
+  %dd.ore n/a
+  %dt.wool Wool
+  %dd.wool n/a
+  %dt.settlements Settlements
+  %dd.settlements n/a
+  %dt.cities Cities
+  %dd.cities n/a
+  %dt.roads Roads
+  %dd.roads n/a

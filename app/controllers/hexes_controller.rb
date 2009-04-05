@@ -25,12 +25,10 @@ class HexesController < ApplicationController
     respond_to do |format|
       format.json do
         hexes = @hexes.map do |hex|
-          hash = {
-            type: hex.hex_type,
-            position: hex.position
-          }
-          hash.merge! harbor_position: hex.harbor_position, harbor_type: hex.harbor_type if hex.harbor?
-          hash
+          { type: hex.hex_type,
+            position: hex.position,
+            harborPosition: hex.harbor_position,
+            harborType: hex.harbor_type }
         end
         render :json => { hexes: hexes }
       end

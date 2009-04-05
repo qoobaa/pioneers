@@ -95,7 +95,7 @@ class Node < ActiveRecord::Base
   end
 
   def edge_positions
-    if position[1].odd?
+    if col.odd?
       [[row, 3 * (col.div(2) + 1) + 1], [row, 3 * (col.div(2) + 1) - 1], [row, 3 * (col.div(2) + 1)]]
     else
       [[row - 1, 3 * col.div(2) + 3], [row, 3 * col.div(2) + 1], [row, 3 * col.div(2) + 2]]
