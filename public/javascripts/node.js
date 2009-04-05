@@ -65,4 +65,24 @@ Pioneers.Node = function(attributes) {
               [this.row(), 3 * ((this.col() - 1) / 2 + 1)]];
     }
   };
+
+  this.update = function(attributes) {
+    this.state = attributes.state;
+    this.updateView();
+  };
+
+  this.updateView = function() {
+    $("#nodes li.row-" + this.row() + " li.col-" + this.col()).html("<div class='" + this.state + " player-" + this.playerNumber() + "'></div>");
+  };
+
+  this.game = function() {
+    return this.map.game;
+  };
+
+  this.playerNumber = function() {
+    var players = this.game().players;
+    for(i in players) {
+      if(players[i].id == this.playerId) return players[i].number;
+    }
+  };
 };

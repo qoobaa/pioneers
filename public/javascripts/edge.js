@@ -98,4 +98,23 @@ Pioneers.Edge = function(attributes) {
               [this.row(), this.col() + 1]];
     }
   };
+
+  this.update = function(attributes) {
+    this.updateView();
+  };
+
+  this.updateView = function() {
+    $("#edges li.row-" + this.row() + " li.col-" + this.col()).html("<div class='road player-" + this.playerNumber() + "'></div>");
+  };
+
+  this.game = function() {
+    return this.map.game;
+  };
+
+  this.playerNumber = function() {
+    var players = this.game().players;
+    for(i in players) {
+      if(players[i].id == this.playerId) return players[i].number;
+    }
+  };
 };

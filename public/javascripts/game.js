@@ -20,9 +20,21 @@ var Pioneers = Pioneers || {};
 Pioneers.Game = function(attributes) {
   this.id = attributes.id;
   this.map = new Pioneers.Map(attributes.map);
-  this.player = new Pioneers.Player(attributes.player);
+  this.map.game = this;
+  this.userPlayer = new Pioneers.UserPlayer(attributes.userPlayer);
+
+  this.createPlayers = function(attributes) {
+    var players = [];
+    for(i in attributes) {
+      players[i] = new Pioneers.Player(attributes[i]);
+    }
+    return players;
+  };
+
+  this.players = this.createPlayers(attributes.players);
 
   this.update = function(attributes) {
-    this.player.update(attributes.player);
+    this.userPlayer.update(attributes.userPlayer);
+    this.map.update(attributes.map);
   };
 };

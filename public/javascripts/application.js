@@ -32,7 +32,7 @@ Pioneers.initGame = function(gameId) {
 Pioneers.updateGame = function(gameId) {
   $.getJSON("/games/" + gameId + ".json",
             function(data) {
-              Pioneers.game.update(data);
+              Pioneers.game.update(data.game);
             }
            );
 };

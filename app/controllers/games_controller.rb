@@ -26,7 +26,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id], include: { map: [:hexes, :nodes, :edges], players: [:user, :cards] })
-    @player = @game.players.find_by_user_id(current_user.try(:id))
+    @user_player = @game.players.find_by_user_id(current_user.try(:id))
     respond_to do |format|
       format.html
       format.json do
@@ -53,13 +53,34 @@ class GamesController < ApplicationController
             harborPosition: hex.harbor_position,
             harborType: hex.harbor_type }
         end
-        if @player
-          cards = @player.cards.map do |card|
+        if @user_player
+          cards = @user_player.cards.map do |card|
             { id: card.id,
               type: card.type,
               state: card.state }
           end
+          user_player = {
+            id: @user_player.id,
+            bricks: @user_player.bricks,
+            grain: @user_player.grain,
+            lumber: @user_player.lumber,
+            ore: @user_player.ore,
+            wool: @user_player.wool,
+            settlements: @user_player.settlements,
+            cities: @user_player.cities,
+            roads: @user_player.roads,
+            state: @user_player.state,
+            visiblePoints: @user_player.visible_points,
+            hiddenPoints: @user_player.hidden_points,
+            bricksExchangeRate: @user_player.bricks_exchange_rate,
+            grainExchangeRate: @user_player.grain_exchange_rate,
+            lumberExchangeRate: @user_player.lumber_exchange_rate,
+            oreExchangeRate: @user_player.ore_exchange_rate,
+            woolExchangeRate: @user_player.wool_exchange_rate,
+            cards: cards
+          }
         end
+
         game = {
           map: {
             size: @game.map_size,
@@ -68,26 +89,7 @@ class GamesController < ApplicationController
             edges: edges,
             robberPosition: @game.map_robber_position,
           },
-          player: {
-            id: @player.id,
-            bricks: @player.bricks,
-            grain: @player.grain,
-            lumber: @player.lumber,
-            ore: @player.ore,
-            wool: @player.wool,
-            settlements: @player.settlements,
-            cities: @player.cities,
-            roads: @player.roads,
-            state: @player.state,
-            visiblePoints: @player.visible_points,
-            hiddenPoints: @player.hidden_points,
-            bricksExchangeRate: @player.bricks_exchange_rate,
-            grainExchangeRate: @player.grain_exchange_rate,
-            lumberExchangeRate: @player.lumber_exchange_rate,
-            oreExchangeRate: @player.ore_exchange_rate,
-            woolExchangeRate: @player.wool_exchange_rate,
-            cards: cards
-          },
+          userPlayer: user_player,
           players: players,
           id: @game.id,
           state: @game.state,
