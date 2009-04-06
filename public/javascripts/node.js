@@ -17,7 +17,9 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Node = function(attributes) {
+Pioneers.Node = function(map, attributes) {
+  this.map = map;
+  this.game = map.game;
   this.position = attributes.position;
   this.playerId = attributes.playerId;
   this.state = attributes.state;
@@ -75,14 +77,12 @@ Pioneers.Node = function(attributes) {
     $("#nodes li.row-" + this.row() + " li.col-" + this.col()).html("<div class='" + this.state + " player-" + this.playerNumber() + "'></div>");
   };
 
-  this.game = function() {
-    return this.map.game;
-  };
-
   this.playerNumber = function() {
-    var players = this.game().players;
-    for(i in players) {
-      if(players[i].id == this.playerId) return players[i].number;
-    }
+    var playerId = this.playerId;
+    return $.grep(this.game.players,
+                  function(player) {
+                    return player.id == playerId;
+                  }
+                 )[0].number;
   };
 };

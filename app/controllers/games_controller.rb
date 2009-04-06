@@ -45,7 +45,7 @@ class GamesController < ApplicationController
             points: player.visible_points,
             resources: player.resources,
             name: player.user_login,
-            idleTime: player.idle_time }
+            isUserIdle: player.user_idle? }
         end
         hexes = @game.map_hexes.map do |hex|
           { type: hex.hex_type,
@@ -80,7 +80,6 @@ class GamesController < ApplicationController
             cards: cards
           }
         end
-
         game = {
           map: {
             size: @game.map_size,

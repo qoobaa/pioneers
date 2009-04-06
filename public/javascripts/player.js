@@ -17,11 +17,23 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Player = function(attributes) {
+Pioneers.Player = function(game, attributes) {
+  this.game = game;
   this.id = attributes.id;
   this.number = attributes.number;
   this.points = attributes.points;
   this.resources = attributes.resources;
   this.name = attributes.name;
-  this.idleTime = attributes.idleTime;
+  this.isUserIdle = attributes.isUserIdle;
+
+  this.update = function(attributes) {
+    this.points = attributes.points;
+    this.resources = attributes.resources;
+    this.isUserIdle = attributes.isUserIdle;
+    this.updateView();
+  };
+
+  this.updateView = function() {
+    $("#player li.player-" + this.number + " .points").text("10");
+  };
 };

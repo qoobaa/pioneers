@@ -30,7 +30,7 @@ class Player < ActiveRecord::Base
   validates_uniqueness_of :user_id, :scope => [:game_id]
 
   delegate :count, :to => :cards, :prefix => true
-  delegate :login, :last_request_at, :to => :user, :prefix => true
+  delegate :login, :idle?, :to => :user, :prefix => true
   delegate :start_game, :preparing?, :current_player, :to => :game, :prefix => true
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points,
                             :visible_points, :hidden_points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
@@ -59,10 +59,6 @@ class Player < ActiveRecord::Base
     resource_type = ([:bricks] * bricks + [:lumber] * lumber + [:ore] * ore + [:grain] * grain + [:wool] * wool).rand
     self[resource_type] -= 1 if resource_type
     resource_type
-  end
-
-  def idle_time
-    (Time.now - user_last_request_at).floor
   end
 
   def current?

@@ -17,7 +17,8 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Hex = function(attributes) {
+Pioneers.Hex = function(map, attributes) {
+  this.map = map;
   this.position = attributes.position;
   this.type = attributes.type;
   this.harborType = attributes.harborType;

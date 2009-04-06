@@ -18,23 +18,52 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.Game = function(attributes) {
-  this.id = attributes.id;
-  this.map = new Pioneers.Map(attributes.map);
-  this.map.game = this;
-  this.userPlayer = new Pioneers.UserPlayer(attributes.userPlayer);
+  this.createMap = function(attributes) {
+    this.map = new Pioneers.Map(this, attributes);
+    this.map.game = this;
+  };
+
+  this.createUserPlayer = function(attributes) {
+    if(attributes != null) {
+      this.userPlayer = new Pioneers.UserPlayer(this, attributes);
+    }
+  };
 
   this.createPlayers = function(attributes) {
-    var players = [];
-    for(i in attributes) {
-      players[i] = new Pioneers.Player(attributes[i]);
-    }
-    return players;
+    var game = this;
+    this.players = $.map(attributes,
+                         function(player) {
+                           return new Pioneers.Player(game, player);
+                         }
+                        );
   };
 
-  this.players = this.createPlayers(attributes.players);
+  this.updateMap = function(attributes) {
+    this.map.update(attributes);
+  };
+
+  this.updateUserPlayer = function(attributes) {
+    if(this.userPlayer != null) {
+      this.userPlayer.update(attributes);
+    }
+  };
+
+  this.updatePlayers = function(attributes) {
+    $.each(this.players,
+           function(i) {
+             this.update(attributes[i]);
+           }
+          );
+  };
 
   this.update = function(attributes) {
-    this.userPlayer.update(attributes.userPlayer);
-    this.map.update(attributes.map);
+    this.updateMap(attributes.map);
+    this.updatePlayers(attributes.players);
+    this.updateUserPlayer(attributes.userPlayer);
   };
+
+  this.id = attributes.id;
+  this.createMap(attributes.map);
+  this.createUserPlayer(attributes.userPlayer);
+  this.createPlayers(attributes.players);
 };

@@ -17,7 +17,9 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Edge = function(attributes) {
+Pioneers.Edge = function(map, attributes) {
+  this.map = map;
+  this.game = map.game;
   this.position = attributes.position;
   this.playerId = attributes.playerId;
 
@@ -42,8 +44,26 @@ Pioneers.Edge = function(attributes) {
     }
   };
 
+  this.hexes = function() {
+    var map = this.map;
+    return $.map(this.hexPositions(),
+                 function(position) {
+                   return map.hexes[position[0]][position[1]];
+                 }
+                );
+  };
+
   this.nodePositions = function() {
     return [this.leftNodePosition(), this.rightNodePosition()];
+  };
+
+  this.nodes = function() {
+    var map = this.map;
+    return $.map(this.nodePositions(),
+                 function(position) {
+                   return map.nodes[position[0]][position[1]];
+                 }
+                );
   };
 
   this.rightNodePosition = function() {
@@ -107,14 +127,12 @@ Pioneers.Edge = function(attributes) {
     $("#edges li.row-" + this.row() + " li.col-" + this.col()).html("<div class='road player-" + this.playerNumber() + "'></div>");
   };
 
-  this.game = function() {
-    return this.map.game;
-  };
-
   this.playerNumber = function() {
-    var players = this.game().players;
-    for(i in players) {
-      if(players[i].id == this.playerId) return players[i].number;
-    }
+    var playerId = this.playerId;
+    return $.grep(this.game.players,
+                  function(player) {
+                    return player.id == playerId;
+                  }
+                 )[0].number;
   };
 };

@@ -21,10 +21,7 @@ Pioneers.initGame = function(gameId) {
   $.getJSON("/games/" + gameId + ".json",
             function(data) {
               Pioneers.game = new Pioneers.Game(data.game);
-              Pioneers.timerId = setInterval(
-                function() {
-                  Pioneers.updateGame(gameId);
-                }, 5000);
+              Pioneers.periodicallyUpdate(gameId);
             }
            );
 };
@@ -35,6 +32,13 @@ Pioneers.updateGame = function(gameId) {
               Pioneers.game.update(data.game);
             }
            );
+};
+
+Pioneers.periodicallyUpdate = function(gameId, interval) {
+  Pioneers.timerId = setInterval(
+    function() {
+      Pioneers.updateGame(gameId);
+    }, interval || 5000);
 };
 
 $(function() {

@@ -17,7 +17,7 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.UserPlayer = function(attributes) {
+Pioneers.UserPlayer = function(game, attributes) {
   this.update = function(attributes) {
     this.id = attributes.id;
     this.bricks = attributes.bricks;
@@ -40,16 +40,16 @@ Pioneers.UserPlayer = function(attributes) {
   };
 
   this.updateView = function() {
-    this.rootElement.children("dd.bricks").text(this.bricks);
-    this.rootElement.children("dd.grain").text(this.grain);
-    this.rootElement.children("dd.lumber").text(this.lumber);
-    this.rootElement.children("dd.ore").text(this.ore);
-    this.rootElement.children("dd.wool").text(this.wool);
-    this.rootElement.children("dd.settlements").text(this.settlements);
-    this.rootElement.children("dd.cities").text(this.cities);
-    this.rootElement.children("dd.roads").text(this.roads);
+    $("#player dd.bricks").text(this.bricks);
+    $("#player dd.grain").text(this.grain);
+    $("#player dd.lumber").text(this.lumber);
+    $("#player dd.ore").text(this.ore);
+    $("#player dd.wool").text(this.wool);
+    $("#player dd.settlements").text(this.settlements);
+    $("#player dd.cities").text(this.cities);
+    $("#player dd.roads").text(this.roads);
   };
 
-  this.rootElement = $("dl#player");
+  this.game = game;
   this.update(attributes);
 };

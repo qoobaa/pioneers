@@ -17,13 +17,12 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Map = function(attributes) {
+Pioneers.Map = function(game, attributes) {
   this.createHexes = function(attributes) {
     var hexes = Pioneers.utils.makeArray2D(10, 10);
     for(var i in attributes) {
-      var hex = new Pioneers.Hex(attributes[i]);
+      var hex = new Pioneers.Hex(this, attributes[i]);
       hexes[hex.row()][hex.col()] = hex;
-      hex.map = this;
     }
     return hexes;
   };
@@ -31,9 +30,8 @@ Pioneers.Map = function(attributes) {
   this.createNodes = function(attributes) {
     var nodes = Pioneers.utils.makeArray2D(10, 10);
     for(var i in attributes) {
-      var node = new Pioneers.Node(attributes[i]);
+      var node = new Pioneers.Node(this, attributes[i]);
       nodes[node.row()][node.col()] = node;
-      node.map = this;
     }
     return nodes;
   };
@@ -41,9 +39,8 @@ Pioneers.Map = function(attributes) {
   this.createEdges = function(attributes) {
     var edges = Pioneers.utils.makeArray2D(10, 10);
     for(var i in attributes) {
-      var edge = new Pioneers.Edge(attributes[i]);
+      var edge = new Pioneers.Edge(this, attributes[i]);
       edges[edge.row()][edge.col()] = edge;
-      edge.map = this;
     }
     return edges;
   };
@@ -52,9 +49,8 @@ Pioneers.Map = function(attributes) {
     for(i in nodes) {
       var position = nodes[i].position;
       if(this.nodes[position[0]][position[1]] == null) {
-        var node = new Pioneers.Node(attributes[i]);
+        var node = new Pioneers.Node(this, attributes[i]);
         this.nodes[node.row()][node.col()] = node;
-        node.map = this;
       } else {
         this.nodes[position[0]][position[1]].update(nodes[i]);
       }
@@ -66,9 +62,8 @@ Pioneers.Map = function(attributes) {
     for(i in edges) {
       var position = edges[i].position;
       if(this.edges[position[0]][position[1]] == null) {
-        var edge = new Pioneers.Edge(attributes[i]);
+        var edge = new Pioneers.Edge(this, attributes[i]);
         this.edges[edge.row()][edge.col()] = edge;
-        edge.map = this;
       } else {
         this.edges[position[0]][position[1]].update(edges[i]);
       }
@@ -80,6 +75,7 @@ Pioneers.Map = function(attributes) {
     this.updateEdges(attributes.edges);
   };
 
+  this.game = game;
   this.hexes = this.createHexes(attributes.hexes);
   this.nodes = this.createNodes(attributes.nodes);
   this.edges = this.createEdges(attributes.edges);
