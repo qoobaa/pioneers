@@ -6,14 +6,14 @@ module Compass
         self.options = options
       end
   
-      def perform
+      def execute
         if options[:quiet]
           # The quiet option may make scripting easier
           puts ::Compass.version[:string]
         else
           lines = []
           lines << "Compass #{::Compass.version[:string]}"
-          lines << "Copyright (c) 2008 Chris Eppstein"
+          lines << "Copyright (c) 2008-2009 Chris Eppstein"
           lines << "Released under the MIT License."
           puts lines.join("\n")
         end
