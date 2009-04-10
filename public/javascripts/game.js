@@ -62,6 +62,66 @@ Pioneers.Game = function(attributes) {
     this.updateUserPlayer(attributes.userPlayer);
   };
 
+  this.playerById = function(id) {
+    return $.grep(this.players,
+                  function(player) {
+                    return player.id == id;
+                  }
+                 )[0];
+  };
+
+  this.buildCity = function() {
+    var playerNumber = this.userPlayer.number;
+    $.each(this.map.settlements(),
+           function() {
+             var id = this.id;
+             $("#nodes li.row-" + this.row() + " li.col-" + this.col()).addClass("expandable").hover(
+               function() {
+                 $(this).html("<div class='city player-" + playerNumber + "'></div>");
+               },
+               function() {
+                 $(this).html("<div class='settlement player-" + playerNumber + "'></div>");
+               }
+             ).click(
+               function() {
+                 alert("you clicked " + id);
+                 $("#nodes .expandable").removeClass("expandable").unbind();
+               }
+             );
+           }
+          );
+  };
+
+  this.buildSettlement = function() {
+    var playerNumber = this.userPlayer.number;
+    var map = this.map;
+    var nodes = [];
+    $.each(this.map.roads(), function() {
+             $.each(this.nodePositions(), function() {
+                      if(map.nodes[this[0]][this[1]] == null) {
+                        var node = new Pioneers.Node(map, { position: this });
+                        if(node.nodes().length == 0) {
+                          $("#nodes li.row-" + node.row() + " li.col-" + node.col()).addClass("settleable").hover(
+                            function() {
+                              $(this).html("<div class='settlement player-" + playerNumber + "'></div>");
+                            },
+                            function() {
+                              $(this).empty();
+                            }
+                          ).click(
+                            function() {
+                              alert("you clicked " + node.row() + ", " + node.col());
+                              $("#nodes .settleable").removeClass("settleable").unbind().empty();
+                            }
+                          );
+                        };
+                      }
+                    }
+                   );
+           }
+          );
+  };
+
   this.id = attributes.id;
   this.createMap(attributes.map);
   this.createUserPlayer(attributes.userPlayer);

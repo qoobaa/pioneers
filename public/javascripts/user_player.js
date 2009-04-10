@@ -20,6 +20,7 @@ var Pioneers = Pioneers || {};
 Pioneers.UserPlayer = function(game, attributes) {
   this.update = function(attributes) {
     this.id = attributes.id;
+    this.number = attributes.number;
     this.bricks = attributes.bricks;
     this.grain = attributes.grain;
     this.lumber = attributes.lumber;

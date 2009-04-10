@@ -20,6 +20,7 @@ var Pioneers = Pioneers || {};
 Pioneers.Node = function(map, attributes) {
   this.map = map;
   this.game = map.game;
+  this.id = attributes.id;
   this.position = attributes.position;
   this.playerId = attributes.playerId;
   this.state = attributes.state;
@@ -44,6 +45,14 @@ Pioneers.Node = function(map, attributes) {
     }
   };
 
+  this.hexes = function() {
+    var map = this.map;
+    return $.map(this.hexPositions(), function(position) {
+                   return map.hexes[position[0]][position[1]];
+                 }
+                );
+  };
+
   this.nodePositions = function() {
     if(this.col() % 2 == 0) {
       return [[this.row() - 1, this.col() + 1],
@@ -54,6 +63,14 @@ Pioneers.Node = function(map, attributes) {
               [this.row(), this.col() - 1],
               [this.row() + 1, this.col() - 1]];
     }
+  };
+
+  this.nodes = function() {
+    var map = this.map;
+    return $.map(this.nodePositions(), function(position) {
+                   return map.nodes[position[0]][position[1]];
+                 }
+                );
   };
 
   this.edgePositions = function() {
@@ -68,6 +85,14 @@ Pioneers.Node = function(map, attributes) {
     }
   };
 
+  this.edges = function() {
+    var map = this.map;
+    return $.map(this.edgePositions(), function(position) {
+                   return map.edges[position[0]][position[1]];
+                 }
+                );
+  };
+
   this.update = function(attributes) {
     this.state = attributes.state;
     this.updateView();
@@ -78,11 +103,6 @@ Pioneers.Node = function(map, attributes) {
   };
 
   this.playerNumber = function() {
-    var playerId = this.playerId;
-    return $.grep(this.game.players,
-                  function(player) {
-                    return player.id == playerId;
-                  }
-                 )[0].number;
+    return this.game.playerById(this.playerId).number;
   };
 };

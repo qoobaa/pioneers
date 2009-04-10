@@ -128,11 +128,6 @@ Pioneers.Edge = function(map, attributes) {
   };
 
   this.playerNumber = function() {
-    var playerId = this.playerId;
-    return $.grep(this.game.players,
-                  function(player) {
-                    return player.id == playerId;
-                  }
-                 )[0].number;
+    return this.game.playerById(this.playerId).number;
   };
 };

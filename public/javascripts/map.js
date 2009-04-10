@@ -19,30 +19,33 @@ var Pioneers = Pioneers || {};
 
 Pioneers.Map = function(game, attributes) {
   this.createHexes = function(attributes) {
-    var hexes = Pioneers.utils.makeArray2D(10, 10);
+    this.hexes = Pioneers.utils.makeArray2D(10, 10);
+    this.hexesList = [];
     for(var i in attributes) {
       var hex = new Pioneers.Hex(this, attributes[i]);
-      hexes[hex.row()][hex.col()] = hex;
+      this.hexes[hex.row()][hex.col()] = hex;
+      this.hexesList.push(hex);
     }
-    return hexes;
   };
 
   this.createNodes = function(attributes) {
-    var nodes = Pioneers.utils.makeArray2D(10, 10);
+    this.nodes = Pioneers.utils.makeArray2D(10, 10);
+    this.nodesList = [];
     for(var i in attributes) {
       var node = new Pioneers.Node(this, attributes[i]);
-      nodes[node.row()][node.col()] = node;
+      this.nodes[node.row()][node.col()] = node;
+      this.nodesList.push(node);
     }
-    return nodes;
   };
 
   this.createEdges = function(attributes) {
-    var edges = Pioneers.utils.makeArray2D(10, 10);
+    this.edges = Pioneers.utils.makeArray2D(10, 10);
+    this.edgesList = [];
     for(var i in attributes) {
       var edge = new Pioneers.Edge(this, attributes[i]);
-      edges[edge.row()][edge.col()] = edge;
+      this.edges[edge.row()][edge.col()] = edge;
+      this.edgesList.push(edge);
     }
-    return edges;
   };
 
   this.updateNodes = function(nodes) {
@@ -51,6 +54,7 @@ Pioneers.Map = function(game, attributes) {
       if(this.nodes[position[0]][position[1]] == null) {
         var node = new Pioneers.Node(this, attributes[i]);
         this.nodes[node.row()][node.col()] = node;
+        this.nodesList.push(node);
       } else {
         this.nodes[position[0]][position[1]].update(nodes[i]);
       }
@@ -64,6 +68,7 @@ Pioneers.Map = function(game, attributes) {
       if(this.edges[position[0]][position[1]] == null) {
         var edge = new Pioneers.Edge(this, attributes[i]);
         this.edges[edge.row()][edge.col()] = edge;
+        this.edgesList.push(edge);
       } else {
         this.edges[position[0]][position[1]].update(edges[i]);
       }
@@ -75,8 +80,39 @@ Pioneers.Map = function(game, attributes) {
     this.updateEdges(attributes.edges);
   };
 
+  this.settlements = function() {
+    var playerId = this.game.userPlayer.id;
+    return  $.grep(this.nodesList,
+                   function(node) {
+                     return node.state == "settlement" && node.playerId == playerId;
+                   }
+                  );
+  };
+
+  this.cities = function() {
+    var playerId = this.game.userPlayer.id;
+    return  $.grep(this.nodesList,
+                   function(node) {
+                     return node.state == "city" && node.playerId == playerId;
+                   }
+                  );
+  };
+
+  this.settlementsAndCities = function() {
+    return $.merge(this.settlements(), this.cities());
+  };
+
+  this.roads = function() {
+    var playerId = this.game.userPlayer.id;
+    return $.grep(this.edgesList,
+                  function(edge) {
+                    return edge.playerId == playerId;
+                  }
+                 );
+  };
+
   this.game = game;
-  this.hexes = this.createHexes(attributes.hexes);
-  this.nodes = this.createNodes(attributes.nodes);
-  this.edges = this.createEdges(attributes.edges);
+  this.createHexes(attributes.hexes);
+  this.createNodes(attributes.nodes);
+  this.createEdges(attributes.edges);
 };

@@ -33,7 +33,8 @@ class GamesController < ApplicationController
         nodes = @game.map_nodes.map do |node|
           { position: node.position,
             playerId: node.player_id,
-            state: node.state }
+            state: node.state,
+            id: node.id }
         end
         edges = @game.map_edges.map do |edge|
           { position: edge.position,
@@ -61,6 +62,7 @@ class GamesController < ApplicationController
           end
           user_player = {
             id: @user_player.id,
+            number: @user_player.number,
             bricks: @user_player.bricks,
             grain: @user_player.grain,
             lumber: @user_player.lumber,
