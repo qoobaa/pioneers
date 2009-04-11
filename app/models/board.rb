@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class Map < ActiveRecord::Base
+class Board < ActiveRecord::Base
   extend ActiveSupport::Memoizable
 
   belongs_to :game

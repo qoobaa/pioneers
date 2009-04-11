@@ -17,7 +17,7 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Hex = function(map, attributes) {
+Pioneers.Hex = function(board, attributes) {
   this.row = function() {
     return this.position[0];
   };
@@ -36,10 +36,10 @@ Pioneers.Hex = function(map, attributes) {
   };
 
   this.hexes = function() {
-    var map = this.map;
+    var board = this.board;
     return $.map(this.hexPositions(),
                  function(position) {
-                   return map.hex(position);
+                   return board.hex(position);
                  }
                 );
   };
@@ -54,10 +54,10 @@ Pioneers.Hex = function(map, attributes) {
   };
 
   this.nodes = function() {
-    var map = this.map;
+    var board = this.board;
     return $.map(this.nodePositions(),
                  function(position) {
-                   return map.node(position);
+                   return board.node(position);
                  }
                 );
   };
@@ -72,15 +72,15 @@ Pioneers.Hex = function(map, attributes) {
   };
 
   this.edges = function() {
-    var map = this.map;
+    var board = this.board;
     return $.map(this.edgePositions(),
                  function(position) {
-                   return map.edge(position);
+                   return board.edge(position);
                  }
                 );
   };
 
-  this.map = map;
+  this.board = board;
   this.position = attributes.position;
   this.type = attributes.type;
   this.harborType = attributes.harborType;

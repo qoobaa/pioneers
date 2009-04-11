@@ -26,13 +26,13 @@ class Robbery < ActiveRecord::Base
   validates_numericality_of :row, :col, :only_integer => true
   validate :position_settleable, :position_changed, :sender_in_neighbourhood
 
-  delegate :map, :to => :game
-  delegate :hexes, :robber_position, :robber_position=, :to => :map, :prefix => true
+  delegate :board, :to => :game
+  delegate :hexes, :robber_position, :robber_position=, :to => :board, :prefix => true
   delegate :robbed!, :players, :to => :game, :prefix => true
 
   before_validation :associate_sender
   before_save :rob_player
-  after_save :robbed, :update_map_robber_position
+  after_save :robbed, :update_board_robber_position
 
   attr_reader :user
   attr_accessor :sender_number
@@ -55,7 +55,7 @@ class Robbery < ActiveRecord::Base
   end
 
   def hex
-    map_hexes.find_by_position(position)
+    board_hexes.find_by_position(position)
   end
 
   def players
@@ -73,7 +73,7 @@ class Robbery < ActiveRecord::Base
   protected
 
   def position_changed?
-    position != map_robber_position
+    position != board_robber_position
   end
 
   def position_settleable
@@ -102,8 +102,8 @@ class Robbery < ActiveRecord::Base
     end
   end
 
-  def update_map_robber_position
-    self.map_robber_position = position
-    map.save!
+  def update_board_robber_position
+    self.board_robber_position = position
+    board.save!
   end
 end

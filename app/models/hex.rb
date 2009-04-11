@@ -18,12 +18,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Hex < ActiveRecord::Base
-  belongs_to :map
-  delegate :width, :height, :size, :robber_position, :nodes, :edges, :hexes, :to => :map, :prefix => true
-  delegate :game, :to => :map
+  belongs_to :board
+  delegate :width, :height, :size, :robber_position, :nodes, :edges, :hexes, :to => :board, :prefix => true
+  delegate :game, :to => :board
 
   validates_inclusion_of :roll, :in => [2, 3, 4, 5, 6, 8, 9, 10, 11, 12], :allow_nil => true
-  validates_uniqueness_of :map_id, :scope => [:row, :col]
+  validates_uniqueness_of :board_id, :scope => [:row, :col]
   validates_inclusion_of :harbor_type, :in => %w(bricks grain lumber ore wool generic), :allow_nil => true
   validates_inclusion_of :harbor_position, :in => 0..5, :allow_nil => true
 
@@ -35,7 +35,7 @@ class Hex < ActiveRecord::Base
   RESOURCE_TYPES = { "hill" => "bricks", "field" => "grain", "mountain" => "ore", "pasture" => "wool", "forest" => "lumber" }.freeze
 
   def robber?
-    map_robber_position == position
+    board_robber_position == position
   end
 
   def position
@@ -72,7 +72,7 @@ class Hex < ActiveRecord::Base
   end
 
   def hexes
-    map_hexes.find_by_positions(hex_positions)
+    board_hexes.find_by_positions(hex_positions)
   end
 
   def node_positions
@@ -80,7 +80,7 @@ class Hex < ActiveRecord::Base
   end
 
   def nodes
-    map_nodes.find_by_positions(node_positions)
+    board_nodes.find_by_positions(node_positions)
   end
 
   def edge_positions
@@ -88,7 +88,7 @@ class Hex < ActiveRecord::Base
   end
 
   def edges
-    map_edges.find_by_position(edge_positions)
+    board_edges.find_by_position(edge_positions)
   end
 
   def harbor?

@@ -21,7 +21,7 @@ class EdgesController < ApplicationController
   before_filter :require_user, :fetch_game
 
   def create
-    @edge = @game.map_edges.build(params[:edge])
+    @edge = @game.board_edges.build(params[:edge])
     @edge.user = @current_user
     if @edge.save
       flash[:success] = "Successfully created"

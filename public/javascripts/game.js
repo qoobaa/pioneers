@@ -18,9 +18,9 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.Game = function(attributes) {
-  this.createMap = function(attributes) {
-    this.map = new Pioneers.Map(this, attributes);
-    this.map.game = this;
+  this.createBoard = function(attributes) {
+    this.board = new Pioneers.Board(this, attributes);
+    this.board.game = this;
   };
 
   this.createUserPlayer = function(attributes) {
@@ -38,8 +38,8 @@ Pioneers.Game = function(attributes) {
                         );
   };
 
-  this.updateMap = function(attributes) {
-    this.map.update(attributes);
+  this.updateBoard = function(attributes) {
+    this.board.update(attributes);
   };
 
   this.updateUserPlayer = function(attributes) {
@@ -57,7 +57,7 @@ Pioneers.Game = function(attributes) {
   };
 
   this.update = function(attributes) {
-    this.updateMap(attributes.map);
+    this.updateBoard(attributes.board);
     this.updatePlayers(attributes.players);
     this.updateUserPlayer(attributes.userPlayer);
   };
@@ -72,7 +72,7 @@ Pioneers.Game = function(attributes) {
 
   this.buildCity = function() {
     var playerNumber = this.userPlayer.number;
-    $.each(this.map.settlements(),
+    $.each(this.board.settlements(),
            function() {
              var id = this.id;
              $("#nodes li.row-" + this.row() + " li.col-" + this.col()).addClass("expandable").hover(
@@ -94,12 +94,12 @@ Pioneers.Game = function(attributes) {
 
   this.buildSettlementMode = function() {
     var playerNumber = this.userPlayer.number;
-    var map = this.map;
+    var board = this.board;
     var nodes = [];
-    $.each(this.map.roads(), function() {
+    $.each(this.board.roads(), function() {
              $.each(this.nodePositions(), function() {
-                      if(map.nodes[this[0]][this[1]] == null) {
-                        var node = new Pioneers.Node(map, { position: this });
+                      if(board.nodes[this[0]][this[1]] == null) {
+                        var node = new Pioneers.Node(board, { position: this });
                         if(node.nodes().length == 0) {
                           $("#nodes li.row-" + node.row() + " li.col-" + node.col()).addClass("settleable").hover(
                             function() {
@@ -127,7 +127,7 @@ Pioneers.Game = function(attributes) {
   };
 
   this.id = attributes.id;
-  this.createMap(attributes.map);
+  this.createBoard(attributes.board);
   this.createUserPlayer(attributes.userPlayer);
   this.createPlayers(attributes.players);
 };

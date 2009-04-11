@@ -18,17 +18,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Edge < ActiveRecord::Base
-  validates_presence_of :player, :map
+  validates_presence_of :player, :board
   validates_associated :player
-  validates_uniqueness_of :map_id, :scope => [:row, :col]
+  validates_uniqueness_of :board_id, :scope => [:row, :col]
 
-  belongs_to :map
+  belongs_to :board
   belongs_to :player
 
   after_save :save_player, :road_built
 
-  delegate :game, :to => :map
-  delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
+  delegate :game, :to => :board
+  delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :board, :prefix => true
   delegate :players, :first_road?, :second_road?, :after_roll?, :road_built!, :to => :game, :prefix => true
   delegate :edges, :number, :to => :player, :prefix => true
 
@@ -70,7 +70,7 @@ class Edge < ActiveRecord::Base
   end
 
   def hexes
-    map_hexes.find_by_positions(hex_positions)
+    board_hexes.find_by_positions(hex_positions)
   end
 
   def node_positions
@@ -98,15 +98,15 @@ class Edge < ActiveRecord::Base
   end
 
   def left_node
-    map_nodes.find_by_position(left_node_position)
+    board_nodes.find_by_position(left_node_position)
   end
 
   def right_node
-    map_nodes.find_by_position(right_node_position)
+    board_nodes.find_by_position(right_node_position)
   end
 
   def nodes
-    map_nodes.find_by_positions(node_positions)
+    board_nodes.find_by_positions(node_positions)
   end
 
   def edge_positions
@@ -134,15 +134,15 @@ class Edge < ActiveRecord::Base
   end
 
   def edges
-    map_edges.find_by_positions(edge_positions)
+    board_edges.find_by_positions(edge_positions)
   end
 
   def left_edges
-    map_edges.find_by_positions(left_edge_positions)
+    board_edges.find_by_positions(left_edge_positions)
   end
 
   def right_edges
-    map_edges.find_by_positions(right_edge_positions)
+    board_edges.find_by_positions(right_edge_positions)
   end
 
   def left_roads

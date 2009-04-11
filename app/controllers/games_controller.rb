@@ -25,18 +25,18 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id], include: { map: [:hexes, :nodes, :edges], players: [:user, :cards] })
+    @game = Game.find(params[:id], include: { board: [:hexes, :nodes, :edges], players: [:user, :cards] })
     @user_player = @game.players.find_by_user_id(current_user.try(:id))
     respond_to do |format|
       format.html
       format.json do
-        nodes = @game.map_nodes.map do |node|
+        nodes = @game.board_nodes.map do |node|
           { position: node.position,
             playerId: node.player_id,
             state: node.state,
             id: node.id }
         end
-        edges = @game.map_edges.map do |edge|
+        edges = @game.board_edges.map do |edge|
           { position: edge.position,
             playerId: edge.player_id }
         end
@@ -48,7 +48,7 @@ class GamesController < ApplicationController
             name: player.user_login,
             isUserIdle: player.user_idle? }
         end
-        hexes = @game.map_hexes.map do |hex|
+        hexes = @game.board_hexes.map do |hex|
           { type: hex.hex_type,
             position: hex.position,
             harborPosition: hex.harbor_position,
@@ -83,12 +83,12 @@ class GamesController < ApplicationController
           }
         end
         game = {
-          map: {
-            size: @game.map_size,
+          board: {
+            size: @game.board_size,
             hexes: hexes,
             nodes: nodes,
             edges: edges,
-            robberPosition: @game.map_robber_position,
+            robberPosition: @game.board_robber_position,
           },
           userPlayer: user_player,
           players: players,

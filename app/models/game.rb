@@ -25,13 +25,13 @@ class Game < ActiveRecord::Base
   has_many :cards
   has_many :exchanges
   has_many :robberies
-  has_one :map
+  has_one :board
 
   belongs_to :largest_army_player, :class_name => "Player"
   belongs_to :longest_road_player, :class_name => "Player"
 
   delegate :id, :to => :current_player, :prefix => true
-  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber_position, :to => :map, :prefix => true
+  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber_position, :to => :board, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
   delegate :resources, :to => :current_discard_player, :prefix => true
 
@@ -48,7 +48,7 @@ class Game < ActiveRecord::Base
 
     state :playing do
       validates_length_of :players, :in => 2..4
-      validates_presence_of :map
+      validates_presence_of :board
       validate :players_ready
     end
 
@@ -319,7 +319,7 @@ class Game < ActiveRecord::Base
   end
 
   def add_resources
-    map_hexes.roll(current_dice_roll_value).each(&:rolled)
+    board_hexes.roll(current_dice_roll_value).each(&:rolled)
   end
 
   def current_dice_roll
@@ -423,7 +423,7 @@ class Game < ActiveRecord::Base
   def longest_road
     new_longest_road_length = self.longest_road_length
     new_longest_road_player = nil
-    edges = map_edges
+    edges = board_edges
 
     until edges.empty?
       length, visited_edges = edges.first.longest_road

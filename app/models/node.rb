@@ -26,19 +26,19 @@ class Node < ActiveRecord::Base
     before_transition :on => :expand, :do => :build_city
   end
 
-  validates_presence_of :player, :map
+  validates_presence_of :player, :board
   validates_associated :player
-  validates_uniqueness_of :map_id, :scope => [:row, :col]
+  validates_uniqueness_of :board_id, :scope => [:row, :col]
   validate :proximity_of_land, :proximity_of_settlements, :possesion_of_road, :player_not_changed
 
-  belongs_to :map
+  belongs_to :board
   belongs_to :player
 
   before_validation_on_create :build_settlement
   after_save :save_player, :settlement_built
 
-  delegate :game, :to => :map
-  delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :map, :prefix => true
+  delegate :game, :to => :board
+  delegate :width, :height, :size, :nodes, :edges, :hexes, :to => :board, :prefix => true
   delegate :players, :first_settlement?, :second_settlement?, :after_roll?, :settlement_built!, :to => :game, :prefix => true
   delegate :nodes, :number, :to => :player, :prefix => true
 
@@ -79,7 +79,7 @@ class Node < ActiveRecord::Base
   end
 
   def hexes
-    map_hexes.find_by_positions(hex_positions)
+    board_hexes.find_by_positions(hex_positions)
   end
 
   def node_positions
@@ -91,7 +91,7 @@ class Node < ActiveRecord::Base
   end
 
   def nodes
-    map_nodes.find_by_positions(node_positions)
+    board_nodes.find_by_positions(node_positions)
   end
 
   def edge_positions
@@ -103,7 +103,7 @@ class Node < ActiveRecord::Base
   end
 
   def edges
-    map_edges.find_by_positions(edge_positions)
+    board_edges.find_by_positions(edge_positions)
   end
 
   def add_resources(type)

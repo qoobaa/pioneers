@@ -21,7 +21,7 @@ class NodesController < ApplicationController
   before_filter :require_user, :fetch_game
 
   def create
-    @node = @game.map_nodes.build(params[:node])
+    @node = @game.board_nodes.build(params[:node])
     @node.user = @current_user
     if @node.save
       flash[:success] = "Successfully created"
@@ -32,7 +32,7 @@ class NodesController < ApplicationController
   end
 
   def update
-    @node = @game.map_nodes.find(params[:id])
+    @node = @game.board_nodes.find(params[:id])
     @node.user = @current_user
     if @node.expand
       flash[:success] = "Successfully expanded"

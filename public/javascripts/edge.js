@@ -17,9 +17,9 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Edge = function(map, attributes) {
-  this.map = map;
-  this.game = map.game;
+Pioneers.Edge = function(board, attributes) {
+  this.board = board;
+  this.game = board.game;
   this.position = attributes.position;
   this.playerId = attributes.playerId;
 
@@ -45,10 +45,10 @@ Pioneers.Edge = function(map, attributes) {
   };
 
   this.hexes = function() {
-    var map = this.map;
+    var board = this.board;
     return $.map(this.hexPositions(),
                  function(position) {
-                   return map.hexes[position[0]][position[1]];
+                   return board.hexes[position[0]][position[1]];
                  }
                 );
   };
@@ -58,10 +58,10 @@ Pioneers.Edge = function(map, attributes) {
   };
 
   this.nodes = function() {
-    var map = this.map;
+    var board = this.board;
     return $.map(this.nodePositions(),
                  function(position) {
-                   return map.nodes[position[0]][position[1]];
+                   return board.nodes[position[0]][position[1]];
                  }
                 );
   };
