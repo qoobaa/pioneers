@@ -111,6 +111,18 @@ Pioneers.Map = function(game, attributes) {
                  );
   };
 
+  this.hex = function(position) {
+    return this.hexes[position[0]][position[1]];
+  };
+
+  this.node = function(position) {
+    return this.nodes[position[0]][position[1]];
+  };
+
+  this.edge = function(position) {
+    return this.edges[position[0]][position[1]];
+  };
+
   this.game = game;
   this.createHexes(attributes.hexes);
   this.createNodes(attributes.nodes);

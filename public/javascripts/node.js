@@ -47,7 +47,8 @@ Pioneers.Node = function(map, attributes) {
 
   this.hexes = function() {
     var map = this.map;
-    return $.map(this.hexPositions(), function(position) {
+    return $.map(this.hexPositions(),
+                 function(position) {
                    return map.hexes[position[0]][position[1]];
                  }
                 );
@@ -67,7 +68,8 @@ Pioneers.Node = function(map, attributes) {
 
   this.nodes = function() {
     var map = this.map;
-    return $.map(this.nodePositions(), function(position) {
+    return $.map(this.nodePositions(),
+                 function(position) {
                    return map.nodes[position[0]][position[1]];
                  }
                 );
@@ -87,7 +89,8 @@ Pioneers.Node = function(map, attributes) {
 
   this.edges = function() {
     var map = this.map;
-    return $.map(this.edgePositions(), function(position) {
+    return $.map(this.edgePositions(),
+                 function(position) {
                    return map.edges[position[0]][position[1]];
                  }
                 );

@@ -92,7 +92,7 @@ Pioneers.Game = function(attributes) {
           );
   };
 
-  this.buildSettlement = function() {
+  this.buildSettlementMode = function() {
     var playerNumber = this.userPlayer.number;
     var map = this.map;
     var nodes = [];
@@ -120,6 +120,10 @@ Pioneers.Game = function(attributes) {
                    );
            }
           );
+  };
+
+  this.buildSettlementQuit = function() {
+
   };
 
   this.id = attributes.id;
