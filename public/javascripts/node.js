@@ -122,11 +122,29 @@ Pioneers.Node = function(board, position) {
 
   this.getEdges = function() {
     var board = this.getBoard();
-    return $.board(this.getEdgePositions(),
+    return $.map(this.getEdgePositions(),
                  function(position) {
                    return board.getEdge(position);
                  }
                 );
+  };
+
+  this.hasRoad = function(playerId) {
+    return $.grep(this.getEdges(),
+                  function(edge) {
+                    return edge.getPlayerId() == playerId;
+                  }
+                 ).length != 0;
+  };
+
+  this.isValidForFirstSettlement = function() {
+    return !this.isSettled() && !this.hasSettlementInNeighbourhood();
+  };
+
+  this.isValidForSecondSettlement = this.isValidForFirstSettlement;
+
+  this.isValidForSettlement = function(playerId) {
+    return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerId);
   };
 
   this.board = board;

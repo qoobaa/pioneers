@@ -105,6 +105,15 @@ Pioneers.Edge = function(board, position) {
                 );
   };
 
+  // TODO: think about getSettlements(playerId) function
+  this.hasSettlement = function(playerId) {
+    return $.grep(this.getNodes(),
+                  function(node) {
+                    return node.getPlayerId() == playerId;
+                  }
+                 ).length != 0;
+  };
+
   this.getLeftEdgePositions = function() {
     if(this.getCol() % 3 == 0) {
       return [[this.getRow() + 1, this.getCol() - 2],
@@ -145,6 +154,11 @@ Pioneers.Edge = function(board, position) {
                    return board.getEdge(position);
                  }
                 );
+  };
+
+  // TODO: conditions
+  this.isValidForFirstRoad = function(playerId) {
+    return !this.isSettled();
   };
 
   this.board = board;
