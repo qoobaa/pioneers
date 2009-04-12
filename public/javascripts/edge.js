@@ -17,117 +17,137 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Edge = function(board, attributes) {
-  this.board = board;
-  this.game = board.game;
-  this.position = attributes.position;
-  this.playerId = attributes.playerId;
+Pioneers.Edge = function(board, position) {
+  this.getPosition = function() {
+    return this.position;
+  };
 
-  this.row = function() {
+  this.getRow = function() {
     return this.position[0];
   };
 
-  this.col = function() {
+  this.getCol = function() {
     return this.position[1];
   };
 
-  this.hexPositions = function() {
-    if(this.col() % 3 == 0) {
-      return [[this.row(), this.col() / 3 - 1],
-              [this.row(), this.col() / 3 - 2]];
-    } else if(this.col() % 3 == 1) {
-      return [[this.row() - 1, (this.col() - 1) / 3 - 1],
-              [this.row(), (this.col() - 1) / 3 - 1]];
+  this.getBoard = function() {
+    return this.board;
+  };
+
+  this.isSettled = function() {
+    return this.getPlayerId() != null;
+  };
+
+  this.getPlayerId = function() {
+    return this.playerId;
+  };
+
+  this.getHexPositions = function() {
+    if(this.getCol() % 3 == 0) {
+      return [[this.getRow(), this.getCol() / 3 - 1],
+              [this.getRow(), this.getCol() / 3 - 2]];
+    } else if(this.getCol() % 3 == 1) {
+      return [[this.getRow() - 1, (this.getCol() - 1) / 3 - 1],
+              [this.getRow(), (this.getCol() - 1) / 3 - 1]];
     } else {
-      return [[this.row() - 1, (this.col() - 2) / 3],
-              [this.row(), (this.col() - 2) / 3 - 1]];
+      return [[this.getRow() - 1, (this.getCol() - 2) / 3],
+              [this.getRow(), (this.getCol() - 2) / 3 - 1]];
     }
   };
 
-  this.hexes = function() {
-    var board = this.board;
-    return $.map(this.hexPositions(),
+  this.getHexes = function() {
+    var board = this.getBoard();
+    return $.map(this.getHexPositions(),
                  function(position) {
-                   return board.hexes[position[0]][position[1]];
+                   return board.getHex(position);
                  }
                 );
   };
 
-  this.nodePositions = function() {
-    return [this.leftNodePosition(), this.rightNodePosition()];
+  this.isSettleable = function() {
+    return $.grep(this.getHexes(),
+                  function(hex) {
+                    return hex.isSettleable();
+                  }
+                 ).length != 0;
   };
 
-  this.nodes = function() {
-    var board = this.board;
-    return $.map(this.nodePositions(),
+  this.getRightNodePosition = function() {
+    if(this.getCol() % 3 == 0) {
+      return [this.getRow(), 2 * this.getCol() / 3 - 1];
+    } else if(this.getCol() % 3 == 1) {
+      return [this.getRow(), 2 * (this.getCol() - 1) / 3];
+    } else {
+      return [this.getRow(), 2 * (this.getCol() - 2) / 3 + 1];
+    }
+  };
+
+  this.getLeftNodePosition = function() {
+    if(this.getCol() % 3 == 0) {
+      return [this.getRow() + 1, 2 * this.getCol() / 3 - 2];
+    } else if(this.getCol() % 3 == 1) {
+      return [this.getRow(), 2 * (this.getCol() - 1) / 3 - 1];
+    } else {
+      return [this.getRow(), 2 * (this.getCol() - 2) / 3];
+    }
+  };
+
+  this.getNodePositions = function() {
+    return [this.getLeftNodePosition(), this.getRightNodePosition()];
+  };
+
+  this.getNodes = function() {
+    var board = this.getBoard();
+    return $.map(this.getNodePositions(),
                  function(position) {
-                   return board.nodes[position[0]][position[1]];
+                   return board.getNode(position);
                  }
                 );
   };
 
-  this.rightNodePosition = function() {
-    if(this.col() % 3 == 0) {
-      return [this.row(), 2 * this.col() / 3 - 1];
-    } else if(this.col() % 3 == 1) {
-      return [this.row(), 2 * (this.col() - 1) / 3];
+  this.getLeftEdgePositions = function() {
+    if(this.getCol() % 3 == 0) {
+      return [[this.getRow() + 1, this.getCol() - 2],
+              [this.getRow() + 1, this.getCol() - 1]];
+    } else if(this.getCol() % 3 == 1) {
+      return [[this.getRow(), this.getCol() - 2],
+              [this.getRow(), this.getCol() - 1]];
     } else {
-      return [this.row(), 2 * (this.col() - 2) / 3 + 1];
+      return [[this.getRow() - 1, this.getCol() + 1],
+              [this.getRow(), this.getCol() - 1]];
     }
   };
 
-  this.leftNodePosition = function() {
-    if(this.col() % 3 == 0) {
-      return [this.row() + 1, 2 * this.col() / 3 - 2];
-    } else if(this.col() % 3 == 1) {
-      return [this.row(), 2 * (this.col() - 1) / 3 - 1];
+  this.getRightEdgePositions = function() {
+    if(this.getCol() % 3 == 0) {
+      return [[this.getRow(), this.getCol() + 1],
+              [this.getRow(), this.getCol() - 1]];
+    } else if(this.getCol() % 3 == 1) {
+      return [[this.getRow() - 1, this.getCol() + 2],
+              [this.getRow(), this.getCol() + 1]];
     } else {
-      return [this.row(), 2 * (this.col() - 2) / 3];
+      return [[this.getRow(), this.getCol() + 2],
+              [this.getRow(), this.getCol() + 1]];
     }
   };
 
-  this.edgePositions = function() {
-    return [this.leftEdgePositions[0],
-            this.leftEdgePositions[1],
-            this.rightEdgePositions[0],
-            this.rightEdgePositions[1]];
+  this.getEdgePositions = function() {
+    return [this.getLeftEdgePositions()[0],
+            this.getLeftEdgePositions()[1],
+            this.getRightEdgePositions()[0],
+            this.getRightEdgePositions()[1]];
   };
 
-  this.leftEdgePositions = function() {
-    if(this.col() % 3 == 0) {
-      return [[this.row() + 1, this.col() - 2],
-              [this.row() + 1, this.col() - 1]];
-    } else if(this.col() % 3 == 1) {
-      return [[this.row(), this.col() - 2],
-              [this.row(), this.col() - 1]];
-    } else {
-      return [[this.row() - 1, this.col() + 1],
-              [this.row(), this.col() - 1]];
-    }
+  this.getEdges = function() {
+    var board = this.getBoard();
+    return $.map(this.getEdgePositions(),
+                 function(edge) {
+                   return board.getEdge(position);
+                 }
+                );
   };
 
-  this.rightEdgePositions = function() {
-    if(this.col() % 3 == 0) {
-      return [[this.row(), this.col() + 1],
-              [this.row(), this.col() - 1]];
-    } else if(this.col() % 3 == 1) {
-      return [[this.row() - 1, this.col() + 2],
-              [this.row(), this.col() + 1]];
-    } else {
-      return [[this.row(), this.col() + 2],
-              [this.row(), this.col() + 1]];
-    }
-  };
-
-  this.update = function(attributes) {
-    this.updateView();
-  };
-
-  this.updateView = function() {
-    $("#edges li.row-" + this.row() + " li.col-" + this.col()).html("<div class='road player-" + this.playerNumber() + "'></div>");
-  };
-
-  this.playerNumber = function() {
-    return this.game.playerById(this.playerId).number;
-  };
+  this.board = board;
+  this.game = board.game;
+  this.position = position;
 };

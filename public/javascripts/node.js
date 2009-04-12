@@ -17,99 +17,119 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Node = function(board, attributes) {
-  this.position = function() {
+Pioneers.Node = function(board, position) {
+  this.getPosition = function() {
     return this.position;
   };
 
-  this.row = function() {
+  this.getRow = function() {
     return this.position[0];
   };
 
-  this.col = function() {
+  this.getCol = function() {
     return this.position[1];
   };
 
-  this.playerNumber = function() {
-    return this.game.playerById(this.playerId).number;
+  // this.getPlayerNumber = function() {
+  //   return this.game.playerById(this.playerId).number;
+  // };
+
+  this.getId = function() {
+    return this.id;
   };
 
-  this.hexPositions = function() {
-    if(this.col() % 2 == 0) {
-      return [[this.row() - 1, this.col() / 2],
-              [this.row(), this.col() / 2 - 1],
-              [this.row(), this.col() / 2]];
+  this.getBoard = function() {
+    return this.board;
+  };
+
+  this.getPlayerId = function() {
+    return this.playerId;
+  };
+
+  this.isSettled = function() {
+    return this.getPlayerId() != null;
+  };
+
+  this.getHexPositions = function() {
+    if(this.getCol() % 2 == 0) {
+      return [[this.getRow() - 1, this.getCol() / 2],
+              [this.getRow(), this.getCol() / 2 - 1],
+              [this.getRow(), this.getCol() / 2]];
     } else {
-      return [[this.row() - 1, (this.col() - 1) / 2],
-              [this.row(), (this.col() - 1) / 2 - 1],
-              [this.row(), (this.col() - 1) / 2]];
+      return [[this.getRow() - 1, (this.getCol() - 1) / 2],
+              [this.getRow(), (this.getCol() - 1) / 2 - 1],
+              [this.getRow(), (this.getCol() - 1) / 2]];
     }
   };
 
-  this.hexes = function() {
-    var board = this.board;
-    return $.map(this.hexPositions(),
+  this.getHexes = function() {
+    var board = this.getBoard();
+    return $.map(this.getHexPositions(),
                  function(position) {
-                   return board.hex(position);
+                   return board.getHex(position);
                  }
                 );
   };
 
-  this.nodePositions = function() {
-    if(this.col() % 2 == 0) {
-      return [[this.row() - 1, this.col() + 1],
-              [this.row(), this.col() - 1],
-              [this.row(), this.col() + 1]];
+  this.isSettleable = function() {
+    return $.grep(this.getHexes(),
+                  function(hex) {
+                    return hex.isSettleable();
+                  }
+                 ).length != 0;
+  };
+
+  this.getNodePositions = function() {
+    if(this.getCol() % 2 == 0) {
+      return [[this.getRow() - 1, this.getCol() + 1],
+              [this.getRow(), this.getCol() - 1],
+              [this.getRow(), this.getCol() + 1]];
     } else {
-      return [[this.row(), this.col() + 1],
-              [this.row(), this.col() - 1],
-              [this.row() + 1, this.col() - 1]];
+      return [[this.getRow(), this.getCol() + 1],
+              [this.getRow(), this.getCol() - 1],
+              [this.getRow() + 1, this.getCol() - 1]];
     }
   };
 
-  this.nodes = function() {
-    var board = this.board;
-    return $.map(this.nodePositions(),
+  this.getNodes = function() {
+    var board = this.getBoard();
+    return $.map(this.getNodePositions(),
                  function(position) {
-                   return board.node(position);
+                   return board.getNode(position);
                  }
                 );
   };
 
-  this.edgePositions = function() {
-    if(this.col() % 2 == 0) {
-      return [[this.row() - 1, 3 * this.col() / 2 + 3],
-              [this.row(), 3 * this.col() / 2 + 1],
-              [this.row(), 3 * this.col() / 2 + 2]];
+  this.hasSettlementInNeighbourhood = function() {
+    return $.grep(this.getNodes(),
+                  function(node) {
+                    return node.isSettled();
+                  }
+                 ).length != 0;
+  };
+
+  this.getEdgePositions = function() {
+    if(this.getCol() % 2 == 0) {
+      return [[this.getRow() - 1, 3 * this.getCol() / 2 + 3],
+              [this.getRow(), 3 * this.getCol() / 2 + 1],
+              [this.getRow(), 3 * this.getCol() / 2 + 2]];
     } else {
-      return [[this.row(), 3 * ((this.col() - 1) / 2 + 1) + 1],
-              [this.row(), 3 * ((this.col() - 1) / 2 + 1) - 1],
-              [this.row(), 3 * ((this.col() - 1) / 2 + 1)]];
+      return [[this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1) + 1],
+              [this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1) - 1],
+              [this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1)]];
     }
   };
 
-  this.edges = function() {
-    var board = this.board;
-    return $.board(this.edgePositions(),
+  this.getEdges = function() {
+    var board = this.getBoard();
+    return $.board(this.getEdgePositions(),
                  function(position) {
-                   return board.edge(position);
+                   return board.getEdge(position);
                  }
                 );
-  };
-
-  this.update = function(attributes) {
-    this.state = attributes.state;
-    this.updateView();
-  };
-
-  this.updateView = function() {
-    $("#nodes li.row-" + this.row() + " li.col-" + this.col()).html("<div class='" + this.state + " player-" + this.playerNumber() + "'></div>");
   };
 
   this.board = board;
   this.game = board.game;
-  this.id = attributes.id;
-  this.position = attributes.position;
-  this.playerId = attributes.playerId;
-  this.state = attributes.state;
+  this.position = position;
 };

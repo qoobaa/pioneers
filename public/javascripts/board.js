@@ -19,60 +19,71 @@ var Pioneers = Pioneers || {};
 
 Pioneers.Board = function(game, attributes) {
   this.createHexes = function(attributes) {
-    this.hexes = Pioneers.utils.makeArray2D(10, 10);
-    this.hexesList = [];
-    for(var i in attributes) {
-      var hex = new Pioneers.Hex(this, attributes[i]);
-      this.hexes[hex.row()][hex.col()] = hex;
-      this.hexesList.push(hex);
-    }
+    var board = this;
+    this.hexes = $.map(attributes,
+                       function(hexAttributes) {
+                         return new Pioneers.Hex(board, hexAttributes);
+                       }
+                      );
   };
 
-  this.createNodes = function(attributes) {
-    this.nodes = Pioneers.utils.makeArray2D(10, 10);
-    this.nodesList = [];
-    for(var i in attributes) {
-      var node = new Pioneers.Node(this, attributes[i]);
-      this.nodes[node.row()][node.col()] = node;
-      this.nodesList.push(node);
-    }
+  this.createNodes = function() {
+    var board = this;
+    this.nodes = [];
+    $.each(this.getHexes(),
+           function() {
+             $.each(this.getNodePositions(),
+                    function() {
+                      if(board.getNode(this) == null) {
+                        board.nodes.push(new Pioneers.Node(board, this));
+                      }
+                    }
+                   );
+           }
+          );
   };
 
-  this.createEdges = function(attributes) {
-    this.edges = Pioneers.utils.makeArray2D(10, 10);
-    this.edgesList = [];
-    for(var i in attributes) {
-      var edge = new Pioneers.Edge(this, attributes[i]);
-      this.edges[edge.row()][edge.col()] = edge;
-      this.edgesList.push(edge);
-    }
+  this.createEdges = function() {
+    var board = this;
+    this.edges = [];
+    $.each(this.getHexes(),
+           function() {
+             $.each(this.getEdgePositions(),
+                    function() {
+                      if(board.getEdge(this) == null) {
+                        board.edges.push(new Pioneers.Edge(board, this));
+                      }
+                    }
+                   );
+           }
+          );
   };
 
   this.updateNodes = function(nodes) {
-    for(i in nodes) {
-      var position = nodes[i].position;
-      if(this.nodes[position[0]][position[1]] == null) {
-        var node = new Pioneers.Node(this, attributes[i]);
-        this.nodes[node.row()][node.col()] = node;
-        this.nodesList.push(node);
-      } else {
-        this.nodes[position[0]][position[1]].update(nodes[i]);
-      }
-    }
+    // for(i in nodes) {
+    //   var position = nodes[i].position;
+    //   if(this.nodes[position[0]][position[1]] == null) {
+    //     var node = new Pioneers.Node(this, attributes[i]);
+    //     this.nodes[node.row()][node.col()] = node;
+    //     this.nodesList.push(node);
+    //   } else {
+    //     this.nodes[position[0]][position[1]].update(nodes[i]);
+    //   }
+    // }
   };
 
   this.updateEdges = function(attributes) {
-    var edges = attributes;
-    for(i in edges) {
-      var position = edges[i].position;
-      if(this.edges[position[0]][position[1]] == null) {
-        var edge = new Pioneers.Edge(this, attributes[i]);
-        this.edges[edge.row()][edge.col()] = edge;
-        this.edgesList.push(edge);
-      } else {
-        this.edges[position[0]][position[1]].update(edges[i]);
-      }
-    }
+    // var edges = attributes;
+    // for(i in edges) {
+    //   var position = edges[i].position;
+    //   if(this.edges[position[0]][position[1]] == null) {
+    //     var edge = new Pioneers.Edge(this, attributes[i]);
+    //     this.edges[edge.row()][edge.col()] = edge;
+    //     this.edgesList.push(edge);
+    //   } else {
+    //     this.edges[position[0]][position[1]].update(edges[i]);
+    //   }
+    // }
   };
 
   this.update = function(attributes) {
@@ -80,7 +91,43 @@ Pioneers.Board = function(game, attributes) {
     this.updateEdges(attributes.edges);
   };
 
-  this.settlements = function() {
+  this.getHexes = function() {
+    return this.hexes;
+  };
+
+  this.getNodes = function() {
+    return this.nodes;
+  };
+
+  this.getEdges = function() {
+    return this.edges;
+  };
+
+  this.getHex = function(position) {
+    return $.grep(this.getHexes(),
+                  function(hex) {
+                    return hex.getRow() == position[0] && hex.getCol() == position[1];
+                  }
+                 )[0];
+  };
+
+  this.getNode = function(position) {
+    return $.grep(this.getNodes(),
+                  function(node) {
+                    return node.getRow() == position[0] && node.getCol() == position[1];
+                  }
+                 )[0];
+  };
+
+  this.getEdge = function(position) {
+    return $.grep(this.getEdges(),
+                  function(edge) {
+                    return edge.getRow() == position[0] && edge.getCol() == position[1];
+                  }
+                 )[0];
+  };
+
+  this.getSettlements = function() {
     var playerId = this.game.userPlayer.id;
     return  $.grep(this.nodesList,
                    function(node) {
@@ -89,7 +136,7 @@ Pioneers.Board = function(game, attributes) {
                   );
   };
 
-  this.cities = function() {
+  this.getCities = function() {
     var playerId = this.game.userPlayer.id;
     return  $.grep(this.nodesList,
                    function(node) {
@@ -98,29 +145,17 @@ Pioneers.Board = function(game, attributes) {
                   );
   };
 
-  this.settlementsAndCities = function() {
+  this.getSettlementsAndCities = function() {
     return $.merge(this.settlements(), this.cities());
   };
 
-  this.roads = function() {
+  this.getRoads = function() {
     var playerId = this.game.userPlayer.id;
     return $.grep(this.edgesList,
                   function(edge) {
                     return edge.playerId == playerId;
                   }
                  );
-  };
-
-  this.hex = function(position) {
-    return this.hexes[position[0]][position[1]];
-  };
-
-  this.node = function(position) {
-    return this.nodes[position[0]][position[1]];
-  };
-
-  this.edge = function(position) {
-    return this.edges[position[0]][position[1]];
   };
 
   this.game = game;

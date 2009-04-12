@@ -18,64 +18,80 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.Hex = function(board, attributes) {
-  this.row = function() {
+  this.getRow = function() {
     return this.position[0];
   };
 
-  this.col = function() {
+  this.getCol = function() {
     return this.position[1];
   };
 
-  this.hexPositions = function() {
-    return [[this.row() - 1, this.col() + 1],
-            [this.row() - 1, this.col()],
-            [this.row(), this.col() - 1],
-            [this.row() + 1, this.col() - 1],
-            [this.row() + 1, this.col()],
-            [this.row(), this.col() + 1]];
+  this.getPosition = function() {
+    return this.position;
   };
 
-  this.hexes = function() {
-    var board = this.board;
+  this.getBoard = function() {
+    return this.board;
+  };
+
+  this.getType = function() {
+    return this.type;
+  };
+
+  this.isSettleable = function() {
+    return this.getType() != "sea";
+  };
+
+  this.getHexPositions = function() {
+    return [[this.getRow() - 1, this.getCol() + 1],
+            [this.getRow() - 1, this.getCol()],
+            [this.getRow(), this.getCol() - 1],
+            [this.getRow() + 1, this.getCol() - 1],
+            [this.getRow() + 1, this.getCol()],
+            [this.getRow(), this.getCol() + 1]];
+  };
+
+  this.getHexes = function() {
+    var board = this.getBoard();
     return $.map(this.hexPositions(),
                  function(position) {
-                   return board.hex(position);
+                   return board.getHex(position);
                  }
                 );
   };
 
-  this.nodePositions = function() {
-    return [[this.row(), 2 * this.col() + 3],
-            [this.row(), 2 * this.col() + 2],
-            [this.row(), 2 * this.col() + 1],
-            [this.row() + 1, 2 * this.col()],
-            [this.row() + 1, 2 * this.col() + 1],
-            [this.row() + 1, 2 * this.col() + 2]];
+  this.getNodePositions = function() {
+    return [[this.getRow(), 2 * this.getCol() + 3],
+            [this.getRow(), 2 * this.getCol() + 2],
+            [this.getRow(), 2 * this.getCol() + 1],
+            [this.getRow() + 1, 2 * this.getCol()],
+            [this.getRow() + 1, 2 * this.getCol() + 1],
+            [this.getRow() + 1, 2 * this.getCol() + 2]];
   };
 
-  this.nodes = function() {
-    var board = this.board;
+  this.getNodes = function() {
+    var board = this.getBoard();
     return $.map(this.nodePositions(),
                  function(position) {
-                   return board.node(position);
+                   return board.getNode(position);
                  }
                 );
   };
 
-  this.edgePositions = function() {
-    return [[this.row(), 3 * this.col() + 5],
-            [this.row(), 3 * this.col() + 4],
-            [this.row(), 3 * this.col() + 3],
-            [this.row() + 1, 3 * this.col() + 2],
-            [this.row() + 1, 3 * this.col() + 4],
-            [this.row(), 3 * this.col() + 6]];
+  this.getEdgePositions = function() {
+    return [[this.getRow(), 3 * this.getCol() + 5],
+            [this.getRow(), 3 * this.getCol() + 4],
+            [this.getRow(), 3 * this.getCol() + 3],
+            [this.getRow() + 1, 3 * this.getCol() + 2],
+            [this.getRow() + 1, 3 * this.getCol() + 4],
+            [this.getRow(), 3 * this.getCol() + 6]];
   };
 
-  this.edges = function() {
-    var board = this.board;
+  this.getEdges = function() {
+    var board = this.getBoard();
     return $.map(this.edgePositions(),
                  function(position) {
-                   return board.edge(position);
+                   return board.getEdge(position);
                  }
                 );
   };
