@@ -18,12 +18,9 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.Node = function(board, attributes) {
-  this.board = board;
-  this.game = board.game;
-  this.id = attributes.id;
-  this.position = attributes.position;
-  this.playerId = attributes.playerId;
-  this.state = attributes.state;
+  this.position = function() {
+    return this.position;
+  };
 
   this.row = function() {
     return this.position[0];
@@ -31,6 +28,10 @@ Pioneers.Node = function(board, attributes) {
 
   this.col = function() {
     return this.position[1];
+  };
+
+  this.playerNumber = function() {
+    return this.game.playerById(this.playerId).number;
   };
 
   this.hexPositions = function() {
@@ -49,7 +50,7 @@ Pioneers.Node = function(board, attributes) {
     var board = this.board;
     return $.map(this.hexPositions(),
                  function(position) {
-                   return board.hexes[position[0]][position[1]];
+                   return board.hex(position);
                  }
                 );
   };
@@ -70,7 +71,7 @@ Pioneers.Node = function(board, attributes) {
     var board = this.board;
     return $.map(this.nodePositions(),
                  function(position) {
-                   return board.nodes[position[0]][position[1]];
+                   return board.node(position);
                  }
                 );
   };
@@ -91,7 +92,7 @@ Pioneers.Node = function(board, attributes) {
     var board = this.board;
     return $.board(this.edgePositions(),
                  function(position) {
-                   return board.edges[position[0]][position[1]];
+                   return board.edge(position);
                  }
                 );
   };
@@ -105,7 +106,10 @@ Pioneers.Node = function(board, attributes) {
     $("#nodes li.row-" + this.row() + " li.col-" + this.col()).html("<div class='" + this.state + " player-" + this.playerNumber() + "'></div>");
   };
 
-  this.playerNumber = function() {
-    return this.game.playerById(this.playerId).number;
-  };
+  this.board = board;
+  this.game = board.game;
+  this.id = attributes.id;
+  this.position = attributes.position;
+  this.playerId = attributes.playerId;
+  this.state = attributes.state;
 };

@@ -1,3 +1,8 @@
+== 2.0.9 release 2009-4-9
+
+* Fixed bug where hooks provided by the password module were called when the password module was not being used due to the fact that the password field did not exist.
+* Fixed bug where the find_with_login method was not being aliased if you were using an alternate field besides login.
+
 == 2.0.8 release 2009-4-9
 
 * Dont reset the @password_changed instance variable to false because its halts the callback chain, instead reset it to nil.

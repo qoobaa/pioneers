@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: authlogic
 version: !ruby/object:Gem::Version 
-  version: 2.0.8
+  version: 2.0.9
 platform: ruby
 authors: 
 - Ben Johnson of Binary Logic
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-04-09 00:00:00 +02:00
+date: 2009-04-11 00:00:00 +02:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
