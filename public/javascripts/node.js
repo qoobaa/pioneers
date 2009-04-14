@@ -129,12 +129,16 @@ Pioneers.Node = function(board, position) {
                 );
   };
 
-  this.hasRoad = function(playerId) {
+  this.getRoads = function(playerId) {
     return $.grep(this.getEdges(),
                   function(edge) {
                     return edge.getPlayerId() == playerId;
                   }
-                 ).length != 0;
+                 );
+  };
+
+  this.hasRoad = function(playerId) {
+    return this.getRoads(playerId).length != 0;
   };
 
   this.isValidForFirstSettlement = function() {

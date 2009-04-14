@@ -96,20 +96,34 @@ Pioneers.Edge = function(board, position) {
     return [this.getLeftNodePosition(), this.getRightNodePosition()];
   };
 
-  this.getNodes = function() {
-    var board = this.getBoard();
-    return $.map(this.getNodePositions(),
-                 function(position) {
-                   return board.getNode(position);
-                 }
-                );
+  this.getLeftNode = function() {
+    return this.getBoard().getNode(this.getLeftNodePosition());
   };
 
-  // TODO: think about getSettlements(playerId) function
-  this.hasSettlement = function(playerId) {
+  this.getRightNode = function() {
+    return this.getBoard().getNode(this.getRightNodePosition());
+  };
+
+  this.getNodes = function() {
+    return [this.getLeftNode(), this.getRightNode()];
+  };
+
+  this.getSettlements = function(playerId) {
     return $.grep(this.getNodes(),
                   function(node) {
-                    return node.getPlayerId() == playerId;
+                    return node.playerId == playerId;
+                  }
+                 );
+  };
+
+  this.hasSettlement = function(playerId) {
+    return this.getSettlements(playerId).length != 0;
+  };
+
+  this.hasSettlementWithoutRoad = function(playerId) {
+    return $.grep(this.getSettlements(playerId),
+                  function(settlement) {
+                    return !settlement.hasRoad(playerId);
                   }
                  ).length != 0;
   };
@@ -141,24 +155,73 @@ Pioneers.Edge = function(board, position) {
   };
 
   this.getEdgePositions = function() {
-    return [this.getLeftEdgePositions()[0],
-            this.getLeftEdgePositions()[1],
-            this.getRightEdgePositions()[0],
-            this.getRightEdgePositions()[1]];
+    return $.merge(this.getLeftEdgePositions(), this.getRightEdgePositions());
   };
 
-  this.getEdges = function() {
+  this.getLeftEdges = function() {
     var board = this.getBoard();
-    return $.map(this.getEdgePositions(),
+    return $.map(this.getLeftEdgePositions(),
                  function(edge) {
                    return board.getEdge(position);
                  }
                 );
   };
 
-  // TODO: conditions
+  this.getRightEdges = function() {
+    var board = this.getBoard();
+    return $.map(this.getRightEdgePositions(),
+                 function(edge) {
+                   return board.getEdge(position);
+                 }
+                );
+  };
+
+  this.getEdges = function() {
+    return $.merge(this.getLeftEdges(), this.getRightEdges());
+  };
+
+  this.getLeftRoads = function(playerId) {
+    var leftNode = this.getLeftNode();
+    if(!leftNode.isSettled() || leftNode.getPlayer() == playerId) {
+      return $.grep(this.getLeftEdges(),
+                    function(edge) {
+                      return edge.playerId == playerId;
+                    }
+                   );
+    } else {
+      return [];
+    }
+  };
+
+  this.getRightRoads = function(playerId) {
+    var rightNode = this.getRightNode();
+    if(!rightNode.isSettled() || rightNode.getPlayer() == playerId) {
+      return $.grep(this.getRightEdges(),
+                    function(edge) {
+                      return edge.playerId == playerId;
+                    }
+                   );
+    } else {
+      return [];
+    }
+  };
+
+  this.getRoads = function(playerId) {
+    return $.merge(this.getLeftRoads(playerId), this.getRightRoads(playerId));
+  };
+
+  this.hasRoad = function(playerId) {
+    return this.getRoads(playerId).length != 0;
+  };
+
   this.isValidForFirstRoad = function(playerId) {
-    return !this.isSettled();
+    return !this.isSettled() && hasSettlementWithoutRoad(playerId);
+  };
+
+  this.isValidForSecondRoad = this.isValidForFirstRoad;
+
+  this.isValidForRoad = function(playerId) {
+    return !this.isSettled() && (this.hasSettlement(playerId) || this.hasRoad(playerId));
   };
 
   this.board = board;
