@@ -41,29 +41,50 @@ Pioneers.periodicallyUpdate = function(gameId, interval) {
     }, interval || 5000);
 };
 
+$.fn.extend({
+              // TODO: refactoring
+              numeric: function(step, min) {
+                var field = $(this).hide();
+                field.val(0);
+                field.siblings("a.minus").remove();
+                field.siblings("a.plus").remove();
+                field.siblings("span.value").remove();
+                var minus = $("<a href='' class='minus'>-</a>");
+                var plus = $("<a href='' class='plus'>+</a>");
+                var showValue = function(element, value) {
+                  element.text(Math.abs(value));
+                  if(value > 0) element.removeClass("neutral negative").addClass("positive");
+                  else if(value < 0) element.removeClass("positive neutral").addClass("negative");
+                  else element.removeClass("positive negative").addClass("neutral");
+                };
+                var value = $("<span class='value neutral'>" + 0 + "</span>");
+                minus.insertBefore(this).click(
+                  function() {
+                    var val = parseInt(field.val());
+                    if(val > 0) val--;
+                    else if(val - step >= min) val -= step;
+                    field.val(val);
+                    showValue(value, val);
+                    return false;
+                  }
+                );
+                value.insertBefore(this);
+                plus.insertAfter(this).click(
+                  function() {
+                    var val = parseInt(field.val());
+                    if(val >= 0) val++;
+                    else val += step;
+                    field.val(val);
+                    showValue(value, val);
+                    return false;
+                  }
+                );
+              }
+            }
+           );
+
 $(function() {
     Pioneers.initGame(10);
-
-    // alert(document.location.pathname);
-    // Pioneers.periodicallyLoadGame(10);
-    // $("#map ul#nodes li ul li").hover(
-    //   function() {
-    //     var settlement = "<div class='settlement player-1'></div>";
-    //     $(settlement).appendTo(this).click(
-    //       function() {
-    //         var position = $(this).parents("li").map(
-    //           function()
-    //           {
-    //             return $(this).attr("class").match(/\d+/);
-    //           }
-    //         ).get().reverse();
-    //         alert(position.join());
-    //       }
-    //     );
-    //   },
-    //   function() {
-    //     $(this).empty();
-    //   }
-    // );
+    // $("#menu").tabs();
   }
  );

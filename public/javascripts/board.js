@@ -27,15 +27,22 @@ Pioneers.Board = function(game, attributes) {
                       );
   };
 
-  this.createNodes = function() {
+  this.createNodes = function(attributes) {
     var board = this;
     this.nodes = [];
     $.each(this.getHexes(),
            function() {
              $.each(this.getNodePositions(),
                     function() {
+                      var position = this;
+                      var attr = $.grep(attributes,
+                                        function(nodeAttributes) {
+                                          return nodeAttributes.row == position[0] && nodeAttributes.col == position[1];
+                                        }
+                                       )[0];
+                      attr = attr || { position: this };
                       if(board.getNode(this) == null) {
-                        board.nodes.push(new Pioneers.Node(board, this));
+                        board.nodes.push(new Pioneers.Node(board, attr));
                       }
                     }
                    );
@@ -43,15 +50,22 @@ Pioneers.Board = function(game, attributes) {
           );
   };
 
-  this.createEdges = function() {
+  this.createEdges = function(attributes) {
     var board = this;
     this.edges = [];
     $.each(this.getHexes(),
            function() {
              $.each(this.getEdgePositions(),
                     function() {
+                      var position = this;
+                      var attr = $.grep(attributes,
+                                        function(edgeAttributes) {
+                                          return edgeAttributes.row == position[0] && edgeAttributes.col == position[1];
+                                        }
+                                       )[0];
+                      attr = attr || { position: this };
                       if(board.getEdge(this) == null) {
-                        board.edges.push(new Pioneers.Edge(board, this));
+                        board.edges.push(new Pioneers.Edge(board, attr));
                       }
                     }
                    );
@@ -60,30 +74,21 @@ Pioneers.Board = function(game, attributes) {
   };
 
   this.updateNodes = function(nodes) {
-    // for(i in nodes) {
-    //   var position = nodes[i].position;
-    //   if(this.nodes[position[0]][position[1]] == null) {
-    //     var node = new Pioneers.Node(this, attributes[i]);
-    //     this.nodes[node.row()][node.col()] = node;
-    //     this.nodesList.push(node);
-    //   } else {
-    //     this.nodes[position[0]][position[1]].update(nodes[i]);
-    //   }
-    // }
+    var board = this;
+    $.each(nodes,
+           function() {
+             board.getNode(this.position).update(this);
+           }
+          );
   };
 
-  this.updateEdges = function(attributes) {
-    // var edges = attributes;
-    // for(i in edges) {
-    //   var position = edges[i].position;
-    //   if(this.edges[position[0]][position[1]] == null) {
-    //     var edge = new Pioneers.Edge(this, attributes[i]);
-    //     this.edges[edge.row()][edge.col()] = edge;
-    //     this.edgesList.push(edge);
-    //   } else {
-    //     this.edges[position[0]][position[1]].update(edges[i]);
-    //   }
-    // }
+  this.updateEdges = function(edges) {
+    var board = this;
+    $.each(edges,
+           function() {
+             board.getEdge(this.position).update(this);
+           }
+          );
   };
 
   this.update = function(attributes) {
@@ -127,33 +132,10 @@ Pioneers.Board = function(game, attributes) {
                  )[0];
   };
 
-  this.getSettlements = function() {
-    var playerId = this.game.userPlayer.id;
-    return  $.grep(this.nodesList,
-                   function(node) {
-                     return node.state == "settlement" && node.playerId == playerId;
-                   }
-                  );
-  };
-
-  this.getCities = function() {
-    var playerId = this.game.userPlayer.id;
-    return  $.grep(this.nodesList,
-                   function(node) {
-                     return node.state == "city" && node.playerId == playerId;
-                   }
-                  );
-  };
-
-  this.getSettlementsAndCities = function() {
-    return $.merge(this.settlements(), this.cities());
-  };
-
-  this.getRoads = function() {
-    var playerId = this.game.userPlayer.id;
-    return $.grep(this.edgesList,
-                  function(edge) {
-                    return edge.playerId == playerId;
+  this.getSettlements = function(playerId) {
+    return $.grep(this.getNodes(),
+                  function(node) {
+                    return node.isSettlement(playerId);
                   }
                  );
   };

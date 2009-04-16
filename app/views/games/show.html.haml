@@ -29,12 +29,65 @@
   %dt.roads Roads
   %dd.roads n/a
 
-%ul#build
-  %li.road
-    = link_to "Road", nil, :class => "road"
-  %li.settlement
-    = link_to "Settlement", nil, :class => "settlement"
-  %li.city
-    = link_to "City", nil, :class => "city"
-  %li.card
-    = link_to "Development card", nil, :class => "card"
+#menu
+  %ul
+    %li
+      = link_to "Build", "#build"
+    %li
+      = link_to "Offer", "#offer"
+    %li
+      = link_to "Exchange", "#exchange"
+    %li
+      = link_to "Cards", "#cards"
+  #build
+    %ul
+      %li.road
+        = link_to "Road", nil, :class => "road"
+      %li.settlement
+        = link_to "Settlement", nil, :class => "settlement"
+      %li.city
+        = link_to "City", nil, :class => "city"
+      %li.card
+        = link_to "Development card", nil, :class => "card"
+      %li.cancel
+        = link_to "Cancel", nil, :class => "cancel"
+  #offer
+    - form_tag game_offer_path(@game) do
+      %ol
+        %li
+          = label_tag "offer[bricks]", "Bricks"
+          = text_field_tag "offer[bricks]", "0"
+        %li
+          = label_tag "offer[grain]", "Grain"
+          = text_field_tag "offer[grain]", "0"
+        %li
+          = label_tag "offer[lumber]", "Lumber"
+          = text_field_tag "offer[lumber]", "0"
+        %li
+          = label_tag "offer[ore]", "Ore"
+          = text_field_tag "offer[ore]", "0"
+        %li
+          = label_tag "offer[wool]", "Wool"
+          = text_field_tag "offer[wool]", "0"
+        = submit_tag "Offer"
+  #exchange
+    - form_tag game_exchanges_path(@game) do
+      %ol
+        %li
+          = label_tag "exchange[bricks]", "Bricks"
+          = text_field_tag "exchange[bricks]", "0"
+        %li
+          = label_tag "exchange[grain]", "Grain"
+          = text_field_tag "exchange[grain]", "0"
+        %li
+          = label_tag "exchange[lumber]", "Lumber"
+          = text_field_tag "exchange[lumber]", "0"
+        %li
+          = label_tag "exchange[ore]", "Ore"
+          = text_field_tag "exchange[ore]", "0"
+        %li
+          = label_tag "exchange[wool]", "Wool"
+          = text_field_tag "exchange[wool]", "0"
+        = submit_tag "Exchange"
+  #cards
+    %ul

@@ -17,7 +17,7 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Edge = function(board, position) {
+Pioneers.Edge = function(board, attributes) {
   this.getPosition = function() {
     return this.position;
   };
@@ -40,6 +40,19 @@ Pioneers.Edge = function(board, position) {
 
   this.getPlayerId = function() {
     return this.playerId;
+  };
+
+  this.getGame = function() {
+    return this.board.game;
+  };
+
+  this.getPlayerNumber = function() {
+    return this.getGame().getPlayerNumber(this.getPlayerId());
+  };
+
+  this.setPlayerId = function(playerId) {
+    this.playerId = playerId;
+    $("#edges li.row-" + this.getRow() + " li.col-" + this.getCol()).html("<div class='road player-" + this.getPlayerNumber() + "'></div>");
   };
 
   this.getHexPositions = function() {
@@ -161,7 +174,7 @@ Pioneers.Edge = function(board, position) {
   this.getLeftEdges = function() {
     var board = this.getBoard();
     return $.map(this.getLeftEdgePositions(),
-                 function(edge) {
+                 function(position) {
                    return board.getEdge(position);
                  }
                 );
@@ -170,7 +183,7 @@ Pioneers.Edge = function(board, position) {
   this.getRightEdges = function() {
     var board = this.getBoard();
     return $.map(this.getRightEdgePositions(),
-                 function(edge) {
+                 function(position) {
                    return board.getEdge(position);
                  }
                 );
@@ -182,7 +195,7 @@ Pioneers.Edge = function(board, position) {
 
   this.getLeftRoads = function(playerId) {
     var leftNode = this.getLeftNode();
-    if(!leftNode.isSettled() || leftNode.getPlayer() == playerId) {
+    if(!leftNode.isSettled() || leftNode.getPlayerId() == playerId) {
       return $.grep(this.getLeftEdges(),
                     function(edge) {
                       return edge.playerId == playerId;
@@ -195,7 +208,7 @@ Pioneers.Edge = function(board, position) {
 
   this.getRightRoads = function(playerId) {
     var rightNode = this.getRightNode();
-    if(!rightNode.isSettled() || rightNode.getPlayer() == playerId) {
+    if(!rightNode.isSettled() || rightNode.getPlayerId() == playerId) {
       return $.grep(this.getRightEdges(),
                     function(edge) {
                       return edge.playerId == playerId;
@@ -224,7 +237,11 @@ Pioneers.Edge = function(board, position) {
     return !this.isSettled() && (this.hasSettlement(playerId) || this.hasRoad(playerId));
   };
 
+  this.update = function(attributes) {
+    if(this.getPlayerId() != attributes.playerId) this.setPlayerId(attributes.playerId);
+  };
+
   this.board = board;
-  this.game = board.game;
-  this.position = position;
+  this.position = attributes.position;
+  this.playerId = attributes.playerId;
 };

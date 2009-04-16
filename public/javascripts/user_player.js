@@ -18,39 +18,242 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.UserPlayer = function(game, attributes) {
-  this.update = function(attributes) {
-    this.id = attributes.id;
-    this.number = attributes.number;
-    this.bricks = attributes.bricks;
-    this.grain = attributes.grain;
-    this.lumber = attributes.lumber;
-    this.ore = attributes.ore;
-    this.wool = attributes.wool;
-    this.settlements = attributes.settlements;
-    this.cities = attributes.cities;
-    this.roads = attributes.roads;
-    this.state = attributes.state;
-    this.visiblePoints = attributes.visiblePoints;
-    this.hiddenPoints = attributes.hiddenPoints;
-    this.bricksExchangeRate = attributes.bricksExchangeRate;
-    this.grainExchangeRate = attributes.grainExchangeRate;
-    this.lumberExchangeRate = attributes.lumberExchangeRate;
-    this.oreExchangeRate = attributes.oreExchangeRate;
-    this.woolExchangeRate = attributes.woolExchangeRate;
-    this.updateView();
+  this.getId = function() {
+    return this.id;
   };
 
-  this.updateView = function() {
-    $("#player dd.bricks").text(this.bricks);
-    $("#player dd.grain").text(this.grain);
-    $("#player dd.lumber").text(this.lumber);
-    $("#player dd.ore").text(this.ore);
-    $("#player dd.wool").text(this.wool);
-    $("#player dd.settlements").text(this.settlements);
-    $("#player dd.cities").text(this.cities);
-    $("#player dd.roads").text(this.roads);
+  this.getNumber = function() {
+    return this.number;
+  };
+
+  this.getBricks = function() {
+    return this.bricks;
+  };
+
+  this.getGrain = function() {
+    return this.grain;
+  };
+
+  this.getLumber = function() {
+    return this.lumber;
+  };
+
+  this.getOre = function() {
+    return this.ore;
+  };
+
+  this.getWool = function() {
+    return this.wool;
+  };
+
+  this.getSettlements = function() {
+    return this.settlements;
+  };
+
+  this.getCities = function() {
+    return this.cities;
+  };
+
+  this.getRoads = function() {
+    return this.roads;
+  };
+
+  this.getState = function() {
+    return this.state;
+  };
+
+  this.getVisiblePoints = function() {
+    return this.visiblePoints;
+  };
+
+  this.getHiddenPoints = function() {
+    return this.hiddenPoints;
+  };
+
+  this.getPoints = function() {
+    return this.visiblePoints + this.hiddenPoints;
+  };
+
+  this.getBricksExchangeRate = function() {
+    return this.bricksExchangeRate;
+  };
+
+  this.getGrainExchangeRate = function() {
+    return this.grainExchangeRate;
+  };
+
+  this.getLumberExchangeRate = function() {
+    return this.lumberExchangeRate;
+  };
+
+  this.getOreExchangeRate = function() {
+    return this.oreExchangeRate;
+  };
+
+  this.getWoolExchangeRate = function() {
+    return this.woolExchangeRate;
+  };
+
+  this.canBuildSettlement = function() {
+    return this.getSettlements() >= 1 &&
+      this.getBricks() >= 1 &&
+      this.getGrain() >= 1 &&
+      this.getLumber() >= 1 &&
+      this.getWool() >= 1;
+  };
+
+  this.canBuildCity = function() {
+    return this.getCities() >= 1 &&
+      this.getGrain() >= 2 &&
+      this.getOre() >= 3;
+  };
+
+  this.canBuildRoad = function() {
+    return this.getRoads() >= 1 &&
+      this.getBricks() >= 1 &&
+      this.getLumber() >= 1;
+  };
+
+  this.canBuyCard = function() {
+    return this.getGrain() >= 1 &&
+      this.getOre() >= 1 &&
+      this.getWool() >= 1;
+  };
+
+  this.setBricks = function(bricks) {
+    this.bricks = bricks;
+    $("#player dd.bricks").text(bricks);
+    $("#offer_bricks").numeric(1, -bricks);
+    if(this.bricksExchangeRate) $("#exchange_bricks").numeric(this.bricksExchangeRate, -bricks);
+  };
+
+  this.setGrain = function(grain) {
+    this.grain = grain;
+    $("#player dd.grain").text(grain);
+    $("#offer_grain").numeric(1, -grain);
+    if(this.grainExchangeRate) $("#exchange_grain").numeric(this.grainExchangeRate, -grain);
+  };
+
+  this.setLumber = function(lumber) {
+    this.lumber = lumber;
+    $("#player dd.lumber").text(lumber);
+    $("#offer_lumber").numeric(1, -lumber);
+    if(this.lumberExchangeRate) $("#exchange_lumber").numeric(this.lumberExchangeRate, -lumber);
+  };
+
+  this.setOre = function(ore) {
+    this.ore = ore;
+    $("#player dd.ore").text(ore);
+    $("#offer_ore").numeric(1, -ore);
+    if(this.oreExchangeRate) $("#exchange_ore").numeric(this.oreExchangeRate, -ore);
+  };
+
+  this.setWool = function(wool) {
+    this.wool = wool;
+    $("#player dd.wool").text(wool);
+    $("#offer_wool").numeric(1, -wool);
+    if(this.woolExchangeRate) $("#exchange_wool").numeric(this.woolExchangeRate, -wool);
+  };
+
+  this.setSettlements = function(settlements) {
+    this.settlements = settlements;
+    $("#player dd.settlements").text(settlements);
+  };
+
+  this.setCities = function(cities) {
+    this.cities = cities;
+    $("#player dd.cities").text(cities);
+  };
+
+  this.setRoads = function(roads) {
+    this.roads = roads;
+    $("#player dd.roads").text(roads);
+  };
+
+  this.setState = function(state) {
+    this.state = state;
+  };
+
+  this.setBricksExchangeRate = function(bricksExchangeRate) {
+    this.bricksExchangeRate = bricksExchangeRate;
+    $("#exchange_bricks").numeric(bricksExchangeRate, -this.getBricks());
+  };
+
+  this.setGrainExchangeRate = function(grainExchangeRate) {
+    this.grainExchangeRate = grainExchangeRate;
+    $("#exchange_grain").numeric(grainExchangeRate, -this.getGrain());
+  };
+
+  this.setLumberExchangeRate = function(lumberExchangeRate) {
+    this.lumberExchangeRate = lumberExchangeRate;
+    $("#exchange_lumber").numeric(lumberExchangeRate, -this.getLumber());
+  };
+
+  this.setOreExchangeRate = function(oreExchangeRate) {
+    this.oreExchangeRate = oreExchangeRate;
+    $("#exchange_ore").numeric(oreExchangeRate, -this.getOre());
+  };
+
+  this.setWoolExchangeRate = function(woolExchangeRate) {
+    this.woolExchangeRate = woolExchangeRate;
+    $("#exchange_wool").numeric(woolExchangeRate, -this.getWool());
+  };
+
+  this.createCards = function(attributes) {
+    var userPlayer = this;
+    this.cards = $.map(attributes,
+                       function(card) {
+                         return new Pioneers.Card(userPlayer, card);
+                       }
+                      );
+  };
+
+  this.updateCards = function(attributes) {
+    var userPlayer = this;
+    $.each(attributes,
+           function() {
+             var card = userPlayer.getCard(this.id);
+             if(card != null) {
+               card.update(this);
+             } else {
+               userPlayer.cards.push(new Pioneers.Card(userPlayer, this));
+             }
+           }
+          );
+  };
+
+  this.getCard = function(cardId) {
+    return $.grep(this.cards,
+                  function(card) {
+                    return cardId == card.getId();
+                  }
+                 )[0];
+  };
+
+  this.update = function(attributes) {
+    this.updateCards(attributes.cards);
+    if(this.getBricks() != attributes.bricks) this.setBricks(attributes.bricks);
+    if(this.getGrain() != attributes.grain) this.setGrain(attributes.grain);
+    if(this.getLumber() != attributes.lumber) this.setLumber(attributes.lumber);
+    if(this.getOre() != attributes.ore) this.setOre(attributes.ore);
+    if(this.getWool() != attributes.wool) this.setWool(attributes.wool);
+    if(this.getSettlements() != attributes.settlements) this.setSettlements(attributes.settlements);
+    if(this.getCities() != attributes.cities) this.setCities(attributes.cities);
+    if(this.getRoads() != attributes.roads) this.setRoads(attributes.roads);
+    if(this.getState() != attributes.state) this.setState(attributes.state);
+    if(this.getBricksExchangeRate() != attributes.bricksExchangeRate) this.setBricksExchangeRate(attributes.bricksExchangeRate);
+    if(this.getGrainExchangeRate() != attributes.grainExchangeRate) this.setGrainExchangeRate(attributes.grainExchangeRate);
+    if(this.getLumberExchangeRate() != attributes.lumberExchangeRate) this.setLumberExchangeRate(attributes.lumberExchangeRate);
+    if(this.getOreExchangeRate() != attributes.oreExchangeRate) this.setOreExchangeRate(attributes.oreExchangeRate);
+    if(this.getWoolExchangeRate() != attributes.woolExchangeRate) this.setWoolExchangeRate(attributes.woolExchangeRate);
+
+    this.visiblePoints = attributes.visiblePoints;
+    this.hiddenPoints = attributes.hiddenPoints;
   };
 
   this.game = game;
+  this.id = attributes.id;
+  this.number = attributes.number;
+  this.createCards(attributes.cards);
   this.update(attributes);
 };

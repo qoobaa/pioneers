@@ -20,7 +20,6 @@ var Pioneers = Pioneers || {};
 Pioneers.Game = function(attributes) {
   this.createBoard = function(attributes) {
     this.board = new Pioneers.Board(this, attributes);
-    this.board.game = this;
   };
 
   this.createUserPlayer = function(attributes) {
@@ -38,7 +37,24 @@ Pioneers.Game = function(attributes) {
                         );
   };
 
+  this.getPlayers = function() {
+    return this.players;
+  };
+
+  this.getPlayer = function(playerId) {
+    return $.grep(this.getPlayers(),
+                  function(player) {
+                    return player.getId() == playerId;
+                  }
+                 )[0];
+  };
+
+  this.getPlayerNumber = function(playerId) {
+    return this.getPlayer(playerId).getNumber();
+  };
+
   this.updateBoard = function(attributes) {
+    var game = this;
     this.board.update(attributes);
   };
 
@@ -49,7 +65,7 @@ Pioneers.Game = function(attributes) {
   };
 
   this.updatePlayers = function(attributes) {
-    $.each(this.players,
+    $.each(this.getPlayers(),
            function(i) {
              this.update(attributes[i]);
            }
@@ -62,72 +78,83 @@ Pioneers.Game = function(attributes) {
     this.updateUserPlayer(attributes.userPlayer);
   };
 
-  this.playerById = function(id) {
-    return $.grep(this.players,
-                  function(player) {
-                    return player.id == id;
-                  }
-                 )[0];
-  };
-
-  this.buildCity = function() {
+  this.buildCityModeOn = function() {
     var playerNumber = this.userPlayer.number;
-    $.each(this.board.settlements(),
+    var playerId = this.userPlayer.id;
+    $.each(this.board.getSettlements(playerId),
            function() {
-             var id = this.id;
-             $("#nodes li.row-" + this.row() + " li.col-" + this.col()).addClass("expandable").hover(
-               function() {
-                 $(this).html("<div class='city player-" + playerNumber + "'></div>");
-               },
-               function() {
-                 $(this).html("<div class='settlement player-" + playerNumber + "'></div>");
-               }
-             ).click(
+             var id = this.getId();
+             $("#nodes li.row-" + this.getRow() + " li.col-" + this.getCol()).addClass("expandable-" + playerNumber).click(
                function() {
                  alert("you clicked " + id);
-                 $("#nodes .expandable").removeClass("expandable").unbind();
+                 Pioneers.game.buildCityModeOff();
+                 Pioneers.ajax.updateNode(id);
                }
              );
            }
           );
   };
 
-  this.buildSettlementMode = function() {
+  this.buildCityModeOff = function() {
     var playerNumber = this.userPlayer.number;
-    var board = this.board;
-    var nodes = [];
-    $.each(this.board.roads(), function() {
-             $.each(this.nodePositions(), function() {
-                      if(board.nodes[this[0]][this[1]] == null) {
-                        var node = new Pioneers.Node(board, { position: this });
-                        if(node.nodes().length == 0) {
-                          $("#nodes li.row-" + node.row() + " li.col-" + node.col()).addClass("settleable").hover(
-                            function() {
-                              $(this).html("<div class='settlement player-" + playerNumber + "'></div>");
-                            },
-                            function() {
-                              $(this).empty();
-                            }
-                          ).click(
-                            function() {
-                              alert("you clicked " + node.row() + ", " + node.col());
-                              $("#nodes .settleable").removeClass("settleable").unbind().empty();
-                            }
-                          );
-                        };
-                      }
-                    }
-                   );
+    $("#nodes .expandable-" + playerNumber).removeClass("expandable-" + playerNumber).unbind();
+  };
+
+  this.buildSettlementModeOn = function() {
+    var playerNumber = this.userPlayer.number;
+    var playerId = this.userPlayer.id;
+    $.each(this.board.getNodes(),
+           function() {
+             var row = this.getRow();
+             var col = this.getCol();
+             if(this.isValidForSettlement(playerId)) {
+               $("#nodes li.row-" + row + " li.col-" + col).addClass("settleable-" + playerNumber).click(
+                 function() {
+                   alert("you clicked [" + row + ", " + col + "]");
+                   Pioneers.ajax.createNode(row, col);
+                   Pioneers.game.buildSettlementModeOff();
+                 }
+               );
+             }
            }
           );
   };
 
-  this.buildSettlementQuit = function() {
+  this.buildSettlementModeOff = function() {
+    var playerNumber = this.userPlayer.number;
+    $("#nodes .settleable-" + playerNumber).removeClass("settleable-" + playerNumber).empty().unbind();
+  };
+
+  this.buildRoadModeOn = function() {
+    var playerNumber = this.userPlayer.number;
+    var playerId = this.userPlayer.id;
+    $.each(this.board.getEdges(),
+           function() {
+             var row = this.getRow();
+             var col = this.getCol();
+             if(this.isValidForRoad(playerId)) {
+               $("#edges li.row-" + row + " li.col-" + col).addClass("settleable-" + playerNumber).click(
+                 function() {
+                   alert("you clicked [" + row + ", " + col + "]");
+                   Pioneers.game.buildRoadModeOff();
+                 }
+               );
+             }
+           }
+          );
+  };
+
+  this.buildRoadModeOff = function() {
+    var playerNumber = this.userPlayer.number;
+    $("#edges .settleable-" + playerNumber).removeClass("settleable-" + playerNumber).unbind();
+  };
+
+  this.robberMoveModeOn = function() {
 
   };
 
   this.id = attributes.id;
   this.createBoard(attributes.board);
-  this.createUserPlayer(attributes.userPlayer);
   this.createPlayers(attributes.players);
+  this.createUserPlayer(attributes.userPlayer);
 };

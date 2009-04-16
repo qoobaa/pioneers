@@ -17,7 +17,7 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Node = function(board, position) {
+Pioneers.Node = function(board, attributes) {
   this.getPosition = function() {
     return this.position;
   };
@@ -30,9 +30,13 @@ Pioneers.Node = function(board, position) {
     return this.position[1];
   };
 
-  // this.getPlayerNumber = function() {
-  //   return this.game.playerById(this.playerId).number;
-  // };
+  this.getGame = function() {
+    return this.board.game;
+  };
+
+  this.getPlayerNumber = function() {
+    return this.getGame().getPlayerNumber(this.getPlayerId());
+  };
 
   this.getId = function() {
     return this.id;
@@ -46,8 +50,33 @@ Pioneers.Node = function(board, position) {
     return this.playerId;
   };
 
+  this.getState = function() {
+    return this.state;
+  };
+
   this.isSettled = function() {
     return this.getPlayerId() != null;
+  };
+
+  this.setState = function(state) {
+    this.state = state;
+    $("#nodes li.row-" + this.getRow() + " li.col-" + this.getCol()).html("<div class='" + state + " player-" + this.getPlayerNumber() + "'></div>");
+  };
+
+  this.isSettlement = function(playerId) {
+    if(playerId != undefined) {
+      return this.state == "settlement" && this.getPlayerId() == playerId;
+    } else {
+      return this.state == "settlement";
+    }
+  };
+
+  this.isCity = function(playerId) {
+    if(playerId != undefined) {
+      return this.state == "city" && this.getPlayerId() == playerId;
+    } else {
+      return this.state == "city";
+    }
   };
 
   this.getHexPositions = function() {
@@ -151,7 +180,15 @@ Pioneers.Node = function(board, position) {
     return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerId);
   };
 
+  this.update = function(attributes) {
+    this.id = attributes.id;
+    this.playerId = attributes.playerId;
+    if(this.state != attributes.state) this.setState(attributes.state);
+  };
+
   this.board = board;
   this.game = board.game;
-  this.position = position;
+  this.position = attributes.position;
+  this.playerId = attributes.playerId;
+  this.state = attributes.state;
 };
