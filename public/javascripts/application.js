@@ -41,50 +41,100 @@ Pioneers.periodicallyUpdate = function(gameId, interval) {
     }, interval || 5000);
 };
 
-$.fn.extend({
-              // TODO: refactoring
-              numeric: function(step, min) {
-                var field = $(this).hide();
-                field.val(0);
-                field.siblings("a.minus").remove();
-                field.siblings("a.plus").remove();
-                field.siblings("span.value").remove();
-                var minus = $("<a href='' class='minus'>-</a>");
-                var plus = $("<a href='' class='plus'>+</a>");
-                var showValue = function(element, value) {
-                  element.text(Math.abs(value));
-                  if(value > 0) element.removeClass("neutral negative").addClass("positive");
-                  else if(value < 0) element.removeClass("positive neutral").addClass("negative");
-                  else element.removeClass("positive negative").addClass("neutral");
-                };
-                var value = $("<span class='value neutral'>" + 0 + "</span>");
-                minus.insertBefore(this).click(
-                  function() {
-                    var val = parseInt(field.val());
-                    if(val > 0) val--;
-                    else if(val - step >= min) val -= step;
-                    field.val(val);
-                    showValue(value, val);
-                    return false;
-                  }
-                );
-                value.insertBefore(this);
-                plus.insertAfter(this).click(
-                  function() {
-                    var val = parseInt(field.val());
-                    if(val >= 0) val++;
-                    else val += step;
-                    field.val(val);
-                    showValue(value, val);
-                    return false;
-                  }
-                );
-              }
-            }
-           );
+$.widget("ui.resourceField", {
+           _init: function() {
+             var widget = this;
+             $("<a href='' class='minus'>-</a>").appendTo(this.element).click(
+               function() {
+                 widget.decreaseValue();
+                 return false;
+               }
+             );
+             $("<span class='value'></span>").appendTo(this.element);
+             $("<a href='' class='plus'>+</a>").appendTo(this.element).click(
+               function() {
+                 widget.increaseValue();
+                 return false;
+               }
+             );
+             this._showValue();
+           },
+
+           _showValue: function() {
+             var value = this.getValue();
+             var valueElement = this.element.children(".value").text(Math.abs(value));
+             valueElement.removeClass().addClass("value");
+             if(value > 0) valueElement.addClass("positive");
+             else if(value < 0) valueElement.addClass("negative");
+           },
+
+           increaseValue: function() {
+             if(this.getValue() >= 0) this.setValue(this.getValue() + 1);
+             else this.setValue(this.getValue() + this.getStep());
+           },
+
+           decreaseValue: function() {
+             if(this.getValue() > 0) this.setValue(this.getValue() - 1);
+             else if(this.getValue() - this.getStep() >= this.getMin()) this.setValue(this.getValue() - this.getStep());
+           },
+
+           setValue: function(value) {
+             this._setData("value", value);
+             this._showValue();
+             this._trigger("change", value);
+           },
+
+           getValue: function() {
+             return this._getData("value");
+           },
+
+           getMin: function() {
+             return this._getData("min");
+           },
+
+           setMin: function(min) {
+             this._setData("min", min);
+             this.reset();
+           },
+
+           getStep: function() {
+             return this._getData("step");
+           },
+
+           setStep: function(step) {
+             this._setData("step", step);
+             this.reset();
+           },
+
+           reset: function() {
+             this.setValue(0);
+           }
+         }
+        );
+
+$.extend($.ui.resourceField, {
+           getter: "getValue getMin getStep",
+           setter: "setValue setMin setStep",
+           defaults: {
+             value: 0,
+             step: 4,
+             min: 0
+           }
+         }
+        );
 
 $(function() {
     Pioneers.initGame(10);
-    // $("#menu").tabs();
+    $("#offer_bricks").resourceField({step: 1});
+    $("#offer_grain").resourceField({step: 1});
+    $("#offer_lumber").resourceField({step: 1});
+    $("#offer_ore").resourceField({step: 1});
+    $("#offer_wool").resourceField({step: 1});
+    $("#exchange_bricks").resourceField();
+    $("#exchange_grain").resourceField();
+    $("#exchange_lumber").resourceField();
+    $("#exchange_ore").resourceField();
+    $("#exchange_wool").resourceField();
+    $("#menu").tabs();
   }
  );

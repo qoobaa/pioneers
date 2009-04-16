@@ -52,42 +52,41 @@
       %li.cancel
         = link_to "Cancel", nil, :class => "cancel"
   #offer
-    - form_tag game_offer_path(@game) do
-      %ol
-        %li
-          = label_tag "offer[bricks]", "Bricks"
-          = text_field_tag "offer[bricks]", "0"
-        %li
-          = label_tag "offer[grain]", "Grain"
-          = text_field_tag "offer[grain]", "0"
-        %li
-          = label_tag "offer[lumber]", "Lumber"
-          = text_field_tag "offer[lumber]", "0"
-        %li
-          = label_tag "offer[ore]", "Ore"
-          = text_field_tag "offer[ore]", "0"
-        %li
-          = label_tag "offer[wool]", "Wool"
-          = text_field_tag "offer[wool]", "0"
-        = submit_tag "Offer"
+    %ul
+      %li
+        Bricks
+        #offer_bricks
+      %li
+        Grain
+        #offer_grain
+      %li
+        Lumber
+        #offer_lumber
+      %li
+        Ore
+        #offer_ore
+      %li
+        Wool
+        #offer_wool
   #exchange
-    - form_tag game_exchanges_path(@game) do
-      %ol
-        %li
-          = label_tag "exchange[bricks]", "Bricks"
-          = text_field_tag "exchange[bricks]", "0"
-        %li
-          = label_tag "exchange[grain]", "Grain"
-          = text_field_tag "exchange[grain]", "0"
-        %li
-          = label_tag "exchange[lumber]", "Lumber"
-          = text_field_tag "exchange[lumber]", "0"
-        %li
-          = label_tag "exchange[ore]", "Ore"
-          = text_field_tag "exchange[ore]", "0"
-        %li
-          = label_tag "exchange[wool]", "Wool"
-          = text_field_tag "exchange[wool]", "0"
-        = submit_tag "Exchange"
+    %ul
+      %li
+        Bricks
+        #exchange_bricks
+      %li
+        Grain
+        #exchange_grain
+      %li
+        Lumber
+        #exchange_lumber
+      %li
+        Ore
+        #exchange_ore
+      %li
+        Wool
+        #exchange_wool
   #cards
     %ul
+
+
+#test
