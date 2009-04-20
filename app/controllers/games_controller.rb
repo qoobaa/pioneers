@@ -32,13 +32,13 @@ class GamesController < ApplicationController
       format.json do
         nodes = @game.board_nodes.map do |node|
           { position: node.position,
-            playerId: node.player_id,
+            playerNumber: node.player_number,
             state: node.state,
             id: node.id }
         end
         edges = @game.board_edges.map do |edge|
           { position: edge.position,
-            playerId: edge.player_id }
+            playerNumber: edge.player_number }
         end
         players = @game.players.map do |player|
           { id: player.id,
@@ -49,7 +49,8 @@ class GamesController < ApplicationController
             isUserIdle: player.user_idle? }
         end
         hexes = @game.board_hexes.map do |hex|
-          { type: hex.hex_type,
+          { roll: hex.roll,
+            type: hex.hex_type,
             position: hex.position,
             harborPosition: hex.harbor_position,
             harborType: hex.harbor_type }

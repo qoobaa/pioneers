@@ -38,8 +38,24 @@ Pioneers.Hex = function(board, attributes) {
     return this.type;
   };
 
+  this.getRoll = function() {
+    return this.roll;
+  };
+
   this.isSettleable = function() {
     return this.getType() != "sea";
+  };
+
+  this.isHarbor = function() {
+    return this.getHarborType() != undefined;
+  };
+
+  this.getHarborPosition = function() {
+    return this.harborPosition;
+  };
+
+  this.getHarborType = function() {
+    return this.harborType;
   };
 
   this.getHexPositions = function() {
@@ -71,11 +87,19 @@ Pioneers.Hex = function(board, attributes) {
 
   this.getNodes = function() {
     var board = this.getBoard();
-    return $.map(this.nodePositions(),
+    return $.map(this.getNodePositions(),
                  function(position) {
                    return board.getNode(position);
                  }
                 );
+  };
+
+  this.getRobbableNodes = function(playerNumber) {
+    return $.grep(this.getNodes(),
+                  function(node) {
+                    return node.isSettled() && node.getPlayerNumber() != playerNumber;
+                  }
+                 );
   };
 
   this.getEdgePositions = function() {
@@ -99,6 +123,7 @@ Pioneers.Hex = function(board, attributes) {
   this.board = board;
   this.position = attributes.position;
   this.type = attributes.type;
+  this.roll = attributes.roll;
   this.harborType = attributes.harborType;
   this.harborPosition = attributes.harborPosition;
 };

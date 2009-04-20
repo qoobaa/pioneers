@@ -30,12 +30,8 @@ Pioneers.Node = function(board, attributes) {
     return this.position[1];
   };
 
-  this.getGame = function() {
-    return this.board.game;
-  };
-
   this.getPlayerNumber = function() {
-    return this.getGame().getPlayerNumber(this.getPlayerId());
+    return this.playerNumber;
   };
 
   this.getId = function() {
@@ -46,16 +42,12 @@ Pioneers.Node = function(board, attributes) {
     return this.board;
   };
 
-  this.getPlayerId = function() {
-    return this.playerId;
-  };
-
   this.getState = function() {
     return this.state;
   };
 
   this.isSettled = function() {
-    return this.getPlayerId() != null;
+    return this.getPlayerNumber() != null;
   };
 
   this.setState = function(state) {
@@ -63,17 +55,17 @@ Pioneers.Node = function(board, attributes) {
     $("#nodes li.row-" + this.getRow() + " li.col-" + this.getCol()).html("<div class='" + state + " player-" + this.getPlayerNumber() + "'></div>");
   };
 
-  this.isSettlement = function(playerId) {
-    if(playerId != undefined) {
-      return this.state == "settlement" && this.getPlayerId() == playerId;
+  this.isSettlement = function(playerNumber) {
+    if(playerNumber != undefined) {
+      return this.state == "settlement" && this.getPlayerNumber() == playerNumber;
     } else {
       return this.state == "settlement";
     }
   };
 
-  this.isCity = function(playerId) {
-    if(playerId != undefined) {
-      return this.state == "city" && this.getPlayerId() == playerId;
+  this.isCity = function(playerNumber) {
+    if(playerNumber != undefined) {
+      return this.state == "city" && this.getPlayerNumber() == playerNumber;
     } else {
       return this.state == "city";
     }
@@ -82,8 +74,8 @@ Pioneers.Node = function(board, attributes) {
   this.getHexPositions = function() {
     if(this.getCol() % 2 == 0) {
       return [[this.getRow() - 1, this.getCol() / 2],
-              [this.getRow(), this.getCol() / 2 - 1],
-              [this.getRow(), this.getCol() / 2]];
+              [this.getRow() - 1, this.getCol() / 2 - 1],
+              [this.getRow(), this.getCol() / 2 - 1]];
     } else {
       return [[this.getRow() - 1, (this.getCol() - 1) / 2],
               [this.getRow(), (this.getCol() - 1) / 2 - 1],
@@ -158,37 +150,38 @@ Pioneers.Node = function(board, attributes) {
                 );
   };
 
-  this.getRoads = function(playerId) {
+  this.getRoads = function(playerNumber) {
     return $.grep(this.getEdges(),
                   function(edge) {
-                    return edge.getPlayerId() == playerId;
+                    return edge.getPlayerNumber() == playerNumber;
                   }
                  );
   };
 
-  this.hasRoad = function(playerId) {
-    return this.getRoads(playerId).length != 0;
+  this.hasRoad = function(playerNumber) {
+    return this.getRoads(playerNumber).length != 0;
   };
 
   this.isValidForFirstSettlement = function() {
-    return !this.isSettled() && !this.hasSettlementInNeighbourhood();
+    return !this.isSettled() && this.isSettleable() && !this.hasSettlementInNeighbourhood();
   };
 
   this.isValidForSecondSettlement = this.isValidForFirstSettlement;
 
-  this.isValidForSettlement = function(playerId) {
-    return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerId);
+  this.isValidForSettlement = function(playerNumber) {
+    return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerNumber);
   };
 
   this.update = function(attributes) {
     this.id = attributes.id;
-    this.playerId = attributes.playerId;
+    this.playerNumber = attributes.playerNumber;
     if(this.state != attributes.state) this.setState(attributes.state);
   };
 
   this.board = board;
   this.game = board.game;
   this.position = attributes.position;
-  this.playerId = attributes.playerId;
+  this.id = attributes.id;
+  this.playerNumber = attributes.playerNumber;
   this.state = attributes.state;
 };

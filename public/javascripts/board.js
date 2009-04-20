@@ -20,9 +20,12 @@ var Pioneers = Pioneers || {};
 Pioneers.Board = function(game, attributes) {
   this.createHexes = function(attributes) {
     var board = this;
+    this.hexes2D = Pioneers.utils.makeArray2D(10, 10);
     this.hexes = $.map(attributes,
                        function(hexAttributes) {
-                         return new Pioneers.Hex(board, hexAttributes);
+                         var hex = new Pioneers.Hex(board, hexAttributes);
+                         board.hexes2D[hex.getRow()][hex.getCol()] = hex;
+                         return hex;
                        }
                       );
   };
@@ -30,6 +33,7 @@ Pioneers.Board = function(game, attributes) {
   this.createNodes = function(attributes) {
     var board = this;
     this.nodes = [];
+    this.nodes2D = Pioneers.utils.makeArray2D([11, 25]);
     $.each(this.getHexes(),
            function() {
              $.each(this.getNodePositions(),
@@ -37,12 +41,14 @@ Pioneers.Board = function(game, attributes) {
                       var position = this;
                       var attr = $.grep(attributes,
                                         function(nodeAttributes) {
-                                          return nodeAttributes.row == position[0] && nodeAttributes.col == position[1];
+                                          return nodeAttributes.position[0] == position[0] && nodeAttributes.position[1] == position[1];
                                         }
                                        )[0];
-                      attr = attr || { position: this };
-                      if(board.getNode(this) == null) {
-                        board.nodes.push(new Pioneers.Node(board, attr));
+                      attr = attr || { position: position };
+                      if(board.getNode(position) == null) {
+                        var node = new Pioneers.Node(board, attr);
+                        board.nodes.push(node);
+                        board.nodes2D[position[0]][position[1]] = node;
                       }
                     }
                    );
@@ -53,6 +59,7 @@ Pioneers.Board = function(game, attributes) {
   this.createEdges = function(attributes) {
     var board = this;
     this.edges = [];
+    this.edges2D = Pioneers.utils.makeArray2D([11, 40]);
     $.each(this.getHexes(),
            function() {
              $.each(this.getEdgePositions(),
@@ -60,12 +67,14 @@ Pioneers.Board = function(game, attributes) {
                       var position = this;
                       var attr = $.grep(attributes,
                                         function(edgeAttributes) {
-                                          return edgeAttributes.row == position[0] && edgeAttributes.col == position[1];
+                                          return edgeAttributes.position[0] == position[0] && edgeAttributes.position[1] == position[1];
                                         }
                                        )[0];
                       attr = attr || { position: this };
                       if(board.getEdge(this) == null) {
-                        board.edges.push(new Pioneers.Edge(board, attr));
+                        var edge = new Pioneers.Edge(board, attr);
+                        board.edges.push(edge);
+                        board.edges2D[position[0]][position[1]] = edge;
                       }
                     }
                    );
@@ -104,43 +113,80 @@ Pioneers.Board = function(game, attributes) {
     return this.nodes;
   };
 
+  this.getNodesValidForSettlement = function(playerNumber) {
+    return $.grep(this.nodes,
+                  function(node) {
+                    return node.isValidForSettlement(playerNumber);
+                  }
+                 );
+  };
+
+  this.getNodesValidForFirstSettlement = function(playerNumber) {
+    return $.grep(this.nodes,
+                  function(node) {
+                    return node.isValidForFirstSettlement(playerNumber);
+                  }
+                 );
+  };
+
+  this.getEdgesValidForRoad = function(playerNumber) {
+    return $.grep(this.edges,
+                  function(edge) {
+                    return edge.isValidForRoad(playerNumber);
+                  }
+                 );
+  };
+
+  this.getEdgesValidForFirstRoad = function(playerNumber) {
+    return $.grep(this.edges,
+                  function(edge) {
+                    return edge.isValidForFirstRoad(playerNumber);
+                  }
+                 );
+  };
+
   this.getEdges = function() {
     return this.edges;
   };
 
   this.getHex = function(position) {
-    return $.grep(this.getHexes(),
-                  function(hex) {
-                    return hex.getRow() == position[0] && hex.getCol() == position[1];
-                  }
-                 )[0];
+    var row = this.hexes2D[position[0]];
+    return row ? row[position[1]] : undefined;
   };
 
   this.getNode = function(position) {
-    return $.grep(this.getNodes(),
-                  function(node) {
-                    return node.getRow() == position[0] && node.getCol() == position[1];
-                  }
-                 )[0];
+    var row = this.nodes2D[position[0]];
+    return row ? row[position[1]] : undefined;
   };
 
   this.getEdge = function(position) {
-    return $.grep(this.getEdges(),
-                  function(edge) {
-                    return edge.getRow() == position[0] && edge.getCol() == position[1];
-                  }
-                 )[0];
+    var row = this.edges2D[position[0]];
+    return row ? row[position[1]] : undefined;
   };
 
-  this.getSettlements = function(playerId) {
+  this.getSettlements = function(playerNumber) {
     return $.grep(this.getNodes(),
                   function(node) {
-                    return node.isSettlement(playerId);
+                    return node.isSettlement(playerNumber);
                   }
                  );
   };
 
+  this.getHeight = function() {
+    return this.size[0];
+  };
+
+  this.getWidth = function() {
+    return this.size[1];
+  };
+
+  this.getRobberPosition = function() {
+    return this.robberPosition;
+  };
+
   this.game = game;
+  this.size = attributes.size;
+  this.robberPosition = attributes.robberPosition;
   this.createHexes(attributes.hexes);
   this.createNodes(attributes.nodes);
   this.createEdges(attributes.edges);

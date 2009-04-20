@@ -35,23 +35,15 @@ Pioneers.Edge = function(board, attributes) {
   };
 
   this.isSettled = function() {
-    return this.getPlayerId() != null;
-  };
-
-  this.getPlayerId = function() {
-    return this.playerId;
-  };
-
-  this.getGame = function() {
-    return this.board.game;
+    return this.getPlayerNumber() != null;
   };
 
   this.getPlayerNumber = function() {
-    return this.getGame().getPlayerNumber(this.getPlayerId());
+    return this.playerNumber;
   };
 
-  this.setPlayerId = function(playerId) {
-    this.playerId = playerId;
+  this.setPlayerNumber = function(playerNumber) {
+    this.playerNumber = playerNumber;
     $("#edges li.row-" + this.getRow() + " li.col-" + this.getCol()).html("<div class='road player-" + this.getPlayerNumber() + "'></div>");
   };
 
@@ -121,22 +113,22 @@ Pioneers.Edge = function(board, attributes) {
     return [this.getLeftNode(), this.getRightNode()];
   };
 
-  this.getSettlements = function(playerId) {
+  this.getSettlements = function(playerNumber) {
     return $.grep(this.getNodes(),
                   function(node) {
-                    return node.playerId == playerId;
+                    return node.playerNumber == playerNumber;
                   }
                  );
   };
 
-  this.hasSettlement = function(playerId) {
-    return this.getSettlements(playerId).length != 0;
+  this.hasSettlement = function(playerNumber) {
+    return this.getSettlements(playerNumber).length != 0;
   };
 
-  this.hasSettlementWithoutRoad = function(playerId) {
-    return $.grep(this.getSettlements(playerId),
+  this.hasSettlementWithoutRoad = function(playerNumber) {
+    return $.grep(this.getSettlements(playerNumber),
                   function(settlement) {
-                    return !settlement.hasRoad(playerId);
+                    return !settlement.hasRoad(playerNumber);
                   }
                  ).length != 0;
   };
@@ -193,12 +185,12 @@ Pioneers.Edge = function(board, attributes) {
     return $.merge(this.getLeftEdges(), this.getRightEdges());
   };
 
-  this.getLeftRoads = function(playerId) {
+  this.getLeftRoads = function(playerNumber) {
     var leftNode = this.getLeftNode();
-    if(!leftNode.isSettled() || leftNode.getPlayerId() == playerId) {
+    if(!leftNode.isSettled() || leftNode.getPlayerNumber() == playerNumber) {
       return $.grep(this.getLeftEdges(),
                     function(edge) {
-                      return edge.playerId == playerId;
+                      return edge.playerNumber == playerNumber;
                     }
                    );
     } else {
@@ -206,12 +198,12 @@ Pioneers.Edge = function(board, attributes) {
     }
   };
 
-  this.getRightRoads = function(playerId) {
+  this.getRightRoads = function(playerNumber) {
     var rightNode = this.getRightNode();
-    if(!rightNode.isSettled() || rightNode.getPlayerId() == playerId) {
+    if(!rightNode.isSettled() || rightNode.getPlayerNumber() == playerNumber) {
       return $.grep(this.getRightEdges(),
                     function(edge) {
-                      return edge.playerId == playerId;
+                      return edge.playerNumber == playerNumber;
                     }
                    );
     } else {
@@ -219,29 +211,29 @@ Pioneers.Edge = function(board, attributes) {
     }
   };
 
-  this.getRoads = function(playerId) {
-    return $.merge(this.getLeftRoads(playerId), this.getRightRoads(playerId));
+  this.getRoads = function(playerNumber) {
+    return $.merge(this.getLeftRoads(playerNumber), this.getRightRoads(playerNumber));
   };
 
-  this.hasRoad = function(playerId) {
-    return this.getRoads(playerId).length != 0;
+  this.hasRoad = function(playerNumber) {
+    return this.getRoads(playerNumber).length != 0;
   };
 
-  this.isValidForFirstRoad = function(playerId) {
-    return !this.isSettled() && hasSettlementWithoutRoad(playerId);
+  this.isValidForFirstRoad = function(playerNumber) {
+    return !this.isSettled() && this.isSettleable() && this.hasSettlementWithoutRoad(playerNumber);
   };
 
   this.isValidForSecondRoad = this.isValidForFirstRoad;
 
-  this.isValidForRoad = function(playerId) {
-    return !this.isSettled() && (this.hasSettlement(playerId) || this.hasRoad(playerId));
+  this.isValidForRoad = function(playerNumber) {
+    return !this.isSettled() && (this.hasSettlement(playerNumber) || this.hasRoad(playerNumber));
   };
 
   this.update = function(attributes) {
-    if(this.getPlayerId() != attributes.playerId) this.setPlayerId(attributes.playerId);
+    if(this.getPlayerNumber() != attributes.playerNumber) this.setPlayerNumber(attributes.playerNumber);
   };
 
   this.board = board;
   this.position = attributes.position;
-  this.playerId = attributes.playerId;
+  this.playerNumber = attributes.playerNumber;
 };

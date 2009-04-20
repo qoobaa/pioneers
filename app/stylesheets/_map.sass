@@ -40,7 +40,7 @@
         &.size-#{!row + "-" + !col}
           :height= !row * 80px + !col * 40px - 40px
           :width= !col * 70px + 20px
-    ul#hexes
+    div.hexes
       :position absolute
       li
         :list-style none
@@ -50,29 +50,41 @@
             :top= !row * 80px
         ul
           li
-            strong
+            :width 95px
+            :height 80px
+            :text-align center
+            :line-height 80px
+            span.robber
+              :display none
+            &.robber,&.settleable:hover
+              span.roll
+                :display none
+              span.robber
+                :display block
+            span
               :width 95px
               :height 80px
               :display block
               :text-align center
+              :font-weight bold
               :line-height 80px
             @for !position from 0 to 6
-              strong.generic-#{!position}
+              span.generic-#{!position}
                 :background= url("/images/harbor-generic-#{!position}.png")
             @for !position from 0 to 6
-              strong.bricks-#{!position}
+              span.bricks-#{!position}
                 :background= url("/images/harbor-generic-#{!position}.png")
             @for !position from 0 to 6
-              strong.grain-#{!position}
+              span.grain-#{!position}
                 :background= url("/images/harbor-generic-#{!position}.png")
             @for !position from 0 to 6
-              strong.lumber-#{!position}
+              span.lumber-#{!position}
                 :background= url("/images/harbor-generic-#{!position}.png")
             @for !position from 0 to 6
-              strong.ore-#{!position}
+              span.ore-#{!position}
                 :background= url("/images/harbor-generic-#{!position}.png")
             @for !position from 0 to 6
-              strong.wool-#{!position}
+              span.wool-#{!position}
                 :background= url("/images/harbor-generic-#{!position}.png")
             :list-style none
             @for !col from 0 to 11
@@ -83,21 +95,21 @@
             div
               :width= 95px
               :height= 80px
-            div.forest
+            &.forest
               :background url("/images/forest.png")
-            div.hill
+            &.hill
               :background url("/images/hill.png")
-            div.mountain
+            &.mountain
               :background url("/images/mountain.png")
-            div.pasture
+            &.pasture
               :background url("/images/pasture.png")
-            div.field
+            &.field
               :background url("/images/field.png")
-            div.sea
+            &.sea
               :background url("/images/sea.png")
-            div.desert
+            &.desert
               :background url("/images/desert.png")
-    ul#nodes
+    div.nodes
       :position absolute
       li
         :list-style none
@@ -131,22 +143,19 @@
                   :left= floor(!col / 2) * 70px - 12px
                 @else
                   :left= floor(!col / 2) * 70px - 12px + 25px
-            div
-              :width= 24px
-              :height= 24px
-            div.settlement.player-1
+            &.settlement.player-1
               :background url("/images/settlement-player-1.png")
-            div.settlement.player-2
+            &.settlement.player-2
               :background url("/images/settlement-player-2.png")
-            div.settlement.player-3
+            &.settlement.player-3
               :background url("/images/settlement-player-3.png")
-            div.city.player-1
+            &.city.player-1
               :background url("/images/city-player-1.png")
-            div.city.player-2
+            &.city.player-2
               :background url("/images/city-player-2.png")
-            div.city.player-3
+            &.city.player-3
               :background url("/images/city-player-3.png")
-    ul#edges
+    div.edges
       :position absolute
       li
         :list-style none
@@ -160,9 +169,6 @@
             :list-style none
             :width 48px
             :height 48px
-            div
-              :width= 48px
-              :height= 48px
             @for !col from 0 to 40
               &.col-#{!col}
                 :position absolute
@@ -171,15 +177,15 @@
                   :top= floor(!col / 3) * 40px - 40px - 24px + 20px
                   &.settleable-1:hover
                     :background url("/images/road-0-player-1.png")
-                  div.road.player-1
+                  &.road.player-1
                     :background url("/images/road-0-player-1.png")
                   &.settleable-2:hover
                     :background url("/images/road-0-player-2.png")
-                  div.road.player-2
+                  &.road.player-2
                     :background url("/images/road-0-player-2.png")
                   &.settleable-3:hover
                     :background url("/images/road-0-player-3.png")
-                  div.road.player-3
+                  &.road.player-3
                     :background url("/images/road-0-player-3.png")
                 @else
                   @if !col % 3 == 1
@@ -187,28 +193,28 @@
                     :top= floor(!col / 3) * 40px - 40px - 24px
                     &.settleable-1:hover
                       :background url("/images/road-1-player-1.png")
-                    div.road.player-1
+                    &.road.player-1
                       :background url("/images/road-1-player-1.png")
                     &.settleable-2:hover
                       :background url("/images/road-1-player-2.png")
-                    div.road.player-2
+                    &.road.player-2
                       :background url("/images/road-1-player-2.png")
                     &.settleable-3:hover
                       :background url("/images/road-1-player-3.png")
-                    div.road.player-3
+                    &.road.player-3
                       :background url("/images/road-1-player-3.png")
                   @else
                     :left= floor(!col / 3) * 70px - 24px + 10px
                     :top= floor(!col / 3) * 40px - 40px - 24px + 20px
                     &.settleable-1:hover
                       :background url("/images/road-2-player-1.png")
-                    div.road.player-1
+                    &.road.player-1
                       :background url("/images/road-2-player-1.png")
                     &.settleable-2:hover
                       :background url("/images/road-2-player-2.png")
-                    div.road.player-2
+                    &.road.player-2
                       :background url("/images/road-2-player-2.png")
                     &.settleable-3:hover
                       :background url("/images/road-2-player-3.png")
-                    div.road.player-3
+                    &.road.player-3
                       :background url("/images/road-2-player-3.png")

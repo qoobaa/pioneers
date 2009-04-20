@@ -78,83 +78,9 @@ Pioneers.Game = function(attributes) {
     this.updateUserPlayer(attributes.userPlayer);
   };
 
-  this.buildCityModeOn = function() {
-    var playerNumber = this.userPlayer.number;
-    var playerId = this.userPlayer.id;
-    $.each(this.board.getSettlements(playerId),
-           function() {
-             var id = this.getId();
-             $("#nodes li.row-" + this.getRow() + " li.col-" + this.getCol()).addClass("expandable-" + playerNumber).click(
-               function() {
-                 alert("you clicked " + id);
-                 Pioneers.game.buildCityModeOff();
-                 Pioneers.ajax.updateNode(id);
-               }
-             );
-           }
-          );
-  };
-
-  this.buildCityModeOff = function() {
-    var playerNumber = this.userPlayer.number;
-    $("#nodes .expandable-" + playerNumber).removeClass("expandable-" + playerNumber).unbind();
-  };
-
-  this.buildSettlementModeOn = function() {
-    var playerNumber = this.userPlayer.number;
-    var playerId = this.userPlayer.id;
-    $.each(this.board.getNodes(),
-           function() {
-             var row = this.getRow();
-             var col = this.getCol();
-             if(this.isValidForSettlement(playerId)) {
-               $("#nodes li.row-" + row + " li.col-" + col).addClass("settleable-" + playerNumber).click(
-                 function() {
-                   alert("you clicked [" + row + ", " + col + "]");
-                   Pioneers.ajax.createNode(row, col);
-                   Pioneers.game.buildSettlementModeOff();
-                 }
-               );
-             }
-           }
-          );
-  };
-
-  this.buildSettlementModeOff = function() {
-    var playerNumber = this.userPlayer.number;
-    $("#nodes .settleable-" + playerNumber).removeClass("settleable-" + playerNumber).empty().unbind();
-  };
-
-  this.buildRoadModeOn = function() {
-    var playerNumber = this.userPlayer.number;
-    var playerId = this.userPlayer.id;
-    $.each(this.board.getEdges(),
-           function() {
-             var row = this.getRow();
-             var col = this.getCol();
-             if(this.isValidForRoad(playerId)) {
-               $("#edges li.row-" + row + " li.col-" + col).addClass("settleable-" + playerNumber).click(
-                 function() {
-                   alert("you clicked [" + row + ", " + col + "]");
-                   Pioneers.game.buildRoadModeOff();
-                 }
-               );
-             }
-           }
-          );
-  };
-
-  this.buildRoadModeOff = function() {
-    var playerNumber = this.userPlayer.number;
-    $("#edges .settleable-" + playerNumber).removeClass("settleable-" + playerNumber).unbind();
-  };
-
-  this.robberMoveModeOn = function() {
-
-  };
-
   this.id = attributes.id;
   this.createBoard(attributes.board);
+  $("#board").board({ board: this.board });
   this.createPlayers(attributes.players);
   this.createUserPlayer(attributes.userPlayer);
 };

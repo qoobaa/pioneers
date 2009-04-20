@@ -1,4 +1,5 @@
-= render @game.board
+#board
+/= render @game.board
 
 %dl#game
   %dt.state State
@@ -68,6 +69,7 @@
       %li
         Wool
         #offer_wool
+    = link_to "Offer", nil, :class => "offer"
   #exchange
     %ul
       %li
@@ -85,6 +87,7 @@
       %li
         Wool
         #exchange_wool
+    = link_to "Offer", nil, :class => "offer"
   #cards
     %ul
 

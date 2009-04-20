@@ -21,7 +21,7 @@ Pioneers.initGame = function(gameId) {
   $.getJSON("/games/" + gameId + ".json",
             function(data) {
               Pioneers.game = new Pioneers.Game(data.game);
-              Pioneers.periodicallyUpdate(gameId);
+              //Pioneers.periodicallyUpdate(gameId);
             }
            );
 };
@@ -136,5 +136,10 @@ $(function() {
     $("#exchange_ore").resourceField();
     $("#exchange_wool").resourceField();
     $("#menu").tabs();
+    $("#build road").click(
+      function() {
+        return false;
+      }
+    );
   }
  );
