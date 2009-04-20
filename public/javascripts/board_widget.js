@@ -185,7 +185,7 @@ $.widget("ui.board", {
 
            _buildCityModeOff: function() {
              var playerNumber = this._getPlayerNumber();
-             this.element.find(".nodes li li").removeClass("unexpandable-" + playerNumber).removeClass("unexpandable-" + playerNumber).unbind();
+             this.element.find(".nodes li li").removeClass("expandable-" + playerNumber).removeClass("unexpandable-" + playerNumber).unbind();
            },
 
            _cityBuilt: function(node) {
@@ -306,6 +306,10 @@ $.widget("ui.board", {
 
            _robbed: function(hex, playerNumber) {
              alert("robber moved to hex [" + hex.getRow() + ", " + hex.getCol() + "], robbed player number " + playerNumber);
+             this._setMode("default");
+           },
+
+           defaultMode: function() {
              this._setMode("default");
            },
 

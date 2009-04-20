@@ -123,18 +123,6 @@
             :height 24px
             :z-index 2
             :list-style none
-            &.settleable-1:hover
-              :background url("/images/settlement-player-1.png")
-            &.settleable-2:hover
-              :background url("/images/settlement-player-2.png")
-            &.settleable-3:hover
-              :background url("/images/settlement-player-3.png")
-            &.expandable-1:hover
-              :background url("/images/city-player-1.png")
-            &.expandable-2:hover
-              :background url("/images/city-player-2.png")
-            &.expandable-3:hover
-              :background url("/images/city-player-3.png")
             @for !col from 0 to 23
               &.col-#{!col}
                 :position absolute
@@ -154,6 +142,18 @@
             &.city.player-2
               :background url("/images/city-player-2.png")
             &.city.player-3
+              :background url("/images/city-player-3.png")
+            &.settleable-1:hover
+              :background url("/images/settlement-player-1.png")
+            &.settleable-2:hover
+              :background url("/images/settlement-player-2.png")
+            &.settleable-3:hover
+              :background url("/images/settlement-player-3.png")
+            &.expandable-1:hover
+              :background url("/images/city-player-1.png")
+            &.expandable-2:hover
+              :background url("/images/city-player-2.png")
+            &.expandable-3:hover
               :background url("/images/city-player-3.png")
     div.edges
       :position absolute

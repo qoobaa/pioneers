@@ -136,8 +136,27 @@ $(function() {
     $("#exchange_ore").resourceField();
     $("#exchange_wool").resourceField();
     $("#menu").tabs();
-    $("#build road").click(
+    $("#build .road").click(
       function() {
+        $("#board").board("buildRoadMode", 1);
+        return false;
+      }
+    );
+    $("#build .settlement").click(
+      function() {
+        $("#board").board("buildSettlementMode", 1);
+        return false;
+      }
+    );
+    $("#build .city").click(
+      function() {
+        $("#board").board("buildCityMode", 1);
+        return false;
+      }
+    );
+    $("#build .cancel").click(
+      function() {
+        $("#board").board("defaultMode");
         return false;
       }
     );
