@@ -41,124 +41,43 @@ Pioneers.periodicallyUpdate = function(gameId, interval) {
     }, interval || 5000);
 };
 
-$.widget("ui.resourceField", {
-           _init: function() {
-             var widget = this;
-             $("<a href='' class='minus'>-</a>").appendTo(this.element).click(
-               function() {
-                 widget.decreaseValue();
-                 return false;
-               }
-             );
-             $("<span class='value'></span>").appendTo(this.element);
-             $("<a href='' class='plus'>+</a>").appendTo(this.element).click(
-               function() {
-                 widget.increaseValue();
-                 return false;
-               }
-             );
-             this._showValue();
-           },
-
-           _showValue: function() {
-             var value = this.getValue();
-             var valueElement = this.element.children(".value").text(Math.abs(value));
-             valueElement.removeClass().addClass("value");
-             if(value > 0) valueElement.addClass("positive");
-             else if(value < 0) valueElement.addClass("negative");
-           },
-
-           increaseValue: function() {
-             if(this.getValue() >= 0) this.setValue(this.getValue() + 1);
-             else this.setValue(this.getValue() + this.getStep());
-           },
-
-           decreaseValue: function() {
-             if(this.getValue() > 0) this.setValue(this.getValue() - 1);
-             else if(this.getValue() - this.getStep() >= this.getMin()) this.setValue(this.getValue() - this.getStep());
-           },
-
-           setValue: function(value) {
-             this._setData("value", value);
-             this._showValue();
-             this._trigger("change", value);
-           },
-
-           getValue: function() {
-             return this._getData("value");
-           },
-
-           getMin: function() {
-             return this._getData("min");
-           },
-
-           setMin: function(min) {
-             this._setData("min", min);
-             this.reset();
-           },
-
-           getStep: function() {
-             return this._getData("step");
-           },
-
-           setStep: function(step) {
-             this._setData("step", step);
-             this.reset();
-           },
-
-           reset: function() {
-             this.setValue(0);
-           }
-         }
-        );
-
-$.extend($.ui.resourceField, {
-           getter: "getValue getMin getStep",
-           setter: "setValue setMin setStep",
-           defaults: {
-             value: 0,
-             step: 4,
-             min: 0
-           }
-         }
-        );
-
 $(function() {
-    Pioneers.initGame(10);
-    $("#offer_bricks").resourceField({step: 1});
-    $("#offer_grain").resourceField({step: 1});
-    $("#offer_lumber").resourceField({step: 1});
-    $("#offer_ore").resourceField({step: 1});
-    $("#offer_wool").resourceField({step: 1});
-    $("#exchange_bricks").resourceField();
-    $("#exchange_grain").resourceField();
-    $("#exchange_lumber").resourceField();
-    $("#exchange_ore").resourceField();
-    $("#exchange_wool").resourceField();
-    $("#menu").tabs();
-    $("#build .road").click(
-      function() {
-        $("#board").board("buildRoadMode", 1);
-        return false;
-      }
-    );
-    $("#build .settlement").click(
-      function() {
-        $("#board").board("buildSettlementMode", 1);
-        return false;
-      }
-    );
-    $("#build .city").click(
-      function() {
-        $("#board").board("buildCityMode", 1);
-        return false;
-      }
-    );
-    $("#build .cancel").click(
-      function() {
-        $("#board").board("defaultMode");
-        return false;
-      }
-    );
+    Pioneers.controllers.applicationController = new Pioneers.ApplicationController();
+  //   Pioneers.initGame(10);
+  //   $("#offer_bricks").resource({step: 1});
+  //   $("#offer_grain").resource({step: 1});
+  //   $("#offer_lumber").resource({step: 1});
+  //   $("#offer_ore").resource({step: 1});
+  //   $("#offer_wool").resource({step: 1});
+  //   $("#exchange_bricks").resource();
+  //   $("#exchange_grain").resource();
+  //   $("#exchange_lumber").resource();
+  //   $("#exchange_ore").resource();
+  //   $("#exchange_wool").resource();
+  //   $("#menu").tabs();
+  //   $("#build .road").click(
+  //     function() {
+  //       $("#board").board("buildRoadMode", 1);
+  //       return false;
+  //     }
+  //   );
+  //   $("#build .settlement").click(
+  //     function() {
+  //       $("#board").board("buildSettlementMode", 1);
+  //       return false;
+  //     }
+  //   );
+  //   $("#build .city").click(
+  //     function() {
+  //       $("#board").board("buildCityMode", 1);
+  //       return false;
+  //     }
+  //   );
+  //   $("#build .cancel").click(
+  //     function() {
+  //       $("#board").board("defaultMode");
+  //       return false;
+  //     }
+  //   );
   }
- );
+);

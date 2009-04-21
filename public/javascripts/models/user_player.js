@@ -123,31 +123,31 @@ Pioneers.UserPlayer = function(game, attributes) {
   this.setBricks = function(bricks) {
     this.bricks = bricks;
     $("#player dd.bricks").text(bricks);
-    $("#offer_bricks").resourceField("setMin", -bricks);
+    $("#offer_bricks").resource("setMin", -bricks);
   };
 
   this.setGrain = function(grain) {
     this.grain = grain;
     $("#player dd.grain").text(grain);
-    $("#offer_grain").resourceField("setMin", -grain);
+    $("#offer_grain").resource("setMin", -grain);
   };
 
   this.setLumber = function(lumber) {
     this.lumber = lumber;
     $("#player dd.lumber").text(lumber);
-    $("#offer_lumber").resourceField("setMin", -lumber);
+    $("#offer_lumber").resource("setMin", -lumber);
   };
 
   this.setOre = function(ore) {
     this.ore = ore;
     $("#player dd.ore").text(ore);
-    $("#offer_ore").resourceField("setMin", -ore);
+    $("#offer_ore").resource("setMin", -ore);
   };
 
   this.setWool = function(wool) {
     this.wool = wool;
     $("#player dd.wool").text(wool);
-    $("#offer_wool").resourceField("setMin", -wool);
+    $("#offer_wool").resource("setMin", -wool);
   };
 
   this.setSettlements = function(settlements) {
@@ -171,27 +171,27 @@ Pioneers.UserPlayer = function(game, attributes) {
 
   this.setBricksExchangeRate = function(bricksExchangeRate) {
     this.bricksExchangeRate = bricksExchangeRate;
-    $("#exchange_bricks").resourceField("setStep", bricksExchangeRate);
+    $("#exchange_bricks").resource("setStep", bricksExchangeRate);
   };
 
   this.setGrainExchangeRate = function(grainExchangeRate) {
     this.grainExchangeRate = grainExchangeRate;
-    $("#exchange_grain").resourceField("setStep", grainExchangeRate);
+    $("#exchange_grain").resource("setStep", grainExchangeRate);
   };
 
   this.setLumberExchangeRate = function(lumberExchangeRate) {
     this.lumberExchangeRate = lumberExchangeRate;
-    $("#exchange_lumber").resourceField("setStep", lumberExchangeRate);
+    $("#exchange_lumber").resource("setStep", lumberExchangeRate);
   };
 
   this.setOreExchangeRate = function(oreExchangeRate) {
     this.oreExchangeRate = oreExchangeRate;
-    $("#exchange_ore").resourceField("setStep", oreExchangeRate);
+    $("#exchange_ore").resource("setStep", oreExchangeRate);
   };
 
   this.setWoolExchangeRate = function(woolExchangeRate) {
     this.woolExchangeRate = woolExchangeRate;
-    $("#exchange_wool").resourceField("setStep", woolExchangeRate);
+    $("#exchange_wool").resource("setStep", woolExchangeRate);
   };
 
   this.createCards = function(attributes) {
