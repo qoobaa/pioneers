@@ -19,7 +19,7 @@ var Pioneers = Pioneers || {};
 
 Pioneers.Game = function(attributes) {
   this.createBoard = function(attributes) {
-    this.board = new Pioneers.Board(this, attributes);
+    this.board = Pioneers.Board.createExisting(attributes);
   };
 
   this.createUserPlayer = function(attributes) {
@@ -53,34 +53,63 @@ Pioneers.Game = function(attributes) {
     return this.getPlayer(playerId).getNumber();
   };
 
-  this.updateBoard = function(attributes) {
-    var game = this;
-    this.board.update(attributes);
+  this.init = function(attributes) {
+    this.id = attributes.id;
+    this.createBoard(attributes.board);
+    //this.createPlayers(attributes.players);
+    //this.createUserPlayer(attributes.userPlayer);
   };
 
-  this.updateUserPlayer = function(attributes) {
+  this.reload = function(callback) {
+    var game = this;
+    $.getJSON(Pioneers.Game.getSingleResourcePath(this.id),
+              function(data) {
+                game.reloadAttributes(data);
+                callback(game);
+              }
+             );
+  };
+
+  this.reloadBoardAttributes = function(attributes) {
+    var game = this;
+    this.board.reloadAttributes(attributes);
+  };
+
+  this.reloadUserPlayerAttributes = function(attributes) {
     if(this.userPlayer != null) {
-      this.userPlayer.update(attributes);
+      this.userPlayer.reloadAttributes(attributes);
     }
   };
 
-  this.updatePlayers = function(attributes) {
+  this.reloadPlayersAttributes = function(attributes) {
     $.each(this.getPlayers(),
            function(i) {
-             this.update(attributes[i]);
+             this.reloadAttributes(attributes[i]);
            }
           );
   };
 
-  this.update = function(attributes) {
-    this.updateBoard(attributes.board);
-    this.updatePlayers(attributes.players);
-    this.updateUserPlayer(attributes.userPlayer);
+  this.getBoard = function() {
+    return this.board;
   };
 
-  this.id = attributes.id;
-  this.createBoard(attributes.board);
-  $("#board").board({ board: this.board });
-  this.createPlayers(attributes.players);
-  this.createUserPlayer(attributes.userPlayer);
+  this.reloadAttributes = function(attributes) {
+    this.reloadBoardAttributes(attributes.board);
+    // this.reloadPlayersAttributes(attributes.players);
+    // this.reloadUserPlayerAttributes(attributes.userPlayer);
+  };
+
+  this.init(attributes);
+};
+
+Pioneers.Game.getSingleResourcePath = function(id) {
+  return "/games/" + id + ".json";
+};
+
+Pioneers.Game.find = function(id, callback) {
+  $.getJSON(Pioneers.Game.getSingleResourcePath(id), function(data) { callback(Pioneers.Game.createExisting(data.game)); });
+};
+
+Pioneers.Game.createExisting = function(attributes) {
+  return new Pioneers.Game(attributes);
 };

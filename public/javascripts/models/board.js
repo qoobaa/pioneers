@@ -17,13 +17,13 @@
 
 var Pioneers = Pioneers || {};
 
-Pioneers.Board = function(game, attributes) {
+Pioneers.Board = function(attributes) {
   this.createHexes = function(attributes) {
     var board = this;
-    this.hexes2D = Pioneers.utils.makeArray2D(10, 10);
+    this.hexes2D = Pioneers.utils.makeArray2D(this.getHeight(), this.getWidth());
     this.hexes = $.map(attributes,
                        function(hexAttributes) {
-                         var hex = new Pioneers.Hex(board, hexAttributes);
+                         var hex = Pioneers.Hex.createExisting(board, hexAttributes);
                          board.hexes2D[hex.getRow()][hex.getCol()] = hex;
                          return hex;
                        }
@@ -32,23 +32,22 @@ Pioneers.Board = function(game, attributes) {
 
   this.createNodes = function(attributes) {
     var board = this;
-    this.nodes = [];
-    this.nodes2D = Pioneers.utils.makeArray2D([11, 25]);
+    this.nodes2D = Pioneers.utils.makeArray2D(this.getNodeHeight(), this.getNodeWidth());
+    this.nodes = $.map(attributes,
+                       function(nodeAttributes) {
+                         var node = Pioneers.Node.createExisting(board, nodeAttributes);
+                         board.nodes2D[node.getRow()][node.getCol()] = node;
+                         return node;
+                       }
+                      );
     $.each(this.getHexes(),
            function() {
              $.each(this.getNodePositions(),
                     function() {
-                      var position = this;
-                      var attr = $.grep(attributes,
-                                        function(nodeAttributes) {
-                                          return nodeAttributes.position[0] == position[0] && nodeAttributes.position[1] == position[1];
-                                        }
-                                       )[0];
-                      attr = attr || { position: position };
-                      if(board.getNode(position) == null) {
-                        var node = new Pioneers.Node(board, attr);
+                      if(board.getNode(this) == undefined) {
+                        var node = new Pioneers.Node(board, { position: this });
                         board.nodes.push(node);
-                        board.nodes2D[position[0]][position[1]] = node;
+                        board.nodes2D[node.getRow()][node.getCol()] = node;
                       }
                     }
                    );
@@ -58,23 +57,22 @@ Pioneers.Board = function(game, attributes) {
 
   this.createEdges = function(attributes) {
     var board = this;
-    this.edges = [];
-    this.edges2D = Pioneers.utils.makeArray2D([11, 40]);
+    this.edges2D = Pioneers.utils.makeArray2D(this.getEdgeHeight(), this.getEdgeWidth());
+    this.edges = $.map(attributes,
+                       function(edgeAttributes) {
+                         var edge = Pioneers.Edge.createExisting(board, edgeAttributes);
+                         board.edges2D[edge.getRow()][edge.getCol()] = edge;
+                         return edge;
+                       }
+                      );
     $.each(this.getHexes(),
            function() {
              $.each(this.getEdgePositions(),
                     function() {
-                      var position = this;
-                      var attr = $.grep(attributes,
-                                        function(edgeAttributes) {
-                                          return edgeAttributes.position[0] == position[0] && edgeAttributes.position[1] == position[1];
-                                        }
-                                       )[0];
-                      attr = attr || { position: this };
-                      if(board.getEdge(this) == null) {
-                        var edge = new Pioneers.Edge(board, attr);
+                      if(board.getEdge(this) == undefined) {
+                        var edge = new Pioneers.Edge(board, { position: this });
                         board.edges.push(edge);
-                        board.edges2D[position[0]][position[1]] = edge;
+                        board.edges2D[edge.getRow()][edge.getCol()] = edge;
                       }
                     }
                    );
@@ -82,27 +80,27 @@ Pioneers.Board = function(game, attributes) {
           );
   };
 
-  this.updateNodes = function(nodes) {
+  this.reloadNodes = function(nodes) {
     var board = this;
     $.each(nodes,
            function() {
-             board.getNode(this.position).update(this);
+             board.getNode(this.position).reloadAttributes(this);
            }
           );
   };
 
-  this.updateEdges = function(edges) {
+  this.reloadEdges = function(edges) {
     var board = this;
     $.each(edges,
            function() {
-             board.getEdge(this.position).update(this);
+             board.getEdge(this.position).reloadAttributes(this);
            }
           );
   };
 
-  this.update = function(attributes) {
-    this.updateNodes(attributes.nodes);
-    this.updateEdges(attributes.edges);
+  this.reloadAttributes = function(attributes) {
+    this.reloadNodes(attributes.nodes);
+    this.reloadEdges(attributes.edges);
   };
 
   this.getHexes = function() {
@@ -111,6 +109,33 @@ Pioneers.Board = function(game, attributes) {
 
   this.getNodes = function() {
     return this.nodes;
+  };
+
+  this.getEdges = function() {
+    return this.edges;
+  };
+
+  this.getHex = function(position) {
+    var row = this.hexes2D[position[0]];
+    return row ? row[position[1]] : undefined;
+  };
+
+  this.getNode = function(position) {
+    var row = this.nodes2D[position[0]];
+    return row ? row[position[1]] : undefined;
+  };
+
+  this.getEdge = function(position) {
+    var row = this.edges2D[position[0]];
+    return row ? row[position[1]] : undefined;
+  };
+
+  this.getSettlements = function(playerNumber) {
+    return $.grep(this.getNodes(),
+                  function(node) {
+                    return node.isSettlement(playerNumber);
+                  }
+                 );
   };
 
   this.getNodesValidForSettlement = function(playerNumber) {
@@ -145,49 +170,45 @@ Pioneers.Board = function(game, attributes) {
                  );
   };
 
-  this.getEdges = function() {
-    return this.edges;
-  };
-
-  this.getHex = function(position) {
-    var row = this.hexes2D[position[0]];
-    return row ? row[position[1]] : undefined;
-  };
-
-  this.getNode = function(position) {
-    var row = this.nodes2D[position[0]];
-    return row ? row[position[1]] : undefined;
-  };
-
-  this.getEdge = function(position) {
-    var row = this.edges2D[position[0]];
-    return row ? row[position[1]] : undefined;
-  };
-
-  this.getSettlements = function(playerNumber) {
-    return $.grep(this.getNodes(),
-                  function(node) {
-                    return node.isSettlement(playerNumber);
-                  }
-                 );
-  };
-
   this.getHeight = function() {
     return this.size[0];
+  };
+
+  this.getNodeHeight = function() {
+    return this.getHeight() + 1;
+  };
+
+  this.getEdgeHeight = function() {
+    return this.getHeight() + 1;
   };
 
   this.getWidth = function() {
     return this.size[1];
   };
 
+  this.getNodeWidth = function() {
+    return this.getWidth() * 2 + 2;
+  };
+
+  this.getEdgeWidth = function() {
+    return this.getWidth() * 3 + 5;
+  };
+
   this.getRobberPosition = function() {
     return this.robberPosition;
   };
 
-  this.game = game;
-  this.size = attributes.size;
-  this.robberPosition = attributes.robberPosition;
-  this.createHexes(attributes.hexes);
-  this.createNodes(attributes.nodes);
-  this.createEdges(attributes.edges);
+  this.init = function(attributes) {
+    this.size = attributes.size;
+    this.robberPosition = attributes.robberPosition;
+    this.createHexes(attributes.hexes);
+    this.createNodes(attributes.nodes);
+    this.createEdges(attributes.edges);
+  };
+
+  this.init(attributes);
+};
+
+Pioneers.Board.createExisting = function(attributes) {
+  return new Pioneers.Board(attributes);
 };

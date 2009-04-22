@@ -44,7 +44,7 @@ Pioneers.Edge = function(board, attributes) {
 
   this.setPlayerNumber = function(playerNumber) {
     this.playerNumber = playerNumber;
-    $("#edges li.row-" + this.getRow() + " li.col-" + this.getCol()).html("<div class='road player-" + this.getPlayerNumber() + "'></div>");
+    Pioneers.Edge.roadBuilt(this);
   };
 
   this.getHexPositions = function() {
@@ -229,11 +229,33 @@ Pioneers.Edge = function(board, attributes) {
     return !this.isSettled() && (this.hasSettlement(playerNumber) || this.hasRoad(playerNumber));
   };
 
-  this.update = function(attributes) {
+  this.reloadAttributes = function(attributes) {
     if(this.getPlayerNumber() != attributes.playerNumber) this.setPlayerNumber(attributes.playerNumber);
   };
 
-  this.board = board;
-  this.position = attributes.position;
-  this.playerNumber = attributes.playerNumber;
+  this.setNewRecord = function(bool) {
+    this.newRecord = bool;
+  };
+
+  this.isNewRecord = function() {
+    return this.newRecord;
+  };
+
+  this.init = function(board, attributes) {
+    this.board = board;
+    this.position = attributes.position;
+    this.playerNumber = attributes.playerNumber;
+  };
+
+  this.init(board, attributes);
+};
+
+Pioneers.Edge.createExisting = function(board, attributes) {
+  var edge = new Pioneers.Edge(board, attributes);
+  edge.setNewRecord(false);
+  return edge;
+};
+
+Pioneers.Edge.roadBuilt = function(edge) {
+
 };

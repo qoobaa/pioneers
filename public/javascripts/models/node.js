@@ -50,9 +50,24 @@ Pioneers.Node = function(board, attributes) {
     return this.getPlayerNumber() != null;
   };
 
+  this.setNewRecord = function(bool) {
+    this.newRecord = bool;
+  };
+
+  this.isNewRecord = function() {
+    return this.newRecord;
+  };
+
   this.setState = function(state) {
     this.state = state;
-    $("#nodes li.row-" + this.getRow() + " li.col-" + this.getCol()).html("<div class='" + state + " player-" + this.getPlayerNumber() + "'></div>");
+    switch(state) {
+    case "settlement":
+      Pioneers.Node.settlementBuilt(this);
+      break;
+    case "city":
+      Pioneers.Node.cityBuilt(this);
+      break;
+    }
   };
 
   this.isSettlement = function(playerNumber) {
@@ -166,22 +181,39 @@ Pioneers.Node = function(board, attributes) {
     return !this.isSettled() && this.isSettleable() && !this.hasSettlementInNeighbourhood();
   };
 
-  this.isValidForSecondSettlement = this.isValidForFirstSettlement;
-
   this.isValidForSettlement = function(playerNumber) {
     return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerNumber);
   };
 
-  this.update = function(attributes) {
+  this.reloadAttributes = function(attributes) {
     this.id = attributes.id;
     this.playerNumber = attributes.playerNumber;
     if(this.state != attributes.state) this.setState(attributes.state);
   };
 
-  this.board = board;
-  this.game = board.game;
-  this.position = attributes.position;
-  this.id = attributes.id;
-  this.playerNumber = attributes.playerNumber;
-  this.state = attributes.state;
+  this.init = function(board, attributes) {
+    this.newRecord = true;
+    this.board = board;
+    this.game = board.game;
+    this.position = attributes.position;
+    this.id = attributes.id;
+    this.playerNumber = attributes.playerNumber;
+    this.state = attributes.state;
+  };
+
+  this.init(board, attributes);
+};
+
+Pioneers.Node.createExisting = function(board, attributes) {
+  var node = new Pioneers.Node(board, attributes);
+  node.setNewRecord(false);
+  return node;
+};
+
+Pioneers.Node.settlementBuilt = function(node) {
+
+};
+
+Pioneers.Node.cityBuilt = function(node) {
+
 };

@@ -42,7 +42,7 @@ Pioneers.periodicallyUpdate = function(gameId, interval) {
 };
 
 $(function() {
-    Pioneers.controllers.applicationController = new Pioneers.ApplicationController();
+    // Pioneers.controllers.applicationController = new Pioneers.ApplicationController();
   //   Pioneers.initGame(10);
   //   $("#offer_bricks").resource({step: 1});
   //   $("#offer_grain").resource({step: 1});

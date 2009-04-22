@@ -16,5 +16,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var Pioneers = Pioneers || {};
-Pioneers.modes = Pioneers.modes || {};
+Pioneers.NodesController = Pioneers.NodesController || {};
 
+Pioneers.NodesController.settlementBuilt = function(node) {
+
+};
+
+Pioneers.NodesController.cityBuilt = function(node) {
+
+};

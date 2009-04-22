@@ -16,11 +16,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var Pioneers = Pioneers || {};
+Pioneers.ApplicationController = Pioneers.ApplicationController || {};
 
-Pioneers.ApplicationController = function() {
-  this.init = function() {
+Pioneers.ApplicationController.init = function() {
 
-  };
-
-  this.init();
 };

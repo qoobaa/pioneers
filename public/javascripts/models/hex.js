@@ -120,10 +120,18 @@ Pioneers.Hex = function(board, attributes) {
                 );
   };
 
-  this.board = board;
-  this.position = attributes.position;
-  this.type = attributes.type;
-  this.roll = attributes.roll;
-  this.harborType = attributes.harborType;
-  this.harborPosition = attributes.harborPosition;
+  this.init = function(board, attributes) {
+    this.board = board;
+    this.position = attributes.position;
+    this.type = attributes.type;
+    this.roll = attributes.roll;
+    this.harborType = attributes.harborType;
+    this.harborPosition = attributes.harborPosition;
+  };
+
+  this.init(board, attributes);
+};
+
+Pioneers.Hex.createExisting = function(board, attributes) {
+  return new Pioneers.Hex(board, attributes);
 };
