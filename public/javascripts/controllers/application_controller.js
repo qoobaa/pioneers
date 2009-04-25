@@ -1,23 +1,23 @@
-// Pioneers - web game based on the Settlers of Catan board game.
+ApplicationController = MVC.Controller.extend("main", {
+  load: function(params) {
+    var id = document.location.pathname.match(/\d+/)[0];
+    Game.find(id, this.continue_to("game_loaded"));
+  },
 
-// Copyright (C) 2009 Jakub Kuźma <qoobaa@gmail.com>
+  game_loaded: function(response) {
+    //$("#board").board({ boardAttributes: response.board });
+    board = new BoardController("board", response.board);
+    document.domain = document.domain;
+    Orbited.settings.hostname = "localhost";
+    Orbited.settings.port = "8000";
+    Orbited.settings.protocol = "http";
+    Orbited.settings.streaming = true;
+    TCPSocket = Orbited.TCPSocket;
 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-var Pioneers = Pioneers || {};
-Pioneers.ApplicationController = Pioneers.ApplicationController || {};
-
-Pioneers.ApplicationController.init = function() {
-
-};
+    var stomp = new STOMPClient();
+    stomp.onmessageframe = function(frame) { StompController.dispatch("onmessageframe", frame); };
+    stomp.onconnectedframe = function(frame) { stomp.subscribe(document.location.pathname); };
+    $(window).bind("beforeunload", function() { stomp.reset(); });
+    stomp.connect("localhost", "61613");
+  }
+});

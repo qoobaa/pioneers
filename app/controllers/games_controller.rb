@@ -96,10 +96,10 @@ class GamesController < ApplicationController
           id: @game.id,
           state: @game.state,
           phase: @game.phase,
+          cards: @game.cards_count,
           currentTurn: @game.current_turn,
           currentTurnCardPlayed: @game.current_turn_card_played,
-          currentPlayerId: @game.current_player_id,
-          cards: @game.cards_count
+          currentPlayerId: @game.current_player_id
         }
         render :json => { game: game }
       end

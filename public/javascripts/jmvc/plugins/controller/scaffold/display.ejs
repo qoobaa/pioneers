@@ -1,0 +1,29 @@
+<h2><%=MVC.String.capitalize(controller_name)%></h2>
+<table cellspacing='0px'>
+    <thead>
+    <tr>
+        <%for(var attr in this.Class.scaffold_model.attributes){%>
+        <%if(attr == 'id') continue;%>
+        <th>
+           <%= attr%> 
+        </th>    
+        <%}%>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody id='<%=singular_name%>_list'>
+        <%= render({partial: 'list', plugin: 'controller/scaffold/list'}) %>
+    </tbody>
+</table>
+<h2>New <%=singular_name%></h2>
+<form>
+    <%for(var attr in this.Class.scaffold_model.attributes){%>
+        <%if(attr == 'id') continue;%>
+        <div id=''>
+            <label><%= attr%> </label><br />
+            <%= this.Class.scaffold_view_helper.form_helper(attr)%><br/>
+            <div class="error_text" id="<%= singular_name%>_<%= attr%>_error">&nbsp;</div>
+        </div>
+    <%}%>
+    <%= submit_tag('create')%>
+</form>

@@ -1,0 +1,6 @@
+<%for(var i = 0; i < objects.length ; i++){%>
+    <tr class='<%= singular_name%>' id='<%= objects[i].element_id() %>'>
+        <% var locals = {}; locals[singular_name] = objects[i]%>
+        <%= render({partial: 'show', locals: locals, plugin: 'controller/scaffold/show' })%>
+    </tr>
+<%}%>

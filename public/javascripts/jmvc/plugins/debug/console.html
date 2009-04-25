@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+	<head>
+		<title>JavaScriptMVC Console</title>
+		
+		<style>
+			body {font: normal 10pt verdana; margin: 0px; padding: 0px;
+				overflow: hidden;
+			
+			}
+			.test_type { background-color: white;
+				border-top: solid 1px #8FBA3C;
+				overflow: auto;
+				padding: 0px 0px 0px 0px;
+			}
+			h1{
+				font-size: 12pt;background:#D5E7B3;
+				margin: 0px;
+				padding: 3px 5px 5px 5px;
+			}
+			#reload {
+				float:right;
+				padding:3px;
+			}
+			
+			#types {
+				padding-top: 1px;
+				margin:0px;
+				line-height: 30px;
+				position: relative;background:#D5E7B3;
+			}
+			#types[id]{
+				line-height: 24px;
+			}
+			
+			h2 { 
+				text-decoration: none; 
+				border-top: solid 1px #8FBA3C;
+				padding: 3px 20px 4px 20px;
+				border-left: solid 1px #8FBA3C;
+				color: blue; cursor: pointer;
+				display: inline;
+				font-size: 14pt;
+			}
+			h2 span {
+				font-size: 10px; 
+			}
+			#functional_button {
+				border-right: solid 1px #8FBA3C;
+			}
+			#console_button {
+				
+			}
+			#console_log {
+				overflow: auto;
+			}
+			#console {}
+			
+			h2.selected { 
+				color: black;
+				background-color: white;
+			}
+			h3 { margin: 0px; font-weight: normal;padding: 3px 3px 0px 2px;  }
+			h3 img {margin: 0px; padding: 0px 5px 0px 0px;}
+			#types[id] h2 {
+				padding: 2px 20px 4px;
+			}
+			#types[id] h2 span{
+				vertical-align:top;
+			}		
+			.run {font-size: 12pt; font-weight: normal;}
+			table {width: 100%; text-align: left; margin-top: 5px;}
+			.test {margin: 0px 10px 5px 10px; border: solid 1px #e0e0e0; padding-bottom: 3px;}
+			
+			.min {float: right;padding:0px;}
+			p {
+				margin: 5px 10px 10px 10px; background-color: #eeeeee; padding-bottom: 5px;padding-top: 3px;
+				font-size: 12pt; font-weight: bold;
+			}
+			p img {margin-top: 1px; margin-left: 3px;}
+			#console pre, #console p {
+				background-color: white;
+				border-bottom: solid 1px #eeeeee;
+				padding: 2px 0px;
+				margin: 2px 10px;
+				font-size: 9pt;
+				white-space: pre;
+			}
+			th { color: gray;padding-left: 2px;}
+			td {border-top: solid 1px #eeeeee}
+			.helpers {font-size: 10px; background-color: #eeeeee; margin: 3px 3px 0px  23px;}
+			img {cursor: pointer}
+			.passed {background-color: #D5E7B3;}
+			.failure {background-color: #EEAAAA;}
+			.result {font-size: 10pt;}
+			a {color: blue;text-decoration: none;}
+			a:hover {text-decoration: underline;}
+			
+			.table_container {margin-left: 23px; margin-right: 3px;}
+			
+			.explanation p {font-weight:normal;background-color:white;}
+			.explanation h3 {font-weight:bold;margin-left:10px;padding:0px;}
+			code { 
+				border: solid 1px #D5E7B3; 
+				margin: 10px 40px 10px 40px; 
+				padding: 10px; background-color: #eeeeee;
+				display: block;
+				white-space: pre;
+			}
+
+			.highlight { background-color:#FFFFCC; }
+			.key {color: #800080; }
+			.attribute, .data {color: red;}
+		</style>
+	</head>
+	<body scroll='no'>
+	<a id="reload" href="#" onclick="opener.location.reload()">Reload</a>
+		<h1>JavaScriptMVC Console</h1>
+		<div id='types'>
+			<h2 class='selected' id='console_button' onclick='show("console");'>Console</h2><h2 id='unit_button' onclick='show("unit");'>Unit</h2><h2 id='functional_button' onclick='show("functional");'>Functional</h2>
+		</div>
+		<div id='unit' class='test_type'  style='display:none'>
+			<div style='display:none;' id='unit_test_runner'>
+				 <p id='unit_play'>
+				 	<img src='playgray.png' onclick='opener.MVC.Test.Unit.run()'/> Unit tests 
+					<span id='unit_result'></span>
+				</p>
+				<div id='unit_container'>
+					<div id='unit_tests'></div>
+				</div>
+			</div>
+ 			<div id='unit_explanation' class='explanation'>
+			
+			<p>Unit tests are used to verify your classes and methods are behaving as you expect.  
+			Here's how to get started.</p>
+			
+			<ol>
+				<li>Create a file like <span class='highlight'>'animals_test.js'</span> in the 
+				<span class='highlight'>'test/unit'</span> directory and add the following code:
+			
+<code><span class='key'>new</span> MVC.Test.Unit('animals',{
+   <span class='attribute'>test_truth</span>: function() {
+      <span class='key'>this</span>.assert(<span class='key'>true</span>);
+   }
+});</code></li>
+
+				<li>Create a file called <span class='highlight'>'<span id='your_app_name_unit'>YOURAPPNAME</span>_test.js'</span> 
+				in your <span class='highlight'>'app'</span> directory and add the following code: <span class='highlight'>include.unit_tests('animals');</span></li>
+				<li>Reload your page.</li>
+			</ol>
+			
+			<p>For more information, check out the <a href='http://javascriptmvc.com/learningcenter/test/api.html'>documentation</a>.</p>
+			
+			</div>
+		</div>
+		
+		
+		<div id='functional' class='test_type' style='display:none'>
+			<div style='display:none;' id='functional_test_runner'>
+				<p id='functional_play'>
+					<img src='playgray.png' onclick='opener.MVC.Test.Functional.run()'/> Functional tests 
+					<span id='functional_result'></span>
+				</p>
+				<div id='functional_container'>
+					<div id='functional_tests'></div>
+				</div>
+			</div>
+			<div id='functional_explanation' class='explanation'>
+			
+				<p>Functional tests are used to simulate user interactions with your page.  
+				Here's how to get started.</p>
+				
+				<ol>
+					<li>Create a file like <span class='highlight'>'widget_test.js'</span> in the 
+				<span class='highlight'>'test/functional'</span> directory and add the following code:
+				
+<code><span class='key'>new</span> MVC.Test.Functional('widget',{
+   <span class='attribute'>test_truth</span>: function() {
+      <span class='key'>this</span>.assert(<span class='key'>true</span>);
+   }
+});</code></li>
+	
+					<li>Create a file called <span class='highlight'>'<span id='your_app_name_functional'>YOURAPPNAME</span>_test.js'</span> 
+					in your <span class='highlight'>'app'</span> directory and add the following code: 
+					<span class='highlight'>include.functional('widget')</span></li>
+					<li>Reload your page.</li>
+				</ol>
+				
+				<p>For more information, check out the <a href='http://javascriptmvc.com/learningcenter/test/api.html'>documentation</a>.</p>
+			
+			</div>
+			
+			
+		</div>
+		
+		<div id='console' class='test_type'>
+			 <div id='console_log' onscroll='console_log_scrolled()'></div>
+		</div>
+		<script src='test_controller.js' type='text/javascript'></script>
+	</body>
+</html>

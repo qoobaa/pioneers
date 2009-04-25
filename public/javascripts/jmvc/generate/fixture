@@ -1,0 +1,35 @@
+if(_args.length < 1){
+	print("USAGE: js jmvc/generate/fixture method url number\n")
+	print("  method = post, get, delete, put\n")
+	print();
+	quit();
+	//slashes (%2F) get converted to ~
+}
+load('jmvc/rhino/command/file.js');
+load('jmvc/generate/loader.js');
+// this needs to create a file in fixtures from the url and convert the params 
+// of the url
+
+
+var method = _args[0].toLowerCase();
+
+// get /todo.xml?xyz
+
+var f = new MVC.File(_args[1])
+var folder_part = f.dir();
+
+var folders = folder_part.split("/");
+var file_name = f.basename().replace(/%2F/g,"~").replace(/%20/g," ");
+
+
+var base = ["test/fixtures"]
+for(var i =0; i < folders.length; i++){
+	if(folders[i]){
+		base.push(folders[i]);
+		MVCOptions.create_folder(base.join( "/" ) );
+	}
+	
+}
+base.push(file_name+"."+method)
+MVCOptions.save(base.join( "/" ), "//insert data here");
+

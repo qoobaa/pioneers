@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../../jmvc/rhino/documentation/style.css" type="text/css" />
+        <title><%= this.name%></title>
+    </head>
+    <body>
+        <div id='left_side'><%= summary %></div>
+        <div id='right_side'><%= this.toHTML() %></div>
+        <script type="text/javascript" src="../../jmvc/rhino/documentation/highlight/highlight.js"></script>
+        <script type="text/javascript">
+          hljs.initHighlightingOnLoad('html', 'css','javascript');
+        </script>
+        <script type="text/javascript">
+            //select someone
+            parts = window.location.href.split("/")
+            var selected = document.getElementById(parts.pop().replace(/[#|?].*/,""))
+            if(selected){
+                selected.className = "selected";
+            }
+        </script>
+    </body>
+</html>
