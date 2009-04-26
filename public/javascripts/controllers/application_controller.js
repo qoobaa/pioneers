@@ -6,7 +6,7 @@ ApplicationController = MVC.Controller.extend("main", {
 
   game_loaded: function(response) {
     //$("#board").board({ boardAttributes: response.board });
-    board = new BoardController("board", response.board);
+    var board = new BoardController("board", response.board);
     document.domain = document.domain;
     Orbited.settings.hostname = "localhost";
     Orbited.settings.port = "8000";

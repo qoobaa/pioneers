@@ -39,7 +39,7 @@
     Orbited.settings = {};
     Orbited.settings.hostname = document.domain;
     Orbited.settings.port = (location.port.length > 0) ? location.port : 80;
-    Orbited.settings.protocol = 'http';
+    Orbited.settings.protocol = location.protocol.slice(0, -1);
     Orbited.settings.log = false;
     Orbited.settings.streaming = true;
     Orbited.settings.HEARTBEAT_TIMEOUT = 6000;
@@ -1178,7 +1178,7 @@
             {
             var id = msg.shift();
             var dataString = msg.join(" ");
-            var data = JSON.parse(dataString);
+            var data = Orbited.JSON.parse(dataString);
             
             Orbited.singleton.XSDR.receiveCbs[id](data);
             }
@@ -1188,7 +1188,7 @@
             var queue = Orbited.singleton.XSDR.queues[id];
             if (queue.length > 0) {
                 data = queue.shift();
-                e.source.postMessage(JSON.stringify(data), e.origin);
+                e.source.postMessage(Orbited.JSON.stringify(data), e.origin);
             }
             }
         }, false
@@ -2356,13 +2356,17 @@ Orbited.CometTransports.Poll.ie = 0.5
         return ret.join("");
     };
 
-    if (!this.JSON) {
+        /*
+         * We create Orbited.JSON whether or not some other JSON
+         * exists. This is because Orbited.JSON is compatible with
+         * JSON.js (imported by xsdrBridge), whereas various other
+         * JSONs, including the one that ships with Prototype, are
+         * not, leading to dumb errors.
+         *     -mario
+         */
 
-        // Create a JSON object only if one does not already exist. We create the
-        // object in a closure to avoid creating global variables.
+        Orbited.JSON = function () {
 
-        JSON = function () {
-            
             function f(n) {
             // Format integers to have at least two digits.
             return n < 10 ? '0' + n : n;
@@ -2673,10 +2677,6 @@ replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
                          }
                     };
                    }();
-            }
-            Orbited.JSON = JSON;
-
-
             })();
 
 

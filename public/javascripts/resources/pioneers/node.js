@@ -177,6 +177,10 @@ Pioneers.Node = function(board, attributes) {
     return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerNumber);
   };
 
+  this.isValidForCity = function(playerNumber) {
+    return this.getPlayerNumber() == playerNumber && this.getState() == "settlement";
+  };
+
   this.init = function(board, attributes) {
     this.board = board;
     this.game = board.game;
