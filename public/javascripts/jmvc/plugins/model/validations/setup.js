@@ -1,1 +1,0 @@
-MVC.Validations = MVC.Class.extend();

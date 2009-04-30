@@ -1,1 +1,0 @@
-include('model_view_helper')

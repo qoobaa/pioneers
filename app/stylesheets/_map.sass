@@ -40,75 +40,73 @@
         &.size-#{!row + "-" + !col}
           :height= !row * 80px + !col * 40px - 40px
           :width= !col * 70px + 20px
-    div.hexes
+    table.hexes
       :position absolute
-      li
-        :list-style none
+      tr
         @for !row from 0 to 11
           &.row-#{!row}
             :position absolute
             :top= !row * 80px
-        ul
-          li
+        td
+          :width 95px
+          :height 80px
+          :text-align center
+          :line-height 80px
+          span.robber
+            :display none
+          &.robber,&.settleable:hover
+            span.roll
+              :display none
+            span.robber
+              :display block
+          span
             :width 95px
             :height 80px
+            :display block
             :text-align center
+            :font-weight bold
             :line-height 80px
-            span.robber
-              :display none
-            &.robber,&.settleable:hover
-              span.roll
-                :display none
-              span.robber
-                :display block
-            span
-              :width 95px
-              :height 80px
-              :display block
-              :text-align center
-              :font-weight bold
-              :line-height 80px
-            @for !position from 0 to 6
-              span.generic-#{!position}
-                :background= url("/images/harbor-generic-#{!position}.png")
-            @for !position from 0 to 6
-              span.bricks-#{!position}
-                :background= url("/images/harbor-generic-#{!position}.png")
-            @for !position from 0 to 6
-              span.grain-#{!position}
-                :background= url("/images/harbor-generic-#{!position}.png")
-            @for !position from 0 to 6
-              span.lumber-#{!position}
-                :background= url("/images/harbor-generic-#{!position}.png")
-            @for !position from 0 to 6
-              span.ore-#{!position}
-                :background= url("/images/harbor-generic-#{!position}.png")
-            @for !position from 0 to 6
-              span.wool-#{!position}
-                :background= url("/images/harbor-generic-#{!position}.png")
-            :list-style none
-            @for !col from 0 to 11
-              &.col-#{!col}
-                :position absolute
-                :top= !col * 40px
-                :left= !col * 70px
-            div
-              :width= 95px
-              :height= 80px
-            &.forest
-              :background url("/images/forest.png")
-            &.hill
-              :background url("/images/hill.png")
-            &.mountain
-              :background url("/images/mountain.png")
-            &.pasture
-              :background url("/images/pasture.png")
-            &.field
-              :background url("/images/field.png")
-            &.sea
-              :background url("/images/sea.png")
-            &.desert
-              :background url("/images/desert.png")
+          @for !position from 0 to 6
+            span.generic-#{!position}
+              :background= url("/images/harbor-generic-#{!position}.png")
+          @for !position from 0 to 6
+            span.bricks-#{!position}
+              :background= url("/images/harbor-generic-#{!position}.png")
+          @for !position from 0 to 6
+            span.grain-#{!position}
+              :background= url("/images/harbor-generic-#{!position}.png")
+          @for !position from 0 to 6
+            span.lumber-#{!position}
+              :background= url("/images/harbor-generic-#{!position}.png")
+          @for !position from 0 to 6
+            span.ore-#{!position}
+              :background= url("/images/harbor-generic-#{!position}.png")
+          @for !position from 0 to 6
+            span.wool-#{!position}
+              :background= url("/images/harbor-generic-#{!position}.png")
+          :list-style none
+          @for !col from 0 to 11
+            &.col-#{!col}
+              :position absolute
+              :top= !col * 40px
+              :left= !col * 70px
+          div
+            :width= 95px
+            :height= 80px
+          &.forest
+            :background url("/images/forest.png")
+          &.hill
+            :background url("/images/hill.png")
+          &.mountain
+            :background url("/images/mountain.png")
+          &.pasture
+            :background url("/images/pasture.png")
+          &.field
+            :background url("/images/field.png")
+          &.sea
+            :background url("/images/sea.png")
+          &.desert
+            :background url("/images/desert.png")
     div.nodes
       :position absolute
       li
