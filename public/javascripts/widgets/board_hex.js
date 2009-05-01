@@ -29,10 +29,13 @@ $.widget("ui.boardHex", {
     $(this.element).removeClass("robber").removeAttr("style");
   },
 
-  reset: function() {
+  reset: function(showEffect) {
     var hex = this.getHex();
     this._clear();
-    if(hex.hasRobber()) $(this.element).addClass("robber");
+    if(hex.hasRobber()) {
+      $(this.element).addClass("robber");
+      if(showEffect) $(this.element).find(".robber").effect("pulsate");
+    }
   },
 
   robber: function() {

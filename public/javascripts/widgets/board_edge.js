@@ -26,10 +26,13 @@ $.widget("ui.boardEdge", {
     $(this.element).removeClass("road-1 road-2 road-3 road-4").removeAttr("style");
   },
 
-  reset: function() {
+  reset: function(showEffect) {
     var edge = this.getEdge();
     this._clear();
-    if(edge.isSettled()) $(this.element).addClass("road-" + edge.getPlayerNumber());
+    if(edge.isSettled()) {
+      $(this.element).addClass("road-" + edge.getPlayerNumber());
+      if(showEffect) $(this.element).effect("pulsate");
+    }
   },
 
   road: function(playerNumber) {

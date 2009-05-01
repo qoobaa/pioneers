@@ -26,10 +26,13 @@ $.widget("ui.boardNode", {
     $(this.element).removeClass("settlement-1 settlement-2 settlement-3 settlement-4 city-1 city-2 city-3 city-4 robbable-1 robbable-2 robbable-3 robbable-4").removeAttr("style");
   },
 
-  reset: function() {
+  reset: function(showEffect) {
     var node = this.getNode();
     this._clear();
-    if(node.isSettled()) $(this.element).addClass(node.getState() + "-" + node.getPlayerNumber());
+    if(node.isSettled()) {
+      $(this.element).addClass(node.getState() + "-" + node.getPlayerNumber());
+      if(showEffect) $(this.element).effect("pulsate");
+    }
   },
 
   settlement: function(playerNumber) {
@@ -47,7 +50,7 @@ $.widget("ui.boardNode", {
 
   robbable: function(playerNumber) {
     var node = this.getNode();
-    this._clear();
+    this.reset();
     $(this.element).addClass("robbable-" + playerNumber).css({ cursor: "pointer" });;
   },
 
