@@ -92,7 +92,6 @@ $.widget("ui.board", {
   // constructor
 
   _init: function() {
-    var boardWidget = this;
     this._setData("board", new Pioneers.Board(this._getBoardAttributes()));
     this._setData("mode", "default");
     this.element.addClass("board size-" + this._getBoard().getHeight() + "-" + this._getBoard().getWidth());
@@ -134,26 +133,6 @@ $.widget("ui.board", {
         if(hex.isValidForRobber()) boardWidget._moveRobber(hex);
       }
     });
-  },
-
-  _moveRobber: function(hex) {
-    var playerNumber = this._getPlayerNumber();
-    this._setHex(hex);
-    if(hex.getRobbableNodes(playerNumber).length == 0) {
-      this._rob(hex);
-    } else {
-      this._setMode("robbery");
-    }
-  },
-
-  _rob: function(hex, playerNumber) {
-    this._setMode("default");
-    var data = {
-      "robbery[row]": hex.getRow(),
-      "robbery[col]": hex.getCol()
-    };
-    if(playerNumber != undefined) data["robbery[player_number]"] = playerNumber;
-    $.post("/games/" + Pioneers.utils.getGameId() + "/robberies", data);
   },
 
   _createNodes: function() {
@@ -220,24 +199,6 @@ $.widget("ui.board", {
     });
   },
 
-  _buildSettlement: function(node) {
-    this._setMode("default");
-    var data = {
-      "node[row]": node.getRow(),
-      "node[col]": node.getCol()
-    };
-    $.post("/games/" + Pioneers.utils.getGameId() + "/nodes", data);
-  },
-
-  _buildCity: function(node) {
-    this._setMode("default");
-    var data = {
-      _method: "put",
-      "node[state_event]": "expand"
-    };
-    $.post("/games/" + Pioneers.utils.getGameId() + "/nodes/" + node.getId(), data);
-  },
-
   _createEdges: function() {
     var boardWidget = this;
     var board = this._getBoard();
@@ -286,6 +247,46 @@ $.widget("ui.board", {
         }
       }
     });
+  },
+
+  // event responses
+
+  _moveRobber: function(hex) {
+    var playerNumber = this._getPlayerNumber();
+    this._setHex(hex);
+    if(hex.getRobbableNodes(playerNumber).length == 0) {
+      this._rob(hex);
+    } else {
+      this._setMode("robbery");
+    }
+  },
+
+  _rob: function(hex, playerNumber) {
+    this._setMode("default");
+    var data = {
+      "robbery[row]": hex.getRow(),
+      "robbery[col]": hex.getCol()
+    };
+    if(playerNumber != undefined) data["robbery[player_number]"] = playerNumber;
+    $.post("/games/" + Pioneers.utils.getGameId() + "/robberies", data);
+  },
+
+  _buildSettlement: function(node) {
+    this._setMode("default");
+    var data = {
+      "node[row]": node.getRow(),
+      "node[col]": node.getCol()
+    };
+    $.post("/games/" + Pioneers.utils.getGameId() + "/nodes", data);
+  },
+
+  _buildCity: function(node) {
+    this._setMode("default");
+    var data = {
+      _method: "put",
+      "node[state_event]": "expand"
+    };
+    $.post("/games/" + Pioneers.utils.getGameId() + "/nodes/" + node.getId(), data);
   },
 
   _buildRoad: function(edge) {

@@ -16,7 +16,5 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $(function() {
-  $.getJSON("/games/" + Pioneers.utils.getGameId() + ".json", function(data) {
-              $("#board").board({ boardAttributes: data.game.board });
-            });
+  $("#game").game();
 });
