@@ -16,365 +16,272 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.board", {
+
+  // widget public methods
+
+  buildFirstSettlementMode: function(playerNumber) {
+    this._setMode("buildFirstSettlement");
+    this._setPlayerNumber(playerNumber);
+  },
+
+  buildSettlementMode: function(playerNumber) {
+    this._setMode("buildSettlement");
+    this._setPlayerNumber(playerNumber);
+  },
+
+  buildCityMode: function(playerNumber) {
+    this._setMode("buildCity");
+    this._setPlayerNumber(playerNumber);
+  },
+
+  buildRoadMode: function(playerNumber) {
+    this._setMode("buildRoad");
+    this._setPlayerNumber(playerNumber);
+  },
+
+  buildFirstRoadMode: function(playerNumber) {
+    this._setMode("buildFirstRoad");
+    this._setPlayerNumber(playerNumber);
+  },
+
+  buildFirstRoadMode: function(playerNumber) {
+    this._setMode("buildFirstRoad");
+    this._setPlayerNumber(playerNumber);
+  },
+
+  moveRobberMode: function(playerNumber) {
+    this._setMode("moveRobber");
+    this._setPlayerNumber(playerNumber);
+  },
+
+  defaultMode: function() {
+    this._setMode("default");
+  },
+
+  // constructor
+
   _init: function() {
+    var boardWidget = this;
     this._setData("board", new Pioneers.Board(this._getBoardAttributes()));
     this.element.addClass("board size-" + this._getBoard().getHeight() + "-" + this._getBoard().getWidth());
     this.element.empty();
     this._createHexes();
-    //this._createNodes();
-    //this._createEdges();
+    this._createNodes();
+    this._createEdges();
   },
 
   _createHexes: function() {
-    var board = this;
-    var height = this._getBoard().getHeight();
-    var width = this._getBoard().getWidth();
-
+    var boardWidget = this;
+    var board = this._getBoard();
     var hexesTable = $("<table/>").addClass("hexes").appendTo(this.element);
     var hexesTableBody = $("<tbody/>").appendTo(hexesTable);
-    for(var row = 0; row < height; row++) {
+    for(var row = 0; row < board.getHeight(); row++) {
       var hexesTr = $("<tr/>").addClass("row-" + row).appendTo(hexesTableBody);
-      for(var col = 0; col < width; col++) {
-        var hex = this._getBoard().getHex([row, col]);
-        if(hex != undefined) {
-          var hexTd = $("<td/>").appendTo(hexesTr).addClass("row-" + row).addClass("col-" + col).addClass(hex.getType()).addClass("hex");
-          $("<span/>").addClass("robber").text("robber").appendTo(hexTd);
-          if(hex.getRoll() != undefined) $("<span/>").addClass("roll roll-" + hex.getRoll()).text(hex.getRoll()).appendTo(hexTd);
-          if(hex.isHarbor()) $("<span/>").addClass(hex.getHarborType() + "-" + hex.getHarborPosition()).text(hex.getHarborType()).appendTo(hexTd);
-          if(hex.hasRobber()) hexTd.addClass("robber");
-        }
+      for(var col = 0; col < board.getWidth(); col++) {
+        var hex = board.getHex([row, col]);
+        if(hex != undefined) $("<td/>").appendTo(hexesTr).boardHex({ hex: hex });
       }
+    }
+
+    hexesTable.mouseout(function(event) {
+      $(event.target).closest(".hex").boardHex("reset");
+    });
+
+    hexesTable.mouseover(function(event) {
+      var boardHex = $(event.target).closest(".hex");
+      var hex = boardHex.boardHex("getHex");
+      if(boardWidget._getMode() == "moveRobber" && hex != undefined) {
+        if(hex.isValidForRobber()) boardHex.boardHex("robber");
+      }
+    });
+
+    hexesTable.click(function(event) {
+      var boardHex = $(event.target).closest(".hex");
+      var hex = boardHex.boardHex("getHex");
+      if(boardWidget._getMode() == "moveRobber" && hex != undefined) {
+        if(hex.isValidForRobber()) boardWidget._moveRobber(hex);
+      }
+    });
+  },
+
+  _moveRobber: function(hex) {
+    var playerNumber = this._getPlayerNumber();
+    this._setHex(hex);
+    if(hex.getRobbableNodes(playerNumber).length == 0) {
+      this._rob(hex);
+    } else {
+      this._setMode("robbery");
     }
   },
 
-  _createHex: function(hex) {
-    var board = this;
-    var hexLi = this.element.find(".hexes .row-" + hex.getRow() + " .col-" + hex.getCol()).addClass(hex.getType()).addClass("hex");
-    $("<span/>").addClass("robber").text("robber").appendTo(hexLi);
-    if(hex.getRoll() != undefined) $("<span/>").addClass("roll roll-" + hex.getRoll()).text(hex.getRoll()).appendTo(hexLi);
-    if(hex.isHarbor()) $("<span/>").addClass(hex.getHarborType() + "-" + hex.getHarborPosition()).text(hex.getHarborType()).appendTo(hexLi);
-    if(hex.getRow() == this._getBoard().getRobberPosition()[0] && hex.getCol() == this._getBoard().getRobberPosition()[1]) hexLi.addClass("robber");
+  _rob: function(hex, playerNumber) {
+    // TODO
+    this._setMode("default");
+    alert("robber moved to " + hex.getPosition() + ", robbed player number " + playerNumber);
   },
 
-           _createNodes: function() {
-             var board = this;
-             var nodesDiv = $("<div/>").addClass("nodes").appendTo(this.element);
-             var nodesUl = $("<ul/>").appendTo(nodesDiv);
-             for(var row = 0; row < this._getBoard().getHeight() + 1; row++) {
-               var rowLi = $("<li/>").addClass("row-" + row).appendTo(nodesUl);
-               var rowUl = $("<ul/>").appendTo(rowLi);
-               for(var col = 0; col < this._getBoard().getWidth() * 2 + 2; col++) {
-                 $("<li/>").addClass("col-" + col).appendTo(rowUl);
-               }
-             }
-             $.each(this._getBoard().getNodes(),
-                    function() {
-                      board._createNode(this);
-                    }
-                   );
-           },
+  _createNodes: function() {
+    var boardWidget = this;
+    var board = this._getBoard();
+    var nodesTable = $("<table/>").addClass("nodes").appendTo(this.element);
+    var nodesTableBody = $("<tbody/>").appendTo(nodesTable);
+    for(var row = 0; row < board.getNodeHeight(); row++) {
+      var nodesTr = $("<tr/>").addClass("row-" + row).appendTo(nodesTableBody);
+      for(var col = 0; col < board.getNodeWidth(); col++) {
+        var node = board.getNode([row, col]);
+        if(node != undefined) $("<td/>").appendTo(nodesTr).boardNode({ node: node });
+      }
+    }
 
-           _createNode: function(node) {
-             var board = this;
-             var nodeLi = this.element.find(".nodes .row-" + node.getRow() + " .col-" + node.getCol()).addClass("node");
-             nodeLi.removeClass("settlement city player-1 player-2 player-3 player-4");
-             if(node.isSettled()) nodeLi.addClass(node.getState()).addClass("player-" + node.getPlayerNumber());
-             return nodeLi;
-           },
+    nodesTable.mouseout(function(event) {
+      $(event.target).closest(".node").boardNode("reset");
+    });
 
-           _createEdges: function() {
-             var board = this;
-             var edgesDiv = $("<div/>").addClass("edges").appendTo(this.element);
-             var edgesUl = $("<ul/>").appendTo(edgesDiv);
-             for(var row = 0; row < this._getBoard().getHeight() + 1; row++) {
-               var rowLi = $("<li/>").addClass("row-" + row).appendTo(edgesUl);
-               var rowUl = $("<ul/>").appendTo(rowLi);
-               for(var col = 0; col < this._getBoard().getWidth() * 3 + 4; col++) {
-                 $("<li/>").addClass("col-" + col).appendTo(rowUl);
-               }
-             }
-             $.each(this._getBoard().getEdges(),
-                    function() {
-                      board._createEdge(this);
-                    }
-                   );
-           },
+    nodesTable.mouseover(function(event) {
+      var playerNumber = boardWidget._getPlayerNumber();
+      var boardNode = $(event.target).closest(".node");
+      var node = boardNode.boardNode("getNode");
+      if(node != undefined) {
+        switch(boardWidget._getMode()) {
+        case "buildFirstSettlement":
+          if(node.isValidForFirstSettlement(playerNumber)) boardNode.boardNode("settlement", playerNumber);
+          break;
+        case "buildSettlement":
+          if(node.isValidForSettlement(playerNumber)) boardNode.boardNode("settlement", playerNumber);
+          break;
+        case "buildCity":
+          if(node.isValidForCity(playerNumber)) boardNode.boardNode("city", playerNumber);
+          break;
+        case "robbery":
+          var hex = boardWidget._getHex();
+          if($.inArray(node, hex.getRobbableNodes(playerNumber)) != -1) boardNode.boardNode("robbable", playerNumber);
+          break;
+        }
+      }
+    });
 
-           _createEdge: function(edge) {
-             var board = this;
-             var edgeLi = this.element.find(".edges .row-" + edge.getRow() + " .col-" + edge.getCol()).addClass("edge");
-             if(edge.isSettled()) edgeLi.addClass("road player-" + edge.getPlayerNumber());
-             return edgeLi;
-           },
+    nodesTable.click(function(event) {
+      var playerNumber = boardWidget._getPlayerNumber();
+      var boardNode = $(event.target).closest(".node");
+      var node = boardNode.boardNode("getNode");
+      if(node != undefined) {
+        switch(boardWidget._getMode()) {
+        case "buildFirstSettlement":
+          if(node.isValidForFirstSettlement(playerNumber)) boardWidget._buildSettlement(node);
+          break;
+        case "buildSettlement":
+          if(node.isValidForSettlement(playerNumber)) boardWidget._buildSettlement(node);
+          break;
+        case "buildCity":
+          if(node.isValidForCity(playerNumber)) boardWidget._buildCity(node);
+          break;
+        case "robbery":
+          var hex = boardWidget._getHex();
+          if($.inArray(node, hex.getRobbableNodes(playerNumber)) != -1) boardWidget._rob(hex, node.getPlayerNumber());
+          break;
+        }
+      }
+    });
+  },
 
-           _getBoard: function() {
-             return this._getData("board");
-           },
+  _buildSettlement: function(node) {
+    this._setMode("default");
+    alert("settlement built " + node.getPosition());
+  },
 
-           _getBoardAttributes: function() {
-             return this._getData("boardAttributes");
-           },
+  _buildCity: function(node) {
+    this._setMode("default");
+    alert("city built " + node.getPosition());
+  },
 
-           buildFirstSettlementMode: function(playerNumber) {
-             this._setMode("buildFirstSettlement");
-             this._setPlayerNumber(playerNumber);
-             this._buildSettlementModeOn();
-           },
+  _createEdges: function() {
+    var boardWidget = this;
+    this._setMode("moveRobber");
+    this._setPlayerNumber(1);
+    var board = this._getBoard();
+    var edgesTable = $("<table/>").addClass("edges").appendTo(this.element);
+    var edgesTableBody = $("<tbody/>").appendTo(edgesTable);
+    for(var row = 0; row < board.getEdgeHeight(); row++) {
+      var edgesTr = $("<tr/>").addClass("row-" + row).appendTo(edgesTableBody);
+      for(var col = 0; col < board.getEdgeWidth(); col++) {
+        var edge = board.getEdge([row, col]);
+        if(edge != undefined) $("<td/>").appendTo(edgesTr).boardEdge({ edge: edge });
+      }
+    }
 
-           buildSettlementMode: function(playerNumber) {
-             this._setMode("buildSettlement");
-             this._setPlayerNumber(playerNumber);
-             this._buildSettlementModeOn();
-           },
+    edgesTable.mouseout(function(event) {
+      $(event.target).closest(".edge").boardEdge("reset");
+    });
 
-           _buildSettlementModeOn: function() {
-             var playerNumber = this._getPlayerNumber();
-             var board = this;
-             board.element.find(".nodes li li").addClass("unsettleable-" + playerNumber);
-             var nodes = null;
+    edgesTable.mouseover(function(event) {
+      var playerNumber = boardWidget._getPlayerNumber();
+      var boardEdge = $(event.target).closest(".edge");
+      var edge = boardEdge.boardEdge("getEdge");
+      if(edge != undefined) {
+        switch(boardWidget._getMode()) {
+        case "buildFirstRoad":
+          if(edge.isValidForFirstRoad(playerNumber)) boardEdge.boardEdge("road", playerNumber);
+          break;
+        case "buildRoad":
+          if(edge.isValidForRoad(playerNumber)) boardEdge.boardEdge("road", playerNumber);
+          break;
+        }
+      }
+    });
 
-             switch(this._getMode()) {
-             case "buildFirstSettlement":
-               nodes = this._getBoard().getNodesValidForFirstSettlement(playerNumber);
-               break;
-             case "buildSettlement":
-               nodes = this._getBoard().getNodesValidForSettlement(playerNumber);
-               break;
-             }
+    edgesTable.click(function(event) {
+      var playerNumber = boardWidget._getPlayerNumber();
+      var boardEdge = $(event.target).closest(".edge");
+      var edge = boardEdge.boardEdge("getEdge");
+      if(edge != undefined) {
+        switch(boardWidget._getMode()) {
+        case "buildFirstRoad":
+          if(edge.isValidForFirstRoad(playerNumber)) boardWidget._buildRoad(edge);
+          break;
+        case "buildRoad":
+          if(edge.isValidForRoad(playerNumber)) boardWidget._buildRoad(edge);
+          break;
+        }
+      }
+    });
+  },
 
-             $.each(nodes,
-                    function() {
-                      var node = this;
-                      board.element.find(".nodes .row-" + this.getRow() + " .col-" + this.getCol())
-                        .addClass("settleable-" + playerNumber)
-                        .removeClass("unsettleable-" + playerNumber)
-                        .click(
-                          function() {
-                            board._settlementBuilt(node);
-                          }
-                        );
-                    }
-                   );
-           },
+  _buildRoad: function(edge) {
+    this._setMode("default");
+    alert("road built " + edge.getPosition());
+  },
 
-           _settlementBuilt: function(node) {
-             var playerNumber = this._getPlayerNumber();
-             alert("settlement built on node [" + node.getRow() + ", " + node.getCol() + "] by player number " + playerNumber);
-             this._setMode("default");
-           },
+  // getters and setters
 
-           _buildSettlementModeOff: function() {
-             var playerNumber = this._getPlayerNumber();
-             this.element.find(".nodes li li").removeClass("unsettleable-" + playerNumber).removeClass("settleable-" + playerNumber).unbind();
-           },
+  _setMode: function(mode) {
+    this._setData("mode", mode);
+  },
 
-           buildCityMode: function(playerNumber) {
-             this._setMode("buildCity");
-             this._setPlayerNumber(playerNumber);
-             this._buildCityModeOn();
-           },
+  _getBoard: function() {
+    return this._getData("board");
+  },
 
-           _buildCityModeOn: function() {
-             var playerNumber = this._getPlayerNumber();
-             var board = this;
-             board.element.find(".nodes li li").addClass("unexpandable-" + playerNumber);
-             var nodes = null;
+  _getBoardAttributes: function() {
+    return this._getData("boardAttributes");
+  },
 
-             $.each(this._getBoard().getSettlements(playerNumber),
-                    function() {
-                      var node = this;
-                      board.element.find(".nodes .row-" + this.getRow() + " .col-" + this.getCol())
-                        .addClass("expandable-" + playerNumber)
-                        .removeClass("unexpandable-" + playerNumber)
-                        .click(
-                          function() {
-                            board._cityBuilt(node);
-                          }
-                        );
-                    }
-                   );
-           },
+  _getMode: function() {
+    return this._getData("mode");
+  },
 
-           _buildCityModeOff: function() {
-             var playerNumber = this._getPlayerNumber();
-             this.element.find(".nodes li li").removeClass("expandable-" + playerNumber).removeClass("unexpandable-" + playerNumber).unbind();
-           },
+  _setPlayerNumber: function(playerNumber) {
+    this._setData("playerNumber", playerNumber);
+  },
 
-           _cityBuilt: function(node) {
-             var playerNumber = this._getPlayerNumber();
-             alert("city built on node#" + node.getId() + " by player number " + playerNumber);
-             this._setMode("default");
-           },
+  _getPlayerNumber: function() {
+    return this._getData("playerNumber");
+  },
 
-           buildRoadMode: function(playerNumber) {
-             this._setMode("buildRoad");
-             this._setPlayerNumber(playerNumber);
-             this._buildRoadModeOn();
-           },
+  _setHex: function(hex) {
+    this._setData("hex", hex);
+  },
 
-           buildFirstRoadMode: function(playerNumber) {
-             this._setMode("buildFirstRoad");
-             this._setPlayerNumber(playerNumber);
-             this._buildRoadModeOn();
-           },
-
-           _buildRoadModeOn: function() {
-             var board = this;
-             var playerNumber = this._getPlayerNumber();
-             board.element.find(".edges li li").addClass("unsettleable-" + playerNumber);
-             var edges = null;
-
-             switch(this._getMode()) {
-             case "buildFirstRoad":
-               edges = this._getBoard().getEdgesValidForFirstRoad(playerNumber);
-               break;
-             case "buildRoad":
-               edges = this._getBoard().getEdgesValidForRoad(playerNumber);
-               break;
-             }
-
-             $.each(edges,
-                    function() {
-                      var edge = this;
-                      board.element.find(".edges .row-" + this.getRow() + " .col-" + this.getCol())
-                        .addClass("settleable-" + playerNumber)
-                        .removeClass("unsettleable-" + playerNumber)
-                        .click(
-                          function() {
-                            board._roadBuilt(edge);
-                          }
-                        );
-                    }
-                   );
-           },
-
-           _roadBuilt: function(edge) {
-             var playerNumber = this._getPlayerNumber();
-             alert("road built on edge [" + edge.getRow() + ", " + edge.getCol() + "], by player number " + playerNumber);
-             this._setMode("default");
-           },
-
-           _buildRoadModeOff: function() {
-             var playerNumber = this._getPlayerNumber();
-             this.element.find(".edges li li").removeClass("unsettleable-" + playerNumber).removeClass("settleable-" + playerNumber).unbind();
-           },
-
-           buildFirstRoadMode: function(playerNumber) {
-             this._setMode("buildFirstRoad");
-             this._setPlayerNumber(playerNumber);
-           },
-
-           robberMoveMode: function(playerNumber) {
-             var board = this;
-             this._setMode("robberMove");
-             this._setPlayerNumber(playerNumber);
-
-             this.element.find(".hexes li li").addClass("unsettleable");
-
-             var settleableHexes = $.grep(this._getBoard().getHexes(),
-                                          function(hex) {
-                                            return hex.isSettleable();
-                                          }
-                                         );
-
-             $.each(settleableHexes,
-                    function() {
-                      var hex = this;
-                      board.element.find(".hexes .row-" + this.getRow() + " .col-" + this.getCol()).addClass("settleable").removeClass("unsettleable").click(
-                        function() {
-                          board.robberMoved(hex);
-                        }
-                      );
-                      board.element.find(".hexes li li.robber").removeClass("settleable").unbind();
-                    }
-                   );
-           },
-
-           _robberMoveModeOff: function() {
-             this.element.find(".hexes li li").removeClass("unsettleable").removeClass("settleable").unbind();
-             this.element.find(".nodes li li").removeClass("robbable").unbind();
-           },
-
-           _robberMoved: function(hex) {
-             this.element.find(".hexes li li").removeClass("unsettleable").removeClass("settleable").unbind();
-             var board = this;
-             var playerNumber = this._getPlayerNumber();
-             var robbableNodes = hex.getRobbableNodes(playerNumber);
-             if(robbableNodes.length == 0) {
-               board.robbed(hex);
-             } else {
-               $.each(robbableNodes,
-                      function() {
-                        var robbedPlayerNumber = this.getPlayerNumber();
-                        board.element.find(".nodes .row-" + this.getRow() + " .col-" + this.getCol()).addClass("robbable").click(
-                          function() {
-                            board.robbed(hex, robbedPlayerNumber);
-                          }
-                        );
-                      }
-                     );
-             }
-           },
-
-           _robbed: function(hex, playerNumber) {
-             alert("robber moved to hex [" + hex.getRow() + ", " + hex.getCol() + "], robbed player number " + playerNumber);
-             this._setMode("default");
-           },
-
-           defaultMode: function() {
-             this._setMode("default");
-           },
-
-           _setMode: function(mode) {
-             switch(this._getMode()) {
-             case "buildFirstSettlement":
-             case "buildSettlement":
-               this._buildSettlementModeOff();
-               break;
-             case "buildCity":
-               this._buildCityModeOff();
-               break;
-             case "buildFirstRoad":
-             case "buildRoad":
-               this._buildRoadModeOff();
-               break;
-             case "robberMove":
-               this._robberMoveModeOff();
-               break;
-             }
-             this._setData("mode", mode);
-           },
-
-           _getMode: function() {
-             return this._getData("mode");
-           },
-
-           _setPlayerNumber: function(playerNumber) {
-             this._setData("playerNumber", playerNumber);
-           },
-
-           _getPlayerNumber: function() {
-             return this._getData("playerNumber");
-           },
-
-           settlementBuilt: function(nodeAttributes) {
-             var node = this._getBoard().getNode(nodeAttributes.position);
-             node.setPlayerNumber(nodeAttributes.playerNumber);
-             node.setState(nodeAttributes.state);
-             node.setId(nodeAttributes.id);
-             this._createNode(node).effect("pulsate");
-           },
-
-           cityBuilt: function(nodeAttributes) {
-             var node = this._getBoard().getNode(nodeAttributes.position);
-             node.setState(nodeAttributes.state);
-             this._createNode(node).effect("pulsate");
-           },
-
-           roadBuilt: function(edgeAttributes) {
-             var edge = this._getBoard().getEdge(edgeAttributes.position);
-             edge.setPlayerNumber(edgeAttributes.playerNumber);
-             this._createEdge(edge).effect("pulsate");
-           }
-         }
-        );
+  _getHex: function(hex) {
+    return this._getData("hex");
+  }
+});

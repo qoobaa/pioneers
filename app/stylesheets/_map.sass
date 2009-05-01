@@ -107,112 +107,108 @@
             :background url("/images/sea.png")
           &.desert
             :background url("/images/desert.png")
-    div.nodes
+    table.nodes
       :position absolute
-      li
-        :list-style none
+      tr
         @for !row from 0 to 11
           &.row-#{!row}
             :position absolute
             :top= !row * 80px
-        ul
-          li
-            :width 24px
-            :height 24px
-            :z-index 2
-            :list-style none
-            @for !col from 0 to 23
-              &.col-#{!col}
-                :position absolute
-                :top= floor((!col + 1) / 2) * 40px - 12px - 40px
-                @if !col % 2 == 0
-                  :left= floor(!col / 2) * 70px - 12px
+        td
+          :width 24px
+          :height 24px
+          :z-index 2
+          :list-style none
+          @for !col from 0 to 23
+            &.col-#{!col}
+              :position absolute
+              :top= floor((!col + 1) / 2) * 40px - 12px - 40px
+              @if !col % 2 == 0
+                :left= floor(!col / 2) * 70px - 12px
+              @else
+                :left= floor(!col / 2) * 70px - 12px + 25px
+          &.settlement-1
+            :background url("/images/settlement-player-1.png")
+          &.settlement-2
+            :background url("/images/settlement-player-2.png")
+          &.settlement-3
+            :background url("/images/settlement-player-3.png")
+          &.city-1
+            :background url("/images/city-player-1.png")
+          &.city-2
+            :background url("/images/city-player-2.png")
+          &.city-3
+            :background url("/images/city-player-3.png")
+          &.settleable-1:hover
+            :background url("/images/settlement-player-1.png")
+          &.settleable-2:hover
+            :background url("/images/settlement-player-2.png")
+          &.settleable-3:hover
+            :background url("/images/settlement-player-3.png")
+          &.expandable-1:hover
+            :background url("/images/city-player-1.png")
+          &.expandable-2:hover
+            :background url("/images/city-player-2.png")
+          &.expandable-3:hover
+            :background url("/images/city-player-3.png")
+    table.edges
+      :position absolute
+      tr
+        @for !row from 0 to 11
+          &.row-#{!row}
+            :position absolute
+            :top= !row * 80px
+        td
+          :z-index 1
+          :list-style none
+          :width 48px
+          :height 48px
+          @for !col from 0 to 40
+            &.col-#{!col}
+              :position absolute
+              @if !col % 3 == 0
+                :left= floor(!col / 3) * 70px - 24px - 58px
+                :top= floor(!col / 3) * 40px - 40px - 24px + 20px
+                &.settleable-1:hover
+                  :background url("/images/road-0-player-1.png")
+                &.road-1
+                  :background url("/images/road-0-player-1.png")
+                &.settleable-2:hover
+                  :background url("/images/road-0-player-2.png")
+                &.road-2
+                  :background url("/images/road-0-player-2.png")
+                &.settleable-3:hover
+                  :background url("/images/road-0-player-3.png")
+                &.road-3
+                  :background url("/images/road-0-player-3.png")
+              @else
+                @if !col % 3 == 1
+                  :left= floor(!col / 3) * 70px - 24px - 24px
+                  :top= floor(!col / 3) * 40px - 40px - 24px
+                  &.settleable-1:hover
+                    :background url("/images/road-1-player-1.png")
+                  &.road-1
+                    :background url("/images/road-1-player-1.png")
+                  &.settleable-2:hover
+                    :background url("/images/road-1-player-2.png")
+                  &.road-2
+                    :background url("/images/road-1-player-2.png")
+                  &.settleable-3:hover
+                    :background url("/images/road-1-player-3.png")
+                  &.road-3
+                    :background url("/images/road-1-player-3.png")
                 @else
-                  :left= floor(!col / 2) * 70px - 12px + 25px
-            &.settlement.player-1
-              :background url("/images/settlement-player-1.png")
-            &.settlement.player-2
-              :background url("/images/settlement-player-2.png")
-            &.settlement.player-3
-              :background url("/images/settlement-player-3.png")
-            &.city.player-1
-              :background url("/images/city-player-1.png")
-            &.city.player-2
-              :background url("/images/city-player-2.png")
-            &.city.player-3
-              :background url("/images/city-player-3.png")
-            &.settleable-1:hover
-              :background url("/images/settlement-player-1.png")
-            &.settleable-2:hover
-              :background url("/images/settlement-player-2.png")
-            &.settleable-3:hover
-              :background url("/images/settlement-player-3.png")
-            &.expandable-1:hover
-              :background url("/images/city-player-1.png")
-            &.expandable-2:hover
-              :background url("/images/city-player-2.png")
-            &.expandable-3:hover
-              :background url("/images/city-player-3.png")
-    div.edges
-      :position absolute
-      li
-        :list-style none
-        @for !row from 0 to 11
-          &.row-#{!row}
-            :position absolute
-            :top= !row * 80px
-        ul
-          li
-            :z-index 1
-            :list-style none
-            :width 48px
-            :height 48px
-            @for !col from 0 to 40
-              &.col-#{!col}
-                :position absolute
-                @if !col % 3 == 0
-                  :left= floor(!col / 3) * 70px - 24px - 58px
+                  :left= floor(!col / 3) * 70px - 24px + 10px
                   :top= floor(!col / 3) * 40px - 40px - 24px + 20px
                   &.settleable-1:hover
-                    :background url("/images/road-0-player-1.png")
-                  &.road.player-1
-                    :background url("/images/road-0-player-1.png")
+                    :background url("/images/road-2-player-1.png")
+                  &.road-1
+                    :background url("/images/road-2-player-1.png")
                   &.settleable-2:hover
-                    :background url("/images/road-0-player-2.png")
-                  &.road.player-2
-                    :background url("/images/road-0-player-2.png")
+                    :background url("/images/road-2-player-2.png")
+                  &.road-2
+                    :background url("/images/road-2-player-2.png")
                   &.settleable-3:hover
-                    :background url("/images/road-0-player-3.png")
-                  &.road.player-3
-                    :background url("/images/road-0-player-3.png")
-                @else
-                  @if !col % 3 == 1
-                    :left= floor(!col / 3) * 70px - 24px - 24px
-                    :top= floor(!col / 3) * 40px - 40px - 24px
-                    &.settleable-1:hover
-                      :background url("/images/road-1-player-1.png")
-                    &.road.player-1
-                      :background url("/images/road-1-player-1.png")
-                    &.settleable-2:hover
-                      :background url("/images/road-1-player-2.png")
-                    &.road.player-2
-                      :background url("/images/road-1-player-2.png")
-                    &.settleable-3:hover
-                      :background url("/images/road-1-player-3.png")
-                    &.road.player-3
-                      :background url("/images/road-1-player-3.png")
-                  @else
-                    :left= floor(!col / 3) * 70px - 24px + 10px
-                    :top= floor(!col / 3) * 40px - 40px - 24px + 20px
-                    &.settleable-1:hover
-                      :background url("/images/road-2-player-1.png")
-                    &.road.player-1
-                      :background url("/images/road-2-player-1.png")
-                    &.settleable-2:hover
-                      :background url("/images/road-2-player-2.png")
-                    &.road.player-2
-                      :background url("/images/road-2-player-2.png")
-                    &.settleable-3:hover
-                      :background url("/images/road-2-player-3.png")
-                    &.road.player-3
-                      :background url("/images/road-2-player-3.png")
+                    :background url("/images/road-2-player-3.png")
+                  &.road-3
+                    :background url("/images/road-2-player-3.png")

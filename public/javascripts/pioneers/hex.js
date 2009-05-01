@@ -46,6 +46,10 @@ Pioneers.Hex = function(board, attributes) {
     return this.getRow() == this.getBoard().getRobberRow() && this.getCol() == this.getBoard().getRobberCol();
   };
 
+  this.isValidForRobber = function() {
+    return this.isSettleable() && !this.hasRobber();
+  };
+
   this.isSettleable = function() {
     return this.getType() != "sea";
   };
