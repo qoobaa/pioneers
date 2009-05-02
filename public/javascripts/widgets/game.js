@@ -16,8 +16,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.game", {
-
   _init: function() {
+    $(this.element).addClass("game");
     var gameWidget = this;
     $.getJSON("/games/" + Pioneers.utils.getGameId() + ".json", function(data) {
       gameWidget._gameDataLoaded(data);
@@ -25,8 +25,64 @@ $.widget("ui.game", {
   },
 
   _gameDataLoaded: function(data) {
-    $("<div/>").appendTo(this.element).board({ boardAttributes: data.game.board });
+    this._setState(data.game.state);
+    this._setPhase(data.game.phase);
+    this._setCards(data.game.cards);
+    this._setTurn(data.game.turn);
+    this._setRoll(data.game.roll);
+    this._setCardPlayed(data.game.cardPlayed);
+    this._setPlayerNumber(data.game.playerNumber);
+    this._createBoard(data.game.board);
+    this._createGameInfo();
+    this._createPlayers(data.game.players);
     this._setupStomp();
+  },
+
+  _createBoard: function(boardAttributes) {
+    $("<div/>").appendTo(this.element).board({ boardAttributes: boardAttributes });
+  },
+
+  _createGameInfo: function() {
+    var gameDl = $("<dl/>").appendTo(this.element);
+    $("<dt/>").appendTo(gameDl).text("State");
+    $("<dd/>").appendTo(gameDl).addClass("state");
+    $("<dt/>").appendTo(gameDl).text("Phase");
+    $("<dd/>").appendTo(gameDl).addClass("phase");
+    $("<dt/>").appendTo(gameDl).text("Turn");
+    $("<dd/>").appendTo(gameDl).addClass("turn");
+    $("<dt/>").appendTo(gameDl).text("Roll");
+    $("<dd/>").appendTo(gameDl).addClass("roll");
+    this._refreshState();
+    this._refreshPhase();
+    this._refreshTurn();
+    this._refreshRoll();
+  },
+
+  _refreshState: function(highlight) {
+    var state = $(this.element).find("dd.state").text(this._getState());
+    if(highlight) state.effect("highlight");
+  },
+
+  _refreshPhase: function(highlight) {
+    var phase = $(this.element).find("dd.phase").text(this._getPhase());
+    if(highlight) phase.effect("highlight");
+  },
+
+  _refreshTurn: function(highlight) {
+    var turn = $(this.element).find("dd.turn").text(this._getTurn());
+    if(highlight) turn.effect("highlight");
+  },
+
+  _refreshRoll: function(highlight) {
+    var roll = $(this.element).find("dd.roll").text(this._getRoll());
+    if(highlight) roll.effect("highlight");
+  },
+
+  _createPlayers: function(playersAttributes) {
+    var gameWidget = this;
+    $.each(playersAttributes, function() {
+      $("<div/>").appendTo(gameWidget.element).player(this);
+    });
   },
 
   // STOMP part
@@ -62,6 +118,53 @@ $.widget("ui.game", {
   },
 
   // getters and setters
+  _setCards: function(cards) {
+    this._setData("cards", cards);
+  },
+
+  _getCards: function() {
+    return this._getData("cards");
+  },
+
+  _setRoll: function(roll) {
+    this._setData("roll", roll);
+  },
+
+  _getRoll: function() {
+    return this._getData("roll");
+  },
+
+  _setState: function(state) {
+    this._setData("state", state);
+  },
+
+  _getState: function() {
+    return this._getData("state");
+  },
+
+  _setPhase: function(phase) {
+    this._setData("phase", phase);
+  },
+
+  _getPhase: function() {
+    return this._getData("phase");
+  },
+
+  _setTurn: function(turn) {
+    this._setData("turn", turn);
+  },
+
+  _getTurn: function() {
+    return this._getData("turn");
+  },
+
+  _setCardPlayed: function(cardPlayed) {
+    this._setData("cardPlayed", cardPlayed);
+  },
+
+  _setPlayerNumber: function(playerNumber) {
+    this._setData("playerNumber", playerNumber);
+  },
 
   _setStomp: function(stomp) {
     this._setData("stomp", stomp);

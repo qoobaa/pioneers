@@ -46,7 +46,8 @@ class GamesController < ApplicationController
             points: player.visible_points,
             resources: player.resources,
             name: player.user_login,
-            isUserIdle: player.user_idle? }
+            state: player.state,
+            cards: player.cards_count }
         end
         hexes = @game.board_hexes.map do |hex|
           { roll: hex.roll,
@@ -97,9 +98,10 @@ class GamesController < ApplicationController
           state: @game.state,
           phase: @game.phase,
           cards: @game.cards_count,
-          currentTurn: @game.current_turn,
-          currentTurnCardPlayed: @game.current_turn_card_played,
-          currentPlayerId: @game.current_player_id
+          turn: @game.current_turn,
+          cardPlayed: @game.current_turn_card_played,
+          playerNumber: @game.current_player_number,
+          roll: @game.current_dice_roll_value
         }
         render :json => { game: game }
       end

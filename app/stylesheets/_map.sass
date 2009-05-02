@@ -31,7 +31,6 @@
   div.board
     :overflow hidden
     :display block
-    /:float left
     :position relative
     :padding 50px
     :background url("/images/map-background.png")
@@ -139,18 +138,6 @@
             :background url("/images/city-player-2.png")
           &.city-3
             :background url("/images/city-player-3.png")
-          &.settleable-1:hover
-            :background url("/images/settlement-player-1.png")
-          &.settleable-2:hover
-            :background url("/images/settlement-player-2.png")
-          &.settleable-3:hover
-            :background url("/images/settlement-player-3.png")
-          &.expandable-1:hover
-            :background url("/images/city-player-1.png")
-          &.expandable-2:hover
-            :background url("/images/city-player-2.png")
-          &.expandable-3:hover
-            :background url("/images/city-player-3.png")
     table.edges
       :position absolute
       tr
@@ -169,46 +156,28 @@
               @if !col % 3 == 0
                 :left= floor(!col / 3) * 70px - 24px - 58px
                 :top= floor(!col / 3) * 40px - 40px - 24px + 20px
-                &.settleable-1:hover
-                  :background url("/images/road-0-player-1.png")
                 &.road-1
                   :background url("/images/road-0-player-1.png")
-                &.settleable-2:hover
-                  :background url("/images/road-0-player-2.png")
                 &.road-2
                   :background url("/images/road-0-player-2.png")
-                &.settleable-3:hover
-                  :background url("/images/road-0-player-3.png")
                 &.road-3
                   :background url("/images/road-0-player-3.png")
               @else
                 @if !col % 3 == 1
                   :left= floor(!col / 3) * 70px - 24px - 24px
                   :top= floor(!col / 3) * 40px - 40px - 24px
-                  &.settleable-1:hover
-                    :background url("/images/road-1-player-1.png")
                   &.road-1
                     :background url("/images/road-1-player-1.png")
-                  &.settleable-2:hover
-                    :background url("/images/road-1-player-2.png")
                   &.road-2
                     :background url("/images/road-1-player-2.png")
-                  &.settleable-3:hover
-                    :background url("/images/road-1-player-3.png")
                   &.road-3
                     :background url("/images/road-1-player-3.png")
                 @else
                   :left= floor(!col / 3) * 70px - 24px + 10px
                   :top= floor(!col / 3) * 40px - 40px - 24px + 20px
-                  &.settleable-1:hover
-                    :background url("/images/road-2-player-1.png")
                   &.road-1
                     :background url("/images/road-2-player-1.png")
-                  &.settleable-2:hover
-                    :background url("/images/road-2-player-2.png")
                   &.road-2
                     :background url("/images/road-2-player-2.png")
-                  &.settleable-3:hover
-                    :background url("/images/road-2-player-3.png")
                   &.road-3
                     :background url("/images/road-2-player-3.png")
