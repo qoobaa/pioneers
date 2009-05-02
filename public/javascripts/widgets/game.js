@@ -35,6 +35,7 @@ $.widget("ui.game", {
     this._createBoard(data.game.board);
     this._createGameInfo();
     this._createPlayers(data.game.players);
+    this._createUserPlayer(data.game.userPlayer);
     this._setupStomp();
   },
 
@@ -85,6 +86,12 @@ $.widget("ui.game", {
     });
   },
 
+  _createUserPlayer: function(userPlayerAttributes) {
+    if(userPlayerAttributes != undefined) {
+      $("<div/>").appendTo(this.element).userPlayer(userPlayerAttributes);
+    }
+  },
+
   // STOMP part
 
   _setupStomp: function() {
@@ -118,6 +125,7 @@ $.widget("ui.game", {
   },
 
   // getters and setters
+
   _setCards: function(cards) {
     this._setData("cards", cards);
   },

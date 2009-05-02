@@ -65,4 +65,10 @@ class ApplicationController < ActionController::Base
     redirect_to(session[:return_to] || default)
     session[:return_to] = nil
   end
+
+  def stomp_send(game, message)
+    stomp = Stomp::Client.new
+    stomp.send("/games/#{game.id}", message)
+    stomp.close
+  end
 end

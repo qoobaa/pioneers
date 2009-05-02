@@ -118,6 +118,8 @@ files:
 - test/util/test_procwrapper.rb
 has_rdoc: true
 homepage: http://rubyforge.org/projects/test-unit/
+licenses: []
+
 post_install_message: 
 rdoc_options: 
 - --main
@@ -139,7 +141,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: test-unit
-rubygems_version: 1.3.1
+rubygems_version: 1.3.2
 signing_key: 
 specification_version: 2
 summary: Test::Unit 2.x - Improved version of Test::Unit bundled in Ruby 1.8.x

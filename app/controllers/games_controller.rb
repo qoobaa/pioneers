@@ -64,24 +64,28 @@ class GamesController < ApplicationController
           end
           user_player = {
             id: @user_player.id,
+            state: @user_player.state,
+            cards: cards,
+
             number: @user_player.number,
+
             bricks: @user_player.bricks,
+            bricksExchangeRate: @user_player.bricks_exchange_rate,
             grain: @user_player.grain,
+            grainExchangeRate: @user_player.grain_exchange_rate,
             lumber: @user_player.lumber,
+            lumberExchangeRate: @user_player.lumber_exchange_rate,
             ore: @user_player.ore,
+            oreExchangeRate: @user_player.ore_exchange_rate,
             wool: @user_player.wool,
+            woolExchangeRate: @user_player.wool_exchange_rate,
+
             settlements: @user_player.settlements,
             cities: @user_player.cities,
             roads: @user_player.roads,
-            state: @user_player.state,
+
             visiblePoints: @user_player.visible_points,
-            hiddenPoints: @user_player.hidden_points,
-            bricksExchangeRate: @user_player.bricks_exchange_rate,
-            grainExchangeRate: @user_player.grain_exchange_rate,
-            lumberExchangeRate: @user_player.lumber_exchange_rate,
-            oreExchangeRate: @user_player.ore_exchange_rate,
-            woolExchangeRate: @user_player.wool_exchange_rate,
-            cards: cards
+            hiddenPoints: @user_player.hidden_points
           }
         end
         game = {

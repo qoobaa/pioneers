@@ -28,6 +28,8 @@ files:
 - test/list_test.rb
 has_rdoc: true
 homepage: http://github.com/pager/acts_as_list
+licenses: []
+
 post_install_message: 
 rdoc_options: 
 - --main
@@ -49,7 +51,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: 
-rubygems_version: 1.3.1
+rubygems_version: 1.3.2
 signing_key: 
 specification_version: 2
 summary: Gemified rails acts_as_list plugin
