@@ -24,11 +24,14 @@ class DiceRollsController < ApplicationController
     @dice_roll = @game.dice_rolls.build(params[:dice_roll])
     @dice_roll.user = @current_user
     if @dice_roll.save
-      flash[:success] = "Successfully created"
+      roll = {
+        roll: @dice_roll.value
+      }
+      stomp_send(@game, { event: "diceRolled", roll: roll })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected

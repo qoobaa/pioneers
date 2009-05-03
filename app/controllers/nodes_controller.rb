@@ -24,22 +24,30 @@ class NodesController < ApplicationController
     @node = @game.board_nodes.build(params[:node])
     @node.user = @current_user
     if @node.save
-      flash[:success] = "Successfully created"
+      node = {
+        position: @node.position,
+        playerNumber: @node.player_number,
+        id: @node.id
+      }
+      stomp_send(@game, { event: "settlementBuilt", node: node })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   def update
     @node = @game.board_nodes.find(params[:id])
     @node.user = @current_user
     if @node.expand
-      flash[:success] = "Successfully expanded"
+      node = {
+        position: @node.position,
+      }
+      stomp_send(@game, { event: "cityBuilt", node: node })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not expand"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected

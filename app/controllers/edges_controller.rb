@@ -24,11 +24,16 @@ class EdgesController < ApplicationController
     @edge = @game.board_edges.build(params[:edge])
     @edge.user = @current_user
     if @edge.save
-      flash[:success] = "Successfully created"
+      edge = {
+        position: @edge.position,
+        playerNumber: @edge.player_number,
+        id: @edge.id
+      }
+      stomp_send(@game, { event: "roadBuilt", edge: edge })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected

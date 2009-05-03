@@ -66,19 +66,19 @@ $.widget("ui.board", {
     this.element.find(".hexes .row-" + newPosition[0] + " .col-" + newPosition[1]).boardHex("reset", true);
   },
 
-  settlementBuilt: function(position, playerNumber) {
+  settlementBuilt: function(position, playerNumber, id) {
     var board = this._getBoard();
     var node = board.getNode(position);
     node.setState("settlement");
     node.setPlayerNumber(playerNumber);
+    node.setId(id);
     this.element.find(".nodes .row-" + position[0] + " .col-" + position[1]).boardNode("reset", true);
   },
 
-  cityBuilt: function(position, playerNumber) {
+  cityBuilt: function(position) {
     var board = this._getBoard();
     var node = board.getNode(position);
     node.setState("city");
-    node.setPlayerNumber(playerNumber);
     this.element.find(".nodes .row-" + position[0] + " .col-" + position[1]).boardNode("reset", true);
   },
 
@@ -130,7 +130,7 @@ $.widget("ui.board", {
       var boardHex = $(event.target).closest(".hex");
       var hex = boardHex.boardHex("getHex");
       if(boardWidget._getMode() == "moveRobber" && hex != undefined) {
-        if(hex.isValidForRobber()) boardWidget._moveRobber(hex);
+        if(hex.isValidForRobber()) boardWidget._moveRobber(event, hex);
       }
     });
   },
@@ -182,17 +182,17 @@ $.widget("ui.board", {
       if(node != undefined) {
         switch(boardWidget._getMode()) {
         case "buildFirstSettlement":
-          if(node.isValidForFirstSettlement(playerNumber)) boardWidget._buildSettlement(node);
+          if(node.isValidForFirstSettlement(playerNumber)) boardWidget._buildSettlement(event, node);
           break;
         case "buildSettlement":
-          if(node.isValidForSettlement(playerNumber)) boardWidget._buildSettlement(node);
+          if(node.isValidForSettlement(playerNumber)) boardWidget._buildSettlement(event, node);
           break;
         case "buildCity":
-          if(node.isValidForCity(playerNumber)) boardWidget._buildCity(node);
+          if(node.isValidForCity(playerNumber)) boardWidget._buildCity(event, node);
           break;
         case "robbery":
           var hex = boardWidget._getHex();
-          if($.inArray(node, hex.getRobbableNodes(playerNumber)) != -1) boardWidget._rob(hex, node.getPlayerNumber());
+          if($.inArray(node, hex.getRobbableNodes(playerNumber)) != -1) boardWidget._rob(event, hex, node.getPlayerNumber());
           break;
         }
       }
@@ -239,10 +239,10 @@ $.widget("ui.board", {
       if(edge != undefined) {
         switch(boardWidget._getMode()) {
         case "buildFirstRoad":
-          if(edge.isValidForFirstRoad(playerNumber)) boardWidget._buildRoad(edge);
+          if(edge.isValidForFirstRoad(playerNumber)) boardWidget._buildRoad(event, edge);
           break;
         case "buildRoad":
-          if(edge.isValidForRoad(playerNumber)) boardWidget._buildRoad(edge);
+          if(edge.isValidForRoad(playerNumber)) boardWidget._buildRoad(event, edge);
           break;
         }
       }
@@ -251,51 +251,34 @@ $.widget("ui.board", {
 
   // event responses
 
-  _moveRobber: function(hex) {
+  _moveRobber: function(event, hex) {
     var playerNumber = this._getPlayerNumber();
     this._setHex(hex);
     if(hex.getRobbableNodes(playerNumber).length == 0) {
-      this._rob(hex);
+      this._rob(event, hex);
     } else {
       this._setMode("robbery");
     }
   },
 
-  _rob: function(hex, playerNumber) {
+  _rob: function(event, hex, playerNumber) {
     this._setMode("default");
-    var data = {
-      "robbery[row]": hex.getRow(),
-      "robbery[col]": hex.getCol()
-    };
-    if(playerNumber != undefined) data["robbery[player_number]"] = playerNumber;
-    $.post("/games/" + Pioneers.utils.getGameId() + "/robberies", data);
+    this._trigger("Robbed", event, [hex.getPosition(), playerNumber]);
   },
 
-  _buildSettlement: function(node) {
+  _buildSettlement: function(event, node) {
     this._setMode("default");
-    var data = {
-      "node[row]": node.getRow(),
-      "node[col]": node.getCol()
-    };
-    $.post("/games/" + Pioneers.utils.getGameId() + "/nodes", data);
+    this._trigger("SettlementBuilt", event, [node.getPosition()]);
   },
 
-  _buildCity: function(node) {
+  _buildCity: function(event, node) {
     this._setMode("default");
-    var data = {
-      _method: "put",
-      "node[state_event]": "expand"
-    };
-    $.post("/games/" + Pioneers.utils.getGameId() + "/nodes/" + node.getId(), data);
+    this._trigger("CityBuilt", event, [node.getId()]);
   },
 
-  _buildRoad: function(edge) {
+  _buildRoad: function(event, edge) {
     this._setMode("default");
-    var data = {
-      "edge[row]": edge.getRow(),
-      "edge[col]": edge.getCol()
-    };
-    $.post("/games/" + Pioneers.utils.getGameId() + "/edges", data);
+    this._trigger("RoadBuilt", event, [edge.getPosition()]);
   },
 
   // getters and setters

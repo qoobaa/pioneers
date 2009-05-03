@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
 
   def stomp_send(game, message)
     stomp = Stomp::Client.new
-    stomp.send("/games/#{game.id}", message)
+    stomp.send("/games/#{game.id}", message.to_json)
     stomp.close
   end
 end

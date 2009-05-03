@@ -63,12 +63,8 @@ class GamesController < ApplicationController
               state: card.state }
           end
           user_player = {
-            id: @user_player.id,
-            state: @user_player.state,
             cards: cards,
-
             number: @user_player.number,
-
             bricks: @user_player.bricks,
             bricksExchangeRate: @user_player.bricks_exchange_rate,
             grain: @user_player.grain,
@@ -79,11 +75,9 @@ class GamesController < ApplicationController
             oreExchangeRate: @user_player.ore_exchange_rate,
             wool: @user_player.wool,
             woolExchangeRate: @user_player.wool_exchange_rate,
-
             settlements: @user_player.settlements,
             cities: @user_player.cities,
             roads: @user_player.roads,
-
             visiblePoints: @user_player.visible_points,
             hiddenPoints: @user_player.hidden_points
           }
@@ -98,7 +92,6 @@ class GamesController < ApplicationController
           },
           userPlayer: user_player,
           players: players,
-          id: @game.id,
           state: @game.state,
           phase: @game.phase,
           cards: @game.cards_count,

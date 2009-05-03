@@ -33,50 +33,55 @@ $.widget("ui.game", {
     this._setCardPlayed(data.game.cardPlayed);
     this._setPlayerNumber(data.game.playerNumber);
     this._createBoard(data.game.board);
-    this._createGameInfo();
+    this._createGameInfo(data.game);
     this._createPlayers(data.game.players);
     this._createUserPlayer(data.game.userPlayer);
+    this._createBuild();
     this._setupStomp();
   },
 
   _createBoard: function(boardAttributes) {
-    $("<div/>").appendTo(this.element).board({ boardAttributes: boardAttributes });
+    var board = $("<div/>").appendTo(this.element).board({ boardAttributes: boardAttributes });
+
+    board.bind("boardRobbed", function(event, position, playerNumber) {
+      var data = {
+        "robbery[row]": position[0],
+        "robbery[col]": position[1],
+        "robbery[player_number]": playerNumber
+      };
+      $.post("/games/" + Pioneers.utils.getGameId() + "/robberies", data);
+    });
+
+    board.bind("boardSettlementBuilt", function(event, position) {
+      var data = {
+        "node[row]": position[0],
+        "node[col]": position[1]
+      };
+      $.post("/games/" + Pioneers.utils.getGameId() + "/nodes", data);
+      $(this.element).find(".build").build("enable");
+    });
+
+    board.bind("boardCityBuilt", function(event, id) {
+      var data = {
+        _method: "put",
+        "node[state_event]": "expand"
+      };
+      $.post("/games/" + Pioneers.utils.getGameId() + "/nodes/" + id, data);
+      $(this.element).find(".build").build("enable");
+    });
+
+    board.bind("boardRoadBuilt", function(event, position) {
+      var data = {
+        "edge[row]": position[0],
+        "edge[col]": position[1]
+      };
+      $.post("/games/" + Pioneers.utils.getGameId() + "/edges", data);
+      $(this.element).find(".build").build("enable");
+    });
   },
 
-  _createGameInfo: function() {
-    var gameDl = $("<dl/>").appendTo(this.element);
-    $("<dt/>").appendTo(gameDl).text("State");
-    $("<dd/>").appendTo(gameDl).addClass("state");
-    $("<dt/>").appendTo(gameDl).text("Phase");
-    $("<dd/>").appendTo(gameDl).addClass("phase");
-    $("<dt/>").appendTo(gameDl).text("Turn");
-    $("<dd/>").appendTo(gameDl).addClass("turn");
-    $("<dt/>").appendTo(gameDl).text("Roll");
-    $("<dd/>").appendTo(gameDl).addClass("roll");
-    this._refreshState();
-    this._refreshPhase();
-    this._refreshTurn();
-    this._refreshRoll();
-  },
-
-  _refreshState: function(highlight) {
-    var state = $(this.element).find("dd.state").text(this._getState());
-    if(highlight) state.effect("highlight");
-  },
-
-  _refreshPhase: function(highlight) {
-    var phase = $(this.element).find("dd.phase").text(this._getPhase());
-    if(highlight) phase.effect("highlight");
-  },
-
-  _refreshTurn: function(highlight) {
-    var turn = $(this.element).find("dd.turn").text(this._getTurn());
-    if(highlight) turn.effect("highlight");
-  },
-
-  _refreshRoll: function(highlight) {
-    var roll = $(this.element).find("dd.roll").text(this._getRoll());
-    if(highlight) roll.effect("highlight");
+  _createGameInfo: function(gameAttributes) {
+    // TODO
   },
 
   _createPlayers: function(playersAttributes) {
@@ -90,6 +95,23 @@ $.widget("ui.game", {
     if(userPlayerAttributes != undefined) {
       $("<div/>").appendTo(this.element).userPlayer(userPlayerAttributes);
     }
+  },
+
+  _createBuild: function() {
+    var that = this;
+    var build = $("<div/>").appendTo(this.element).build();
+    build.bind("buildSettlement", function(event) {
+      $(this).build("disable");
+      $(that.element).find(".board").board("buildSettlementMode", 1);
+    });
+    build.bind("buildCity", function() {
+      $(this).build("disable");
+      $(that.element).find(".board").board("buildCityMode", 1);
+    });
+    build.bind("buildRoad", function() {
+      $(this).build("disable");
+      $(that.element).find(".board").board("buildRoadMode", 1);
+    });
   },
 
   // STOMP part

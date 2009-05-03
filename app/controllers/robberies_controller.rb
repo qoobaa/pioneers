@@ -5,11 +5,14 @@ class RobberiesController < ApplicationController
     @robbery = @game.robberies.build(params[:robbery])
     @robbery.user = @current_user
     if @robbery.save
-      flash[:success] = "Successfully created"
+      hex = {
+        position: @robbery.position
+      }
+      stomp_send(@game, { event: "robberMoved", hex: hex })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected
