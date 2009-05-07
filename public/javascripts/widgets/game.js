@@ -25,6 +25,7 @@ $.widget("ui.game", {
   },
 
   _gameDataLoaded: function(data) {
+    this._setId(data.game.id);
     this._setState(data.game.state);
     this._setPhase(data.game.phase);
     this._setCards(data.game.cards);
@@ -41,6 +42,7 @@ $.widget("ui.game", {
   },
 
   _createBoard: function(boardAttributes) {
+    var that = this;
     var board = $("<div/>").appendTo(this.element).board({ boardAttributes: boardAttributes });
 
     board.bind("boardRobbed", function(event, position, playerNumber) {
@@ -49,7 +51,7 @@ $.widget("ui.game", {
         "robbery[col]": position[1],
         "robbery[player_number]": playerNumber
       };
-      $.post("/games/" + Pioneers.utils.getGameId() + "/robberies", data);
+      $.post("/games/" + that._getId() + "/robberies", data);
     });
 
     board.bind("boardSettlementBuilt", function(event, position) {
@@ -57,7 +59,7 @@ $.widget("ui.game", {
         "node[row]": position[0],
         "node[col]": position[1]
       };
-      $.post("/games/" + Pioneers.utils.getGameId() + "/nodes", data);
+      $.post("/games/" + that._getId() + "/nodes", data);
       $(this.element).find(".build").build("enable");
     });
 
@@ -66,7 +68,7 @@ $.widget("ui.game", {
         _method: "put",
         "node[state_event]": "expand"
       };
-      $.post("/games/" + Pioneers.utils.getGameId() + "/nodes/" + id, data);
+      $.post("/games/" + that._getId() + "/nodes/" + id, data);
       $(this.element).find(".build").build("enable");
     });
 
@@ -75,13 +77,13 @@ $.widget("ui.game", {
         "edge[row]": position[0],
         "edge[col]": position[1]
       };
-      $.post("/games/" + Pioneers.utils.getGameId() + "/edges", data);
+      $.post("/games/" + that._getId() + "/edges", data);
       $(this.element).find(".build").build("enable");
     });
   },
 
   _createGameInfo: function(gameAttributes) {
-    // TODO
+    $("<div/>").appendTo(this.element).gameInfo(gameAttributes);
   },
 
   _createPlayers: function(playersAttributes) {
@@ -94,6 +96,7 @@ $.widget("ui.game", {
   _createUserPlayer: function(userPlayerAttributes) {
     if(userPlayerAttributes != undefined) {
       $("<div/>").appendTo(this.element).userPlayer(userPlayerAttributes);
+      this._setUserPlayerNumber(userPlayerAttributes.playerNumber);
     }
   },
 
@@ -101,15 +104,15 @@ $.widget("ui.game", {
     var that = this;
     var build = $("<div/>").appendTo(this.element).build();
     build.bind("buildSettlement", function(event) {
-      $(this).build("disable");
+      build.build("disable");
       $(that.element).find(".board").board("buildSettlementMode", 1);
     });
     build.bind("buildCity", function() {
-      $(this).build("disable");
+      build.build("disable");
       $(that.element).find(".board").board("buildCityMode", 1);
     });
     build.bind("buildRoad", function() {
-      $(this).build("disable");
+      build.build("disable");
       $(that.element).find(".board").board("buildRoadMode", 1);
     });
   },
@@ -144,9 +147,72 @@ $.widget("ui.game", {
 
   _stompMessageReceived: function(frame) {
     console.log(frame.body);
+    var message = eval("(" + frame.body + ")");
+    switch(message.event) {
+    case "settlementBuilt":
+      // { event: "settlementBuilt", node: { position: [3, 3], id: 10, player: 1 }, game: { phase: "after_roll", state: "playing", winner: null }, player: { number: 1, resources: 2, points: 4 } }
+      $(this.element).find(".board").board("settlementBuilt", message.node);
+      break;
+    case "cityBuilt":
+      // { event: "cityBuilt", node: { position: [3, 3], player: 1 }, game: { state: "playing", winner: null }, player: { number: 1, resources: 0, points: 5 } }
+      $(this.element).find(".board").board("cityBuilt", message.node);
+      break;
+    case "roadBuilt":
+      // { event: "roadBuilt", edge: { position: [3, 3], player: 1 }, game: { phase: "after_roll", player: 1 } }
+      $(this.element).find(".board").board("roadBuilt", message.edge);
+      break;
+    case "robberMoved":
+      // { event: "robberyCreated", hex: { position: [3, 3] }, robbery: { sender: 1, recipient: 2, bricks: 1, grain: 0, lumber: 0, ore: 0, wool: 0 }, game: { phase: "after_roll" } }
+      $(this.element).find(".board").board("robberMoved", message.hex);
+      break;
+    case "diceRolled":
+      // { event: "diceRolled", game: { phase: "discard", discardPlayer: 1, roll: 7 } }
+      break;
+    case "turnEnded":
+      // { event: "turnEnded", game: { phase: "before_roll", player: 1, turn: 21 } }
+      break;
+    case "offerCreated":
+      // { event: "offerCreated", offer: { player: 1, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 }, game: { phase: "offer" } }
+      break;
+    case "offerCancelled":
+      // { event: "offerExpired", game: { phase: "after_roll" } }
+      break;
+    case "offerAgreed":
+      // { event: "offerAgreed", offer: { sender: 1, recipient: 2, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 }, game: { phase: "after_roll" } }
+      break;
+    case "responseCreated":
+      // { event: "responseCreated", response: { player: 1, agreed: true } }
+      break;
+    case "exchanged":
+      // { event: "exchanged", exchange: { player: 1, bricks: 0, grain: -4, lumber: 1, ore: 0, wool: 0 } }
+      break;
+    case "discarded":
+      // { event: "discarded", discard: { player: 1, bricks: 0, grain: -4, lumber: 0, ore: 0, wool: 0 } }
+      break;
+    case "cardBought":
+      // { event: "cardBought", card: { player: 1, id: 5 } }
+      break;
+    case "cardPlayed":
+      // { event: "cardPlayed", card: { player: 1, id: 5 }, game: { phase: "robber" } }
+      break;
+    case "playerCreated":
+      // { event: "playerCreated", player: { number: 2, name: "joe" } }
+      break;
+    case "playerStarted":
+      // { event: "playerStarted", player: { number: 2 } }
+      break;
+    }
   },
 
   // getters and setters
+
+  _setId: function(id) {
+    this._setData("id", id);
+  },
+
+  _getId: function() {
+    return this._getData("id");
+  },
 
   _setCards: function(cards) {
     this._setData("cards", cards);
@@ -174,6 +240,14 @@ $.widget("ui.game", {
 
   _setPhase: function(phase) {
     this._setData("phase", phase);
+    $(".build").hide();
+    switch(phase) {
+    case "after_roll":
+      if(this._getUserPlayerNumber() === this._getPlayerNumber()) {
+        $(".build").show();
+      }
+      break;
+    }
   },
 
   _getPhase: function() {
@@ -192,8 +266,20 @@ $.widget("ui.game", {
     this._setData("cardPlayed", cardPlayed);
   },
 
+  _getPlayerNumber: function() {
+    return this._getData("playerNumber");
+  },
+
   _setPlayerNumber: function(playerNumber) {
     this._setData("playerNumber", playerNumber);
+  },
+
+  _getUserPlayerNumber: function() {
+    return this._getData("userPlayerNumber");
+  },
+
+  _setUserPlayerNumber: function(userPlayerNumber) {
+    this._setData("userPlayerNumber", userPlayerNumber);
   },
 
   _setStomp: function(stomp) {

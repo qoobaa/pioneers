@@ -51,5 +51,21 @@ $.widget("ui.gameInfo", {
   _refreshRoll: function(highlight) {
     var roll = $(this.element).find("dd.roll").text(this._getRoll());
     if(highlight) roll.effect("highlight");
+  },
+
+  _getState: function() {
+    return this._getData("state");
+  },
+
+  _getPhase: function() {
+    return this._getData("phase");
+  },
+
+  _getTurn: function() {
+    return this._getData("turn");
+  },
+
+  _getRoll: function() {
+    return this._getData("roll");
   }
 });

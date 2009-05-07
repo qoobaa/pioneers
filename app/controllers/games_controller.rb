@@ -92,6 +92,7 @@ class GamesController < ApplicationController
           },
           userPlayer: user_player,
           players: players,
+          id: @game.id,
           state: @game.state,
           phase: @game.phase,
           cards: @game.cards_count,

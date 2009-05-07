@@ -42,7 +42,7 @@ $.widget("ui.build", {
 
     li = $("<li/>").appendTo(ul);
     $("<a/>").appendTo(li).attr("href", "").addClass("settlement").text("Settlement").click(function(event) {
-      if(!$(that).hasClass("disabled") && !$(this).hasClass("disabled")) {
+      if(!$(that.element).hasClass("disabled") && !$(this).hasClass("disabled")) {
         that._trigger("Settlement", event);
       }
       return false;
@@ -50,7 +50,7 @@ $.widget("ui.build", {
 
     li = $("<li/>").appendTo(ul);
     $("<a/>").appendTo(li).attr("href", "").addClass("city").text("City").click(function(event) {
-      if(!$(that).hasClass("disabled") && !$(this).hasClass("disabled")) {
+      if(!$(that.element).hasClass("disabled") && !$(this).hasClass("disabled")) {
         that._trigger("City", event);
       }
       return false;
@@ -58,7 +58,7 @@ $.widget("ui.build", {
 
     li = $("<li/>").appendTo(ul);
     $("<a/>").appendTo(li).attr("href", "").addClass("road").text("Road").click(function(event) {
-      if(!$(that).hasClass("disabled") && !$(this).hasClass("disabled")) {
+      if(!$(that.element).hasClass("disabled") && !$(this).hasClass("disabled")) {
         that._trigger("Road", event);
       }
       return false;

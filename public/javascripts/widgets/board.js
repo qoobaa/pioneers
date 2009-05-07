@@ -58,35 +58,35 @@ $.widget("ui.board", {
     this._setMode("default");
   },
 
-  robberMoved: function(newPosition) {
+  robberMoved: function(hex) {
     var board = this._getBoard();
     var oldPosition = board.getRobberPosition();
-    board.setRobberPosition(newPosition);
+    board.setRobberPosition(hex.position);
     this.element.find(".hexes .row-" + oldPosition[0] + " .col-" + oldPosition[1]).boardHex("reset");
-    this.element.find(".hexes .row-" + newPosition[0] + " .col-" + newPosition[1]).boardHex("reset", true);
+    this.element.find(".hexes .row-" + hex.position[0] + " .col-" + hex.position[1]).boardHex("reset", true);
   },
 
-  settlementBuilt: function(position, playerNumber, id) {
+  settlementBuilt: function(node) {
     var board = this._getBoard();
-    var node = board.getNode(position);
-    node.setState("settlement");
-    node.setPlayerNumber(playerNumber);
-    node.setId(id);
-    this.element.find(".nodes .row-" + position[0] + " .col-" + position[1]).boardNode("reset", true);
+    var boardNode = board.getNode(node.position);
+    boardNode.setState("settlement");
+    boardNode.setPlayerNumber(node.playerNumber);
+    boardNode.setId(node.id);
+    this.element.find(".nodes .row-" + node.position[0] + " .col-" + node.position[1]).boardNode("reset", true);
   },
 
-  cityBuilt: function(position) {
+  cityBuilt: function(node) {
     var board = this._getBoard();
-    var node = board.getNode(position);
-    node.setState("city");
-    this.element.find(".nodes .row-" + position[0] + " .col-" + position[1]).boardNode("reset", true);
+    var boardNode = board.getNode(node.position);
+    boardNode.setState("city");
+    this.element.find(".nodes .row-" + node.position[0] + " .col-" + node.position[1]).boardNode("reset", true);
   },
 
-  roadBuilt: function(position, playerNumber) {
+  roadBuilt: function(edge) {
     var board = this._getBoard();
-    var edge = board.getEdge(position);
-    edge.setPlayerNumber(playerNumber);
-    this.element.find(".edges .row-" + position[0] + " .col-" + position[1]).boardEdge("reset", true);
+    var boardEdge = board.getEdge(edge.position);
+    boardEdge.setPlayerNumber(edge.playerNumber);
+    this.element.find(".edges .row-" + edge.position[0] + " .col-" + edge.position[1]).boardEdge("reset", true);
   },
 
   // constructor
