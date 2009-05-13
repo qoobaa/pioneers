@@ -127,7 +127,7 @@ $.widget("ui.game", {
     Orbited.settings.protocol = "http";
     Orbited.settings.streaming = true;
     TCPSocket = Orbited.TCPSocket;
-    var stomp = new STOMPClient();
+    stomp = new STOMPClient();
     this._setStomp(stomp);
     stomp.onconnectedframe = function(frame) {
       gameWidget._stompConnected(frame);
