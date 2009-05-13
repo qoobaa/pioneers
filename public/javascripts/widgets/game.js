@@ -148,19 +148,9 @@ $.widget("ui.game", {
   _stompMessageReceived: function(frame) {
     console.log(frame.body);
     var message = eval("(" + frame.body + ")");
+    this["_" + message.event](message);
+    return undefined;
     switch(message.event) {
-    case "settlementBuilt":
-      // { event: "settlementBuilt", node: { position: [3, 3], id: 10, player: 1 }, game: { phase: "after_roll", state: "playing", winner: null }, player: { number: 1, resources: 2, points: 4 } }
-      $(this.element).find(".board").board("settlementBuilt", message.node);
-      break;
-    case "cityBuilt":
-      // { event: "cityBuilt", node: { position: [3, 3], player: 1 }, game: { state: "playing", winner: null }, player: { number: 1, resources: 0, points: 5 } }
-      $(this.element).find(".board").board("cityBuilt", message.node);
-      break;
-    case "roadBuilt":
-      // { event: "roadBuilt", edge: { position: [3, 3], player: 1 }, game: { phase: "after_roll", player: 1 } }
-      $(this.element).find(".board").board("roadBuilt", message.edge);
-      break;
     case "robberMoved":
       // { event: "robberyCreated", hex: { position: [3, 3] }, robbery: { sender: 1, recipient: 2, bricks: 1, grain: 0, lumber: 0, ore: 0, wool: 0 }, game: { phase: "after_roll" } }
       $(this.element).find(".board").board("robberMoved", message.hex);
@@ -202,6 +192,22 @@ $.widget("ui.game", {
       // { event: "playerStarted", player: { number: 2 } }
       break;
     }
+  },
+
+  // stomp events actions
+  _settlementBuilt: function(event) {
+    // { event: "settlementBuilt", node: { position: [3, 3], id: 10, player: 1 }, game: { phase: "after_roll", state: "playing", winner: null }, player: { number: 1, resources: 2, points: 4 } }
+    $(this.element).find(".board").board("settlementBuilt", event.node);
+  },
+
+  _cityBuilt: function(event) {
+    // { event: "cityBuilt", node: { position: [3, 3] }, game: { state: "playing", winner: null }, player: { number: 1, resources: 0, points: 5 } }
+    $(this.element).find(".board").board("cityBuilt", event.node);
+  },
+
+  _roadBuilt: function(event) {
+    // { event: "roadBuilt", edge: { position: [3, 3], player: 1 }, game: { phase: "after_roll", player: 1, winner: null }, player: { number: 1, resources: 0, points: 6 } }
+    $(this.element).find(".board").board("roadBuilt", event.edge);
   },
 
   // getters and setters

@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Game < ActiveRecord::Base
+  include ToHash
+
   has_many :players, :order => "number"
   has_many :dice_rolls, :order => "turn DESC"
   has_many :discards
@@ -34,6 +36,7 @@ class Game < ActiveRecord::Base
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber_position, :to => :board, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
   delegate :resources, :to => :current_discard_player, :prefix => true
+  delegate :number, :to => :winner, :prefix => true, :allow_nil => true
 
   after_update :save_players, :sum_cards_count, :end_game
 

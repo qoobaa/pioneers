@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Node < ActiveRecord::Base
+  include ToHash
+
   state_machine :initial => :settlement do
     event :expand do
       transition :settlement => :city

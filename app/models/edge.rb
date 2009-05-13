@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Edge < ActiveRecord::Base
+  include ToHash
+
   validates_presence_of :player, :board
   validates_associated :player
   validates_uniqueness_of :board_id, :scope => [:row, :col]

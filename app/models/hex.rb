@@ -26,9 +26,7 @@ class Hex < ActiveRecord::Base
   validates_uniqueness_of :board_id, :scope => [:row, :col]
   validates_inclusion_of :harbor_type, :in => %w(bricks grain lumber ore wool generic), :allow_nil => true
   validates_inclusion_of :harbor_position, :in => 0..5, :allow_nil => true
-
-  extend EnumField
-  enum_field :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
+  validates_inclusion_of :hex_type, :in => ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
 
   named_scope :roll, lambda { |roll| { :conditions => { :roll => roll } } }
 
@@ -47,7 +45,7 @@ class Hex < ActiveRecord::Base
   end
 
   def settleable?
-    not sea?
+    hex_type != "sea"
   end
 
   def self.find_by_position(position)

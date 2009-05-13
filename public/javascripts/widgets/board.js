@@ -70,7 +70,7 @@ $.widget("ui.board", {
     var board = this._getBoard();
     var boardNode = board.getNode(node.position);
     boardNode.setState("settlement");
-    boardNode.setPlayerNumber(node.playerNumber);
+    boardNode.setPlayerNumber(node.player);
     boardNode.setId(node.id);
     this.element.find(".nodes .row-" + node.position[0] + " .col-" + node.position[1]).boardNode("reset", true);
   },
@@ -85,7 +85,7 @@ $.widget("ui.board", {
   roadBuilt: function(edge) {
     var board = this._getBoard();
     var boardEdge = board.getEdge(edge.position);
-    boardEdge.setPlayerNumber(edge.playerNumber);
+    boardEdge.setPlayerNumber(edge.player);
     this.element.find(".edges .row-" + edge.position[0] + " .col-" + edge.position[1]).boardEdge("reset", true);
   },
 

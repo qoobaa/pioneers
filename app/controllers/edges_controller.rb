@@ -23,13 +23,11 @@ class EdgesController < ApplicationController
   def create
     @edge = @game.board_edges.build(params[:edge])
     @edge.user = @current_user
-    if @edge.save
-      edge = {
-        position: @edge.position,
-        playerNumber: @edge.player_number,
-        id: @edge.id
-      }
-      stomp_send(@game, { event: "roadBuilt", edge: edge })
+    if true # @edge.save
+      edge = @edge.to_hash(:position => :position, :player => :player_number)
+      game = @game.to_hash(:state => :state, :winner => :winner_number)
+      player = @edge.player.to_hash(:number => :number, :resources => :resources, :points => :visible_points)
+      stomp_send(@game, { :event => "roadBuilt", :edge => edge, :game => game, :player => player })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity
