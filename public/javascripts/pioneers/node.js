@@ -18,177 +18,165 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.Node = function(board, attributes) {
-  this.getPosition = function() {
-    return this.position;
-  };
+    this.getPosition = function() {
+        return this.position;
+    };
 
-  this.getRow = function() {
-    return this.position[0];
-  };
+    this.getRow = function() {
+        return this.position[0];
+    };
 
-  this.getCol = function() {
-    return this.position[1];
-  };
+    this.getCol = function() {
+        return this.position[1];
+    };
 
-  this.getPlayerNumber = function() {
-    return this.playerNumber;
-  };
+    this.getPlayerNumber = function() {
+        return this.playerNumber;
+    };
 
-  this.getId = function() {
-    return this.id;
-  };
+    this.getId = function() {
+        return this.id;
+    };
 
-  this.getBoard = function() {
-    return this.board;
-  };
+    this.getBoard = function() {
+        return this.board;
+    };
 
-  this.getState = function() {
-    return this.state;
-  };
+    this.getState = function() {
+        return this.state;
+    };
 
-  this.isSettled = function() {
-    return this.getPlayerNumber() != null;
-  };
+    this.isSettled = function() {
+        return this.getPlayerNumber() != null;
+    };
 
-  this.setState = function(state) {
-    this.state = state;
-  };
+    this.setState = function(state) {
+        this.state = state;
+    };
 
-  this.setId = function(id) {
-    this.id = id;
-  };
+    this.setId = function(id) {
+        this.id = id;
+    };
 
-  this.setPlayerNumber = function(playerNumber) {
-    this.playerNumber = playerNumber;
-  };
+    this.setPlayerNumber = function(playerNumber) {
+        this.playerNumber = playerNumber;
+    };
 
-  this.isSettlement = function(playerNumber) {
-    if(playerNumber != undefined) {
-      return this.state == "settlement" && this.getPlayerNumber() == playerNumber;
-    } else {
-      return this.state == "settlement";
-    }
-  };
+    this.isSettlement = function(playerNumber) {
+        if(playerNumber != undefined) {
+            return this.state == "settlement" && this.getPlayerNumber() == playerNumber;
+        } else {
+            return this.state == "settlement";
+        }
+    };
 
-  this.isCity = function(playerNumber) {
-    if(playerNumber != undefined) {
-      return this.state == "city" && this.getPlayerNumber() == playerNumber;
-    } else {
-      return this.state == "city";
-    }
-  };
+    this.isCity = function(playerNumber) {
+        if(playerNumber != undefined) {
+            return this.state == "city" && this.getPlayerNumber() == playerNumber;
+        } else {
+            return this.state == "city";
+        }
+    };
 
-  this.getHexPositions = function() {
-    if(this.getCol() % 2 == 0) {
-      return [[this.getRow() - 1, this.getCol() / 2],
-              [this.getRow() - 1, this.getCol() / 2 - 1],
-              [this.getRow(), this.getCol() / 2 - 1]];
-    } else {
-      return [[this.getRow() - 1, (this.getCol() - 1) / 2],
-              [this.getRow(), (this.getCol() - 1) / 2 - 1],
-              [this.getRow(), (this.getCol() - 1) / 2]];
-    }
-  };
+    this.getHexPositions = function() {
+        if(this.getCol() % 2 == 0) {
+            return [[this.getRow() - 1, this.getCol() / 2],
+                    [this.getRow() - 1, this.getCol() / 2 - 1],
+                    [this.getRow(), this.getCol() / 2 - 1]];
+        } else {
+            return [[this.getRow() - 1, (this.getCol() - 1) / 2],
+                    [this.getRow(), (this.getCol() - 1) / 2 - 1],
+                    [this.getRow(), (this.getCol() - 1) / 2]];
+        }
+    };
 
-  this.getHexes = function() {
-    var board = this.getBoard();
-    return $.map(this.getHexPositions(),
-                 function(position) {
-                   return board.getHex(position);
-                 }
-                );
-  };
+    this.getHexes = function() {
+        var board = this.getBoard();
+        return $.map(this.getHexPositions(), function(position) {
+            return board.getHex(position);
+        });
+    };
 
-  this.isSettleable = function() {
-    return $.grep(this.getHexes(),
-                  function(hex) {
-                    return hex.isSettleable();
-                  }
-                 ).length != 0;
-  };
+    this.isSettleable = function() {
+        return $.grep(this.getHexes(), function(hex) {
+            return hex.isSettleable();
+        }).length != 0;
+    };
 
-  this.getNodePositions = function() {
-    if(this.getCol() % 2 == 0) {
-      return [[this.getRow() - 1, this.getCol() + 1],
-              [this.getRow(), this.getCol() - 1],
-              [this.getRow(), this.getCol() + 1]];
-    } else {
-      return [[this.getRow(), this.getCol() + 1],
-              [this.getRow(), this.getCol() - 1],
-              [this.getRow() + 1, this.getCol() - 1]];
-    }
-  };
+    this.getNodePositions = function() {
+        if(this.getCol() % 2 == 0) {
+            return [[this.getRow() - 1, this.getCol() + 1],
+                    [this.getRow(), this.getCol() - 1],
+                    [this.getRow(), this.getCol() + 1]];
+        } else {
+            return [[this.getRow(), this.getCol() + 1],
+                    [this.getRow(), this.getCol() - 1],
+                    [this.getRow() + 1, this.getCol() - 1]];
+        }
+    };
 
-  this.getNodes = function() {
-    var board = this.getBoard();
-    return $.map(this.getNodePositions(),
-                 function(position) {
-                   return board.getNode(position);
-                 }
-                );
-  };
+    this.getNodes = function() {
+        var board = this.getBoard();
+        return $.map(this.getNodePositions(), function(position) {
+            return board.getNode(position);
+        });
+    };
 
-  this.hasSettlementInNeighbourhood = function() {
-    return $.grep(this.getNodes(),
-                  function(node) {
-                    return node.isSettled();
-                  }
-                 ).length != 0;
-  };
+    this.hasSettlementInNeighbourhood = function() {
+        return $.grep(this.getNodes(), function(node) {
+            return node.isSettled();
+        }).length != 0;
+    };
 
-  this.getEdgePositions = function() {
-    if(this.getCol() % 2 == 0) {
-      return [[this.getRow() - 1, 3 * this.getCol() / 2 + 3],
-              [this.getRow(), 3 * this.getCol() / 2 + 1],
-              [this.getRow(), 3 * this.getCol() / 2 + 2]];
-    } else {
-      return [[this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1) + 1],
-              [this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1) - 1],
-              [this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1)]];
-    }
-  };
+    this.getEdgePositions = function() {
+        if(this.getCol() % 2 == 0) {
+            return [[this.getRow() - 1, 3 * this.getCol() / 2 + 3],
+                    [this.getRow(), 3 * this.getCol() / 2 + 1],
+                    [this.getRow(), 3 * this.getCol() / 2 + 2]];
+        } else {
+            return [[this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1) + 1],
+                    [this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1) - 1],
+                    [this.getRow(), 3 * ((this.getCol() - 1) / 2 + 1)]];
+        }
+    };
 
-  this.getEdges = function() {
-    var board = this.getBoard();
-    return $.map(this.getEdgePositions(),
-                 function(position) {
-                   return board.getEdge(position);
-                 }
-                );
-  };
+    this.getEdges = function() {
+        var board = this.getBoard();
+        return $.map(this.getEdgePositions(), function(position) {
+            return board.getEdge(position);
+        });
+    };
 
-  this.getRoads = function(playerNumber) {
-    return $.grep(this.getEdges(),
-                  function(edge) {
-                    return edge.getPlayerNumber() == playerNumber;
-                  }
-                 );
-  };
+    this.getRoads = function(playerNumber) {
+        return $.grep(this.getEdges(), function(edge) {
+            return edge.getPlayerNumber() == playerNumber;
+        });
+    };
 
-  this.hasRoad = function(playerNumber) {
-    return this.getRoads(playerNumber).length != 0;
-  };
+    this.hasRoad = function(playerNumber) {
+        return this.getRoads(playerNumber).length != 0;
+    };
 
-  this.isValidForFirstSettlement = function() {
-    return !this.isSettled() && this.isSettleable() && !this.hasSettlementInNeighbourhood();
-  };
+    this.isValidForFirstSettlement = function() {
+        return !this.isSettled() && this.isSettleable() && !this.hasSettlementInNeighbourhood();
+    };
 
-  this.isValidForSettlement = function(playerNumber) {
-    return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerNumber);
-  };
+    this.isValidForSettlement = function(playerNumber) {
+        return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerNumber);
+    };
 
-  this.isValidForCity = function(playerNumber) {
-    return this.getPlayerNumber() == playerNumber && this.getState() == "settlement";
-  };
+    this.isValidForCity = function(playerNumber) {
+        return this.getPlayerNumber() == playerNumber && this.getState() == "settlement";
+    };
 
-  this.init = function(board, attributes) {
-    this.board = board;
-    this.game = board.game;
-    this.position = attributes.position;
-    this.id = attributes.id;
-    this.playerNumber = attributes.playerNumber;
-    this.state = attributes.state;
-  };
+    this.init = function(board, attributes) {
+        this.board = board;
+        this.game = board.game;
+        this.position = attributes.position;
+        this.id = attributes.id;
+        this.playerNumber = attributes.playerNumber;
+        this.state = attributes.state;
+    };
 
-  this.init(board, attributes);
+    this.init(board, attributes);
 };

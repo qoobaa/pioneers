@@ -18,128 +18,120 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.Hex = function(board, attributes) {
-  this.getRow = function() {
-    return this.position[0];
-  };
+    this.getRow = function() {
+        return this.position[0];
+    };
 
-  this.getCol = function() {
-    return this.position[1];
-  };
+    this.getCol = function() {
+        return this.position[1];
+    };
 
-  this.getPosition = function() {
-    return this.position;
-  };
+    this.getPosition = function() {
+        return this.position;
+    };
 
-  this.getBoard = function() {
-    return this.board;
-  };
+    this.getBoard = function() {
+        return this.board;
+    };
 
-  this.getType = function() {
-    return this.type;
-  };
+    this.getType = function() {
+        return this.type;
+    };
 
-  this.getRoll = function() {
-    return this.roll;
-  };
+    this.getRoll = function() {
+        return this.roll;
+    };
 
-  this.hasRobber = function() {
-    return this.getRow() == this.getBoard().getRobberRow() && this.getCol() == this.getBoard().getRobberCol();
-  };
+    this.hasRobber = function() {
+        return this.getRow() == this.getBoard().getRobberRow() && this.getCol() == this.getBoard().getRobberCol();
+    };
 
-  this.isValidForRobber = function() {
-    return this.isSettleable() && !this.hasRobber();
-  };
+    this.isValidForRobber = function() {
+        return this.isSettleable() && !this.hasRobber();
+    };
 
-  this.isSettleable = function() {
-    return this.getType() != "sea";
-  };
+    this.isSettleable = function() {
+        return this.getType() != "sea";
+    };
 
-  this.isRobbable = function() {
-    return this.isSettleable() && !this.hasRobber();
-  };
+    this.isRobbable = function() {
+        return this.isSettleable() && !this.hasRobber();
+    };
 
-  this.isHarbor = function() {
-    return this.getHarborType() != undefined;
-  };
+    this.isHarbor = function() {
+        return this.getHarborType() != undefined;
+    };
 
-  this.getHarborPosition = function() {
-    return this.harborPosition;
-  };
+    this.getHarborPosition = function() {
+        return this.harborPosition;
+    };
 
-  this.getHarborType = function() {
-    return this.harborType;
-  };
+    this.getHarborType = function() {
+        return this.harborType;
+    };
 
-  this.getHexPositions = function() {
-    return [[this.getRow() - 1, this.getCol() + 1],
-            [this.getRow() - 1, this.getCol()],
-            [this.getRow(), this.getCol() - 1],
-            [this.getRow() + 1, this.getCol() - 1],
-            [this.getRow() + 1, this.getCol()],
-            [this.getRow(), this.getCol() + 1]];
-  };
+    this.getHexPositions = function() {
+        return [[this.getRow() - 1, this.getCol() + 1],
+                [this.getRow() - 1, this.getCol()],
+                [this.getRow(), this.getCol() - 1],
+                [this.getRow() + 1, this.getCol() - 1],
+                [this.getRow() + 1, this.getCol()],
+                [this.getRow(), this.getCol() + 1]];
+    };
 
-  this.getHexes = function() {
-    var board = this.getBoard();
-    return $.map(this.hexPositions(),
-                 function(position) {
-                   return board.getHex(position);
-                 }
-                );
-  };
+    this.getHexes = function() {
+        var board = this.getBoard();
+        return $.map(this.hexPositions(), function(position) {
+            return board.getHex(position);
+        });
+    };
 
-  this.getNodePositions = function() {
-    return [[this.getRow(), 2 * this.getCol() + 3],
-            [this.getRow(), 2 * this.getCol() + 2],
-            [this.getRow(), 2 * this.getCol() + 1],
-            [this.getRow() + 1, 2 * this.getCol()],
-            [this.getRow() + 1, 2 * this.getCol() + 1],
-            [this.getRow() + 1, 2 * this.getCol() + 2]];
-  };
+    this.getNodePositions = function() {
+        return [[this.getRow(), 2 * this.getCol() + 3],
+                [this.getRow(), 2 * this.getCol() + 2],
+                [this.getRow(), 2 * this.getCol() + 1],
+                [this.getRow() + 1, 2 * this.getCol()],
+                [this.getRow() + 1, 2 * this.getCol() + 1],
+                [this.getRow() + 1, 2 * this.getCol() + 2]];
+    };
 
-  this.getNodes = function() {
-    var board = this.getBoard();
-    return $.map(this.getNodePositions(),
-                 function(position) {
-                   return board.getNode(position);
-                 }
-                );
-  };
+    this.getNodes = function() {
+        var board = this.getBoard();
+        return $.map(this.getNodePositions(), function(position) {
+            return board.getNode(position);
+        });
+    };
 
-  this.getRobbableNodes = function(playerNumber) {
-    return $.grep(this.getNodes(),
-                  function(node) {
-                    return node.isSettled() && node.getPlayerNumber() != playerNumber;
-                  }
-                 );
-  };
+    this.getRobbableNodes = function(playerNumber) {
+        return $.grep(this.getNodes(), function(node) {
+            return node.isSettled() && node.getPlayerNumber() != playerNumber;
+        });
+    };
 
-  this.getEdgePositions = function() {
-    return [[this.getRow(), 3 * this.getCol() + 5],
-            [this.getRow(), 3 * this.getCol() + 4],
-            [this.getRow(), 3 * this.getCol() + 3],
-            [this.getRow() + 1, 3 * this.getCol() + 2],
-            [this.getRow() + 1, 3 * this.getCol() + 4],
-            [this.getRow(), 3 * this.getCol() + 6]];
-  };
+    this.getEdgePositions = function() {
+        return [[this.getRow(), 3 * this.getCol() + 5],
+                [this.getRow(), 3 * this.getCol() + 4],
+                [this.getRow(), 3 * this.getCol() + 3],
+                [this.getRow() + 1, 3 * this.getCol() + 2],
+                [this.getRow() + 1, 3 * this.getCol() + 4],
+                [this.getRow(), 3 * this.getCol() + 6]];
+    };
 
-  this.getEdges = function() {
-    var board = this.getBoard();
-    return $.map(this.edgePositions(),
-                 function(position) {
-                   return board.getEdge(position);
-                 }
-                );
-  };
+    this.getEdges = function() {
+        var board = this.getBoard();
+        return $.map(this.edgePositions(), function(position) {
+            return board.getEdge(position);
+        });
+    };
 
-  this.init = function(board, attributes) {
-    this.board = board;
-    this.position = attributes.position;
-    this.type = attributes.type;
-    this.roll = attributes.roll;
-    this.harborType = attributes.harborType;
-    this.harborPosition = attributes.harborPosition;
-  };
+    this.init = function(board, attributes) {
+        this.board = board;
+        this.position = attributes.position;
+        this.type = attributes.type;
+        this.roll = attributes.roll;
+        this.harborType = attributes.harborType;
+        this.harborPosition = attributes.harborPosition;
+    };
 
-  this.init(board, attributes);
+    this.init(board, attributes);
 };

@@ -18,221 +18,205 @@
 var Pioneers = Pioneers || {};
 
 Pioneers.Edge = function(board, attributes) {
-  this.getPosition = function() {
-    return this.position;
-  };
+    this.getPosition = function() {
+        return this.position;
+    };
 
-  this.getRow = function() {
-    return this.position[0];
-  };
+    this.getRow = function() {
+        return this.position[0];
+    };
 
-  this.getCol = function() {
-    return this.position[1];
-  };
+    this.getCol = function() {
+        return this.position[1];
+    };
 
-  this.getBoard = function() {
-    return this.board;
-  };
+    this.getBoard = function() {
+        return this.board;
+    };
 
-  this.isSettled = function() {
-    return this.getPlayerNumber() != null;
-  };
+    this.isSettled = function() {
+        return this.getPlayerNumber() != null;
+    };
 
-  this.getPlayerNumber = function() {
-    return this.playerNumber;
-  };
+    this.getPlayerNumber = function() {
+        return this.playerNumber;
+    };
 
-  this.setPlayerNumber = function(playerNumber) {
-    this.playerNumber = playerNumber;
-  };
+    this.setPlayerNumber = function(playerNumber) {
+        this.playerNumber = playerNumber;
+    };
 
-  this.getHexPositions = function() {
-    if(this.getCol() % 3 == 0) {
-      return [[this.getRow(), this.getCol() / 3 - 1],
-              [this.getRow(), this.getCol() / 3 - 2]];
-    } else if(this.getCol() % 3 == 1) {
-      return [[this.getRow() - 1, (this.getCol() - 1) / 3 - 1],
-              [this.getRow(), (this.getCol() - 1) / 3 - 1]];
-    } else {
-      return [[this.getRow() - 1, (this.getCol() - 2) / 3],
-              [this.getRow(), (this.getCol() - 2) / 3 - 1]];
-    }
-  };
+    this.getHexPositions = function() {
+        if(this.getCol() % 3 == 0) {
+            return [[this.getRow(), this.getCol() / 3 - 1],
+                    [this.getRow(), this.getCol() / 3 - 2]];
+        } else if(this.getCol() % 3 == 1) {
+            return [[this.getRow() - 1, (this.getCol() - 1) / 3 - 1],
+                    [this.getRow(), (this.getCol() - 1) / 3 - 1]];
+        } else {
+            return [[this.getRow() - 1, (this.getCol() - 2) / 3],
+                    [this.getRow(), (this.getCol() - 2) / 3 - 1]];
+        }
+    };
 
-  this.getHexes = function() {
-    var board = this.getBoard();
-    return $.map(this.getHexPositions(),
-                 function(position) {
-                   return board.getHex(position);
-                 }
-                );
-  };
+    this.getHexes = function() {
+        var board = this.getBoard();
+        return $.map(this.getHexPositions(), function(position) {
+            return board.getHex(position);
+        });
+    };
 
-  this.isSettleable = function() {
-    return $.grep(this.getHexes(),
-                  function(hex) {
-                    return hex.isSettleable();
-                  }
-                 ).length != 0;
-  };
+    this.isSettleable = function() {
+        return $.grep(this.getHexes(), function(hex) {
+            return hex.isSettleable();
+        }).length != 0;
+    };
 
-  this.getRightNodePosition = function() {
-    if(this.getCol() % 3 == 0) {
-      return [this.getRow(), 2 * this.getCol() / 3 - 1];
-    } else if(this.getCol() % 3 == 1) {
-      return [this.getRow(), 2 * (this.getCol() - 1) / 3];
-    } else {
-      return [this.getRow(), 2 * (this.getCol() - 2) / 3 + 1];
-    }
-  };
+    this.getRightNodePosition = function() {
+        if(this.getCol() % 3 == 0) {
+            return [this.getRow(), 2 * this.getCol() / 3 - 1];
+        } else if(this.getCol() % 3 == 1) {
+            return [this.getRow(), 2 * (this.getCol() - 1) / 3];
+        } else {
+            return [this.getRow(), 2 * (this.getCol() - 2) / 3 + 1];
+        }
+    };
 
-  this.getLeftNodePosition = function() {
-    if(this.getCol() % 3 == 0) {
-      return [this.getRow() + 1, 2 * this.getCol() / 3 - 2];
-    } else if(this.getCol() % 3 == 1) {
-      return [this.getRow(), 2 * (this.getCol() - 1) / 3 - 1];
-    } else {
-      return [this.getRow(), 2 * (this.getCol() - 2) / 3];
-    }
-  };
+    this.getLeftNodePosition = function() {
+        if(this.getCol() % 3 == 0) {
+            return [this.getRow() + 1, 2 * this.getCol() / 3 - 2];
+        } else if(this.getCol() % 3 == 1) {
+            return [this.getRow(), 2 * (this.getCol() - 1) / 3 - 1];
+        } else {
+            return [this.getRow(), 2 * (this.getCol() - 2) / 3];
+        }
+    };
 
-  this.getNodePositions = function() {
-    return [this.getLeftNodePosition(), this.getRightNodePosition()];
-  };
+    this.getNodePositions = function() {
+        return [this.getLeftNodePosition(), this.getRightNodePosition()];
+    };
 
-  this.getLeftNode = function() {
-    return this.getBoard().getNode(this.getLeftNodePosition());
-  };
+    this.getLeftNode = function() {
+        return this.getBoard().getNode(this.getLeftNodePosition());
+    };
 
-  this.getRightNode = function() {
-    return this.getBoard().getNode(this.getRightNodePosition());
-  };
+    this.getRightNode = function() {
+        return this.getBoard().getNode(this.getRightNodePosition());
+    };
 
-  this.getNodes = function() {
-    return [this.getLeftNode(), this.getRightNode()];
-  };
+    this.getNodes = function() {
+        return [this.getLeftNode(), this.getRightNode()];
+    };
 
-  this.getSettlements = function(playerNumber) {
-    return $.grep(this.getNodes(),
-                  function(node) {
-                    return node.playerNumber == playerNumber;
-                  }
-                 );
-  };
+    this.getSettlements = function(playerNumber) {
+        return $.grep(this.getNodes(), function(node) {
+            return node.playerNumber == playerNumber;
+        });
+    };
 
-  this.hasSettlement = function(playerNumber) {
-    return this.getSettlements(playerNumber).length != 0;
-  };
+    this.hasSettlement = function(playerNumber) {
+        return this.getSettlements(playerNumber).length != 0;
+    };
 
-  this.hasSettlementWithoutRoad = function(playerNumber) {
-    return $.grep(this.getSettlements(playerNumber),
-                  function(settlement) {
-                    return !settlement.hasRoad(playerNumber);
-                  }
-                 ).length != 0;
-  };
+    this.hasSettlementWithoutRoad = function(playerNumber) {
+        return $.grep(this.getSettlements(playerNumber), function(settlement) {
+            return !settlement.hasRoad(playerNumber);
+        }).length != 0;
+    };
 
-  this.getLeftEdgePositions = function() {
-    if(this.getCol() % 3 == 0) {
-      return [[this.getRow() + 1, this.getCol() - 2],
-              [this.getRow() + 1, this.getCol() - 1]];
-    } else if(this.getCol() % 3 == 1) {
-      return [[this.getRow(), this.getCol() - 2],
-              [this.getRow(), this.getCol() - 1]];
-    } else {
-      return [[this.getRow() - 1, this.getCol() + 1],
-              [this.getRow(), this.getCol() - 1]];
-    }
-  };
+    this.getLeftEdgePositions = function() {
+        if(this.getCol() % 3 == 0) {
+            return [[this.getRow() + 1, this.getCol() - 2],
+                    [this.getRow() + 1, this.getCol() - 1]];
+        } else if(this.getCol() % 3 == 1) {
+            return [[this.getRow(), this.getCol() - 2],
+                    [this.getRow(), this.getCol() - 1]];
+        } else {
+            return [[this.getRow() - 1, this.getCol() + 1],
+                    [this.getRow(), this.getCol() - 1]];
+        }
+    };
 
-  this.getRightEdgePositions = function() {
-    if(this.getCol() % 3 == 0) {
-      return [[this.getRow(), this.getCol() + 1],
-              [this.getRow(), this.getCol() - 1]];
-    } else if(this.getCol() % 3 == 1) {
-      return [[this.getRow() - 1, this.getCol() + 2],
-              [this.getRow(), this.getCol() + 1]];
-    } else {
-      return [[this.getRow(), this.getCol() + 2],
-              [this.getRow(), this.getCol() + 1]];
-    }
-  };
+    this.getRightEdgePositions = function() {
+        if(this.getCol() % 3 == 0) {
+            return [[this.getRow(), this.getCol() + 1],
+                    [this.getRow(), this.getCol() - 1]];
+        } else if(this.getCol() % 3 == 1) {
+            return [[this.getRow() - 1, this.getCol() + 2],
+                    [this.getRow(), this.getCol() + 1]];
+        } else {
+            return [[this.getRow(), this.getCol() + 2],
+                    [this.getRow(), this.getCol() + 1]];
+        }
+    };
 
-  this.getEdgePositions = function() {
-    return $.merge(this.getLeftEdgePositions(), this.getRightEdgePositions());
-  };
+    this.getEdgePositions = function() {
+        return $.merge(this.getLeftEdgePositions(), this.getRightEdgePositions());
+    };
 
-  this.getLeftEdges = function() {
-    var board = this.getBoard();
-    return $.map(this.getLeftEdgePositions(),
-                 function(position) {
-                   return board.getEdge(position);
-                 }
-                );
-  };
+    this.getLeftEdges = function() {
+        var board = this.getBoard();
+        return $.map(this.getLeftEdgePositions(), function(position) {
+            return board.getEdge(position);
+        });
+    };
 
-  this.getRightEdges = function() {
-    var board = this.getBoard();
-    return $.map(this.getRightEdgePositions(),
-                 function(position) {
-                   return board.getEdge(position);
-                 }
-                );
-  };
+    this.getRightEdges = function() {
+        var board = this.getBoard();
+        return $.map(this.getRightEdgePositions(), function(position) {
+            return board.getEdge(position);
+        });
+    };
 
-  this.getEdges = function() {
-    return $.merge(this.getLeftEdges(), this.getRightEdges());
-  };
+    this.getEdges = function() {
+        return $.merge(this.getLeftEdges(), this.getRightEdges());
+    };
 
-  this.getLeftRoads = function(playerNumber) {
-    var leftNode = this.getLeftNode();
-    if(!leftNode.isSettled() || leftNode.getPlayerNumber() == playerNumber) {
-      return $.grep(this.getLeftEdges(),
-                    function(edge) {
-                      return edge.playerNumber == playerNumber;
-                    }
-                   );
-    } else {
-      return [];
-    }
-  };
+    this.getLeftRoads = function(playerNumber) {
+        var leftNode = this.getLeftNode();
+        if(!leftNode.isSettled() || leftNode.getPlayerNumber() == playerNumber) {
+            return $.grep(this.getLeftEdges(), function(edge) {
+                return edge.playerNumber == playerNumber;
+            });
+        } else {
+            return [];
+        }
+    };
 
-  this.getRightRoads = function(playerNumber) {
-    var rightNode = this.getRightNode();
-    if(!rightNode.isSettled() || rightNode.getPlayerNumber() == playerNumber) {
-      return $.grep(this.getRightEdges(),
-                    function(edge) {
-                      return edge.playerNumber == playerNumber;
-                    }
-                   );
-    } else {
-      return [];
-    }
-  };
+    this.getRightRoads = function(playerNumber) {
+        var rightNode = this.getRightNode();
+        if(!rightNode.isSettled() || rightNode.getPlayerNumber() == playerNumber) {
+            return $.grep(this.getRightEdges(), function(edge) {
+                return edge.playerNumber == playerNumber;
+            });
+        } else {
+            return [];
+        }
+    };
 
-  this.getRoads = function(playerNumber) {
-    return $.merge(this.getLeftRoads(playerNumber), this.getRightRoads(playerNumber));
-  };
+    this.getRoads = function(playerNumber) {
+        return $.merge(this.getLeftRoads(playerNumber), this.getRightRoads(playerNumber));
+    };
 
-  this.hasRoad = function(playerNumber) {
-    return this.getRoads(playerNumber).length != 0;
-  };
+    this.hasRoad = function(playerNumber) {
+        return this.getRoads(playerNumber).length != 0;
+    };
 
-  this.isValidForFirstRoad = function(playerNumber) {
-    return !this.isSettled() && this.isSettleable() && this.hasSettlementWithoutRoad(playerNumber);
-  };
+    this.isValidForFirstRoad = function(playerNumber) {
+        return !this.isSettled() && this.isSettleable() && this.hasSettlementWithoutRoad(playerNumber);
+    };
 
-  this.isValidForSecondRoad = this.isValidForFirstRoad;
+    this.isValidForSecondRoad = this.isValidForFirstRoad;
 
-  this.isValidForRoad = function(playerNumber) {
-    return !this.isSettled() && (this.hasSettlement(playerNumber) || this.hasRoad(playerNumber));
-  };
+    this.isValidForRoad = function(playerNumber) {
+        return !this.isSettled() && (this.hasSettlement(playerNumber) || this.hasRoad(playerNumber));
+    };
 
-  this.init = function(board, attributes) {
-    this.board = board;
-    this.position = attributes.position;
-    this.playerNumber = attributes.playerNumber;
-  };
+    this.init = function(board, attributes) {
+        this.board = board;
+        this.position = attributes.position;
+        this.playerNumber = attributes.playerNumber;
+    };
 
-  this.init(board, attributes);
+    this.init(board, attributes);
 };

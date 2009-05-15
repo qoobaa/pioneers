@@ -16,49 +16,49 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.boardNode", {
-  _init: function() {
-    var node = this.getNode();
-    $(this.element).addClass("node").addClass("col-" + node.getCol());
-    this.reset();
-  },
+    _init: function() {
+        var node = this.getNode();
+        $(this.element).addClass("node").addClass("col-" + node.getCol());
+        this.reset();
+    },
 
-  _clear: function() {
-    $(this.element).removeClass("settlement-1 settlement-2 settlement-3 settlement-4 city-1 city-2 city-3 city-4 robbable-1 robbable-2 robbable-3 robbable-4").removeAttr("style");
-  },
+    _clear: function() {
+        $(this.element).removeClass("settlement-1 settlement-2 settlement-3 settlement-4 city-1 city-2 city-3 city-4 robbable-1 robbable-2 robbable-3 robbable-4").removeAttr("style");
+    },
 
-  reset: function(showEffect) {
-    var node = this.getNode();
-    this._clear();
-    if(node.isSettled()) {
-      $(this.element).addClass(node.getState() + "-" + node.getPlayerNumber());
-      if(showEffect) $(this.element).effect("pulsate");
+    reset: function(showEffect) {
+        var node = this.getNode();
+        this._clear();
+        if(node.isSettled()) {
+            $(this.element).addClass(node.getState() + "-" + node.getPlayerNumber());
+            if(showEffect) $(this.element).effect("pulsate");
+        }
+    },
+
+    settlement: function(playerNumber) {
+        var node = this.getNode();
+        this._clear();
+        $(this.element).addClass("settlement-" + playerNumber).css({ cursor: "pointer" });;
+    },
+
+    city: function(playerNumber) {
+        var node = this.getNode();
+        this._clear();
+        playerNumber = playerNumber || node.getPlayerNumber();
+        $(this.element).addClass("city-" + playerNumber).css({ cursor: "pointer" });;
+    },
+
+    robbable: function(playerNumber) {
+        var node = this.getNode();
+        this.reset();
+        $(this.element).addClass("robbable-" + playerNumber).css({ cursor: "pointer" });;
+    },
+
+    getNode: function() {
+        return this._getData("node");
     }
-  },
-
-  settlement: function(playerNumber) {
-    var node = this.getNode();
-    this._clear();
-    $(this.element).addClass("settlement-" + playerNumber).css({ cursor: "pointer" });;
-  },
-
-  city: function(playerNumber) {
-    var node = this.getNode();
-    this._clear();
-    playerNumber = playerNumber || node.getPlayerNumber();
-    $(this.element).addClass("city-" + playerNumber).css({ cursor: "pointer" });;
-  },
-
-  robbable: function(playerNumber) {
-    var node = this.getNode();
-    this.reset();
-    $(this.element).addClass("robbable-" + playerNumber).css({ cursor: "pointer" });;
-  },
-
-  getNode: function() {
-    return this._getData("node");
-  }
 });
 
 $.extend($.ui.boardNode, {
-  getter: "getNode"
+    getter: "getNode"
 });

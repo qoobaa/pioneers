@@ -16,39 +16,39 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.boardHex", {
-  _init: function() {
-    var hex = this.getHex();
-    $(this.element).addClass("hex").addClass("col-" + hex.getCol()).addClass(hex.getType());
-    if(hex.isSettleable()) $("<span/>").addClass("robber").text("robber").appendTo(this.element);
-    if(hex.getRoll() != undefined) $("<span/>").addClass("roll roll-" + hex.getRoll()).text(hex.getRoll()).appendTo(this.element);
-    if(hex.isHarbor()) $("<span/>").addClass(hex.getHarborType() + "-" + hex.getHarborPosition()).text(hex.getHarborType()).appendTo(this.element);
-    this.reset();
-  },
+    _init: function() {
+        var hex = this.getHex();
+        $(this.element).addClass("hex").addClass("col-" + hex.getCol()).addClass(hex.getType());
+        if(hex.isSettleable()) $("<span/>").addClass("robber").text("robber").appendTo(this.element);
+        if(hex.getRoll() != undefined) $("<span/>").addClass("roll roll-" + hex.getRoll()).text(hex.getRoll()).appendTo(this.element);
+        if(hex.isHarbor()) $("<span/>").addClass(hex.getHarborType() + "-" + hex.getHarborPosition()).text(hex.getHarborType()).appendTo(this.element);
+        this.reset();
+    },
 
-  _clear: function() {
-    $(this.element).removeClass("robber").removeAttr("style");
-  },
+    _clear: function() {
+        $(this.element).removeClass("robber").removeAttr("style");
+    },
 
-  reset: function(showEffect) {
-    var hex = this.getHex();
-    this._clear();
-    if(hex.hasRobber()) {
-      $(this.element).addClass("robber");
-      if(showEffect) $(this.element).find(".robber").effect("pulsate");
+    reset: function(showEffect) {
+        var hex = this.getHex();
+        this._clear();
+        if(hex.hasRobber()) {
+            $(this.element).addClass("robber");
+            if(showEffect) $(this.element).find(".robber").effect("pulsate");
+        }
+    },
+
+    robber: function() {
+        var hex = this.getHex();
+        this._clear();
+        $(this.element).addClass("robber").css({ cursor: "pointer" });;
+    },
+
+    getHex: function() {
+        return this._getData("hex");
     }
-  },
-
-  robber: function() {
-    var hex = this.getHex();
-    this._clear();
-    $(this.element).addClass("robber").css({ cursor: "pointer" });;
-  },
-
-  getHex: function() {
-    return this._getData("hex");
-  }
 });
 
 $.extend($.ui.boardHex, {
-  getter: "getHex"
+    getter: "getHex"
 });

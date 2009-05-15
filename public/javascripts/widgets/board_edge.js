@@ -16,36 +16,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.boardEdge", {
-  _init: function() {
-    var edge = this.getEdge();
-    $(this.element).addClass("edge").addClass("col-" + edge.getCol());
-    this.reset();
-  },
+    _init: function() {
+        var edge = this.getEdge();
+        $(this.element).addClass("edge").addClass("col-" + edge.getCol());
+        this.reset();
+    },
 
-  _clear: function() {
-    $(this.element).removeClass("road-1 road-2 road-3 road-4").removeAttr("style");
-  },
+    _clear: function() {
+        $(this.element).removeClass("road-1 road-2 road-3 road-4").removeAttr("style");
+    },
 
-  reset: function(showEffect) {
-    var edge = this.getEdge();
-    this._clear();
-    if(edge.isSettled()) {
-      $(this.element).addClass("road-" + edge.getPlayerNumber());
-      if(showEffect) $(this.element).effect("pulsate");
+    reset: function(showEffect) {
+        var edge = this.getEdge();
+        this._clear();
+        if(edge.isSettled()) {
+            $(this.element).addClass("road-" + edge.getPlayerNumber());
+            if(showEffect) $(this.element).effect("pulsate");
+        }
+    },
+
+    road: function(playerNumber) {
+        var edge = this.getEdge();
+        this._clear();
+        $(this.element).addClass("road-" + playerNumber).css({ cursor: "pointer" });
+    },
+
+    getEdge: function() {
+        return this._getData("edge");
     }
-  },
-
-  road: function(playerNumber) {
-    var edge = this.getEdge();
-    this._clear();
-    $(this.element).addClass("road-" + playerNumber).css({ cursor: "pointer" });
-  },
-
-  getEdge: function() {
-    return this._getData("edge");
-  }
 });
 
 $.extend($.ui.boardEdge, {
-  getter: "getEdge"
+    getter: "getEdge"
 });

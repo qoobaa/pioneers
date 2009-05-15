@@ -16,104 +16,104 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.player", {
-  // public methods
+    // public methods
 
-  toggleCurrent: function() {
-    $(this.element).toggleClass("current", 300);
-  },
+    toggleCurrent: function() {
+        $(this.element).toggleClass("current", 300);
+    },
 
-  // constructor
+    // constructor
 
-  _init: function() {
-    $(this.element).addClass("player-" + this.getNumber());
-    var playerDl = $("<dl/>").appendTo(this.element);
+    _init: function() {
+        $(this.element).addClass("player-" + this.getNumber());
+        var playerDl = $("<dl/>").appendTo(this.element);
 
-    $("<dt/>").appendTo(playerDl).text("Name");
-    $("<dd/>").appendTo(playerDl).addClass("name");
-    $("<dt/>").appendTo(playerDl).text("State");
-    $("<dd/>").appendTo(playerDl).addClass("state");
-    $("<dt/>").appendTo(playerDl).text("Resources");
-    $("<dd/>").appendTo(playerDl).addClass("resources");
-    $("<dt/>").appendTo(playerDl).text("Cards");
-    $("<dd/>").appendTo(playerDl).addClass("cards");
-    $("<dt/>").appendTo(playerDl).text("Points");
-    $("<dd/>").appendTo(playerDl).addClass("points");
+        $("<dt/>").appendTo(playerDl).text("Name");
+        $("<dd/>").appendTo(playerDl).addClass("name");
+        $("<dt/>").appendTo(playerDl).text("State");
+        $("<dd/>").appendTo(playerDl).addClass("state");
+        $("<dt/>").appendTo(playerDl).text("Resources");
+        $("<dd/>").appendTo(playerDl).addClass("resources");
+        $("<dt/>").appendTo(playerDl).text("Cards");
+        $("<dd/>").appendTo(playerDl).addClass("cards");
+        $("<dt/>").appendTo(playerDl).text("Points");
+        $("<dd/>").appendTo(playerDl).addClass("points");
 
-    this._refreshName();
-    this._refreshResources();
-    this._refreshCards();
-    this._refreshPoints();
-    this._refreshState();
-  },
+        this._refreshName();
+        this._refreshResources();
+        this._refreshCards();
+        this._refreshPoints();
+        this._refreshState();
+    },
 
-  _refreshName: function(highlight) {
-    var name = $(this.element).find(".name").text(this.getName());
-    if(highlight) name.effect("highlight");
-  },
+    _refreshName: function(highlight) {
+        var name = $(this.element).find(".name").text(this.getName());
+        if(highlight) name.effect("highlight");
+    },
 
-  _refreshResources: function(highlight) {
-    var resources = $(this.element).find(".resources").text(this.getResources());
-    if(highlight) resources.effect("highlight");
-  },
+    _refreshResources: function(highlight) {
+        var resources = $(this.element).find(".resources").text(this.getResources());
+        if(highlight) resources.effect("highlight");
+    },
 
-  _refreshCards: function(highlight) {
-    var cards = $(this.element).find(".cards").text(this.getCards());
-    if(highlight) cards.effect("highlight");
-  },
+    _refreshCards: function(highlight) {
+        var cards = $(this.element).find(".cards").text(this.getCards());
+        if(highlight) cards.effect("highlight");
+    },
 
-  _refreshPoints: function(highlight) {
-    var points = $(this.element).find(".points").text(this.getPoints());
-    if(highlight) points.effect("highlight");
-  },
+    _refreshPoints: function(highlight) {
+        var points = $(this.element).find(".points").text(this.getPoints());
+        if(highlight) points.effect("highlight");
+    },
 
-  _refreshState: function(highlight) {
-    var state = $(this.element).find(".state").text(this.getState());
-    if(highlight) state.effect("highlight");
-  },
+    _refreshState: function(highlight) {
+        var state = $(this.element).find(".state").text(this.getState());
+        if(highlight) state.effect("highlight");
+    },
 
-  // getters and setters
+    // getters and setters
 
-  getNumber: function() {
-    return this._getData("number");
-  },
+    getNumber: function() {
+        return this._getData("number");
+    },
 
-  getCards: function() {
-    return this._getData("cards");
-  },
+    getCards: function() {
+        return this._getData("cards");
+    },
 
-  setCards: function(cards) {
-    this._setData("cards", cards);
-    this._refreshCards(true);
-  },
+    setCards: function(cards) {
+        this._setData("cards", cards);
+        this._refreshCards(true);
+    },
 
-  getPoints: function() {
-    return this._getData("points");
-  },
+    getPoints: function() {
+        return this._getData("points");
+    },
 
-  setPoints: function(points) {
-    this._setData("points", points);
-    this._refreshPoints(true);
-  },
+    setPoints: function(points) {
+        this._setData("points", points);
+        this._refreshPoints(true);
+    },
 
-  getResources: function() {
-    return this._getData("resources");
-  },
+    getResources: function() {
+        return this._getData("resources");
+    },
 
-  setResources: function(resources) {
-    this._setData("resources", resources);
-    this._refreshResources(true);
-  },
+    setResources: function(resources) {
+        this._setData("resources", resources);
+        this._refreshResources(true);
+    },
 
-  getState: function() {
-    return this._getData("state");
-  },
+    getState: function() {
+        return this._getData("state");
+    },
 
-  getName: function() {
-    return this._getData("name");
-  }
+    getName: function() {
+        return this._getData("name");
+    }
 });
 
 $.extend($.ui.player, {
-  getter: ["getPoints", "getResources", "getName", "getState", "getCards", "getNumber"],
-  setter: ["setPoints", "setResources", "setState", "setCards"]
+    getter: ["getPoints", "getResources", "getName", "getState", "getCards", "getNumber"],
+    setter: ["setPoints", "setResources", "setState", "setCards"]
 });

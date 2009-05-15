@@ -19,15 +19,15 @@ var Pioneers = Pioneers || {};
 Pioneers.utils = Pioneers.utils || {};
 
 Pioneers.utils.makeArray2D = function(sizeOrHeight, nothingOrWidth) {
-  var height = (arguments.length == 1) ? sizeOrHeight[0] : sizeOrHeight;
-  var width = (arguments.length == 1) ? sizeOrHeight[1] : nothingOrWidth;
-  var array = new Array(height);
-  for(var row = 0; row < 10; row++) {
-    array[row] = new Array(width);
-  }
-  return array;
+    var height = (arguments.length == 1) ? sizeOrHeight[0] : sizeOrHeight;
+    var width = (arguments.length == 1) ? sizeOrHeight[1] : nothingOrWidth;
+    var array = new Array(height);
+    for(var row = 0; row < 10; row++) {
+        array[row] = new Array(width);
+    }
+    return array;
 };
 
 Pioneers.utils.getGameId = function() {
-  return document.location.pathname.match(/\/games\/\d+/)[0].match(/\d+/)[0];
+    return document.location.pathname.match(/\/games\/\d+/)[0].match(/\d+/)[0];
 };
