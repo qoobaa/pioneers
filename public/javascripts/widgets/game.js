@@ -30,8 +30,6 @@ $.widget("ui.game", {
             that.options[key] = value;
         });
 
-        $("<div/>").appendTo(this.element).resource({ max: 10, min: -10 });
-
         this._createBoard(this.options.board);
         this._createGameinfo(this.options);
         this._createPlayers(this.options.players);
@@ -39,6 +37,7 @@ $.widget("ui.game", {
         this._createBuild();
         this._createEndTurn();
         this._createRollDice();
+        this._createDiscard();
         this._setupStomp();
         this._refresh();
     },
@@ -141,6 +140,10 @@ $.widget("ui.game", {
             $.post("/games/" + that.options.id + "/dice_rolls", data);
             return false;
         });
+    },
+
+    _createDiscard: function() {
+        this.discard = $("<div/>").appendTo(this.element).discard(this.options.userPlayer);
     },
 
     // STOMP part

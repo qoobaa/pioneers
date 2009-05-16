@@ -22,6 +22,32 @@ $.widget("ui.discard", {
     _init: function() {
         this.element.addClass("ui-discard ui-widget");
 
-    }
+        this.bricks = $("<div/>").addClass("ui-discard-bricks").appendTo(this.element).resource({ step: 1, max: 0, min: this.options.bricks, value: 0 });
+        this.grain = $("<div/>").addClass("ui-discard-grain").appendTo(this.element).resource({ step: 1, max: 0, min: this.options.grain, value: 0 });
+        this.lumber = $("<div/>").addClass("ui-discard-lumber").appendTo(this.element).resource({ step: 1, max: 0, min: this.options.lumber, value: 0 });
+        this.ore = $("<div/>").addClass("ui-discard-ore").appendTo(this.element).resource({ step: 1, max: 0, min: this.options.ore, value: 0 });
+        this.wool = $("<div/>").addClass("ui-discard-wool").appendTo(this.element).resource({ step: 1, max: 0, min: this.options.wool, value: 0 });
 
+        this.accept = $("<a/>").attr("href", "").addClass("ui-discard-accept").text("Accept").appendTo(this.element);
+    },
+
+    bricks: function(bricks) {
+        this.options.bricks = bricks;
+    },
+
+    grain: function(grain) {
+        this.options.grain = grain;
+    },
+
+    lumber: function(lumber) {
+        this.options.lumber = lumber;
+    },
+
+    ore: function(ore) {
+        this.options.ore = ore;
+    },
+
+    wool: function(wool) {
+        this.options.wool = wool;
+    }
 });
