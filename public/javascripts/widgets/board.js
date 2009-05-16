@@ -19,39 +19,39 @@ $.widget("ui.board", {
 
     // widget public methods
 
-    buildFirstSettlementMode: function(playerNumber) {
+    buildFirstSettlementMode: function(player) {
         this._setMode("buildFirstSettlement");
-        this._setPlayerNumber(playerNumber);
+        this._setPlayer(player);
     },
 
-    buildSettlementMode: function(playerNumber) {
+    buildSettlementMode: function(player) {
         this._setMode("buildSettlement");
-        this._setPlayerNumber(playerNumber);
+        this._setPlayer(player);
     },
 
-    buildCityMode: function(playerNumber) {
+    buildCityMode: function(player) {
         this._setMode("buildCity");
-        this._setPlayerNumber(playerNumber);
+        this._setPlayer(player);
     },
 
-    buildRoadMode: function(playerNumber) {
+    buildRoadMode: function(player) {
         this._setMode("buildRoad");
-        this._setPlayerNumber(playerNumber);
+        this._setPlayer(player);
     },
 
-    buildFirstRoadMode: function(playerNumber) {
+    buildFirstRoadMode: function(player) {
         this._setMode("buildFirstRoad");
-        this._setPlayerNumber(playerNumber);
+        this._setPlayer(player);
     },
 
-    buildFirstRoadMode: function(playerNumber) {
+    buildFirstRoadMode: function(player) {
         this._setMode("buildFirstRoad");
-        this._setPlayerNumber(playerNumber);
+        this._setPlayer(player);
     },
 
-    moveRobberMode: function(playerNumber) {
+    moveRobberMode: function(player) {
         this._setMode("moveRobber");
-        this._setPlayerNumber(playerNumber);
+        this._setPlayer(player);
     },
 
     defaultMode: function() {
@@ -70,7 +70,7 @@ $.widget("ui.board", {
         var board = this._getBoard();
         var boardNode = board.getNode(node.position);
         boardNode.setState("settlement");
-        boardNode.setPlayerNumber(node.player);
+        boardNode.setPlayer(node.player);
         boardNode.setId(node.id);
         this.element.find(".nodes .row-" + node.position[0] + " .col-" + node.position[1]).boardNode("reset", true);
     },
@@ -85,7 +85,7 @@ $.widget("ui.board", {
     roadBuilt: function(edge) {
         var board = this._getBoard();
         var boardEdge = board.getEdge(edge.position);
-        boardEdge.setPlayerNumber(edge.player);
+        boardEdge.setPlayer(edge.player);
         this.element.find(".edges .row-" + edge.position[0] + " .col-" + edge.position[1]).boardEdge("reset", true);
     },
 
@@ -153,46 +153,46 @@ $.widget("ui.board", {
         });
 
         nodesTable.mouseover(function(event) {
-            var playerNumber = boardWidget._getPlayerNumber();
+            var player = boardWidget._getPlayer();
             var boardNode = $(event.target).closest(".node");
             var node = boardNode.boardNode("getNode");
             if(node != undefined) {
                 switch(boardWidget._getMode()) {
                 case "buildFirstSettlement":
-                    if(node.isValidForFirstSettlement(playerNumber)) boardNode.boardNode("settlement", playerNumber);
+                    if(node.isValidForFirstSettlement(player)) boardNode.boardNode("settlement", player);
                     break;
                 case "buildSettlement":
-                    if(node.isValidForSettlement(playerNumber)) boardNode.boardNode("settlement", playerNumber);
+                    if(node.isValidForSettlement(player)) boardNode.boardNode("settlement", player);
                     break;
                 case "buildCity":
-                    if(node.isValidForCity(playerNumber)) boardNode.boardNode("city", playerNumber);
+                    if(node.isValidForCity(player)) boardNode.boardNode("city", player);
                     break;
                 case "robbery":
                     var hex = boardWidget._getHex();
-                    if($.inArray(node, hex.getRobbableNodes(playerNumber)) != -1) boardNode.boardNode("robbable", playerNumber);
+                    if($.inArray(node, hex.getRobbableNodes(player)) != -1) boardNode.boardNode("robbable", player);
                     break;
                 }
             }
         });
 
         nodesTable.click(function(event) {
-            var playerNumber = boardWidget._getPlayerNumber();
+            var player = boardWidget._getPlayer();
             var boardNode = $(event.target).closest(".node");
             var node = boardNode.boardNode("getNode");
             if(node != undefined) {
                 switch(boardWidget._getMode()) {
                 case "buildFirstSettlement":
-                    if(node.isValidForFirstSettlement(playerNumber)) boardWidget._buildSettlement(event, node);
+                    if(node.isValidForFirstSettlement(player)) boardWidget._buildSettlement(event, node);
                     break;
                 case "buildSettlement":
-                    if(node.isValidForSettlement(playerNumber)) boardWidget._buildSettlement(event, node);
+                    if(node.isValidForSettlement(player)) boardWidget._buildSettlement(event, node);
                     break;
                 case "buildCity":
-                    if(node.isValidForCity(playerNumber)) boardWidget._buildCity(event, node);
+                    if(node.isValidForCity(player)) boardWidget._buildCity(event, node);
                     break;
                 case "robbery":
                     var hex = boardWidget._getHex();
-                    if($.inArray(node, hex.getRobbableNodes(playerNumber)) != -1) boardWidget._rob(event, hex, node.getPlayerNumber());
+                    if($.inArray(node, hex.getRobbableNodes(player)) != -1) boardWidget._rob(event, hex, node.getPlayer());
                     break;
                 }
             }
@@ -217,32 +217,32 @@ $.widget("ui.board", {
         });
 
         edgesTable.mouseover(function(event) {
-            var playerNumber = boardWidget._getPlayerNumber();
+            var player = boardWidget._getPlayer();
             var boardEdge = $(event.target).closest(".edge");
             var edge = boardEdge.boardEdge("getEdge");
             if(edge != undefined) {
                 switch(boardWidget._getMode()) {
                 case "buildFirstRoad":
-                    if(edge.isValidForFirstRoad(playerNumber)) boardEdge.boardEdge("road", playerNumber);
+                    if(edge.isValidForFirstRoad(player)) boardEdge.boardEdge("road", player);
                     break;
                 case "buildRoad":
-                    if(edge.isValidForRoad(playerNumber)) boardEdge.boardEdge("road", playerNumber);
+                    if(edge.isValidForRoad(player)) boardEdge.boardEdge("road", player);
                     break;
                 }
             }
         });
 
         edgesTable.click(function(event) {
-            var playerNumber = boardWidget._getPlayerNumber();
+            var player = boardWidget._getPlayer();
             var boardEdge = $(event.target).closest(".edge");
             var edge = boardEdge.boardEdge("getEdge");
             if(edge != undefined) {
                 switch(boardWidget._getMode()) {
                 case "buildFirstRoad":
-                    if(edge.isValidForFirstRoad(playerNumber)) boardWidget._buildRoad(event, edge);
+                    if(edge.isValidForFirstRoad(player)) boardWidget._buildRoad(event, edge);
                     break;
                 case "buildRoad":
-                    if(edge.isValidForRoad(playerNumber)) boardWidget._buildRoad(event, edge);
+                    if(edge.isValidForRoad(player)) boardWidget._buildRoad(event, edge);
                     break;
                 }
             }
@@ -252,18 +252,18 @@ $.widget("ui.board", {
     // event responses
 
     _moveRobber: function(event, hex) {
-        var playerNumber = this._getPlayerNumber();
+        var player = this._getPlayer();
         this._setHex(hex);
-        if(hex.getRobbableNodes(playerNumber).length == 0) {
+        if(hex.getRobbableNodes(player).length == 0) {
             this._rob(event, hex);
         } else {
             this._setMode("robbery");
         }
     },
 
-    _rob: function(event, hex, playerNumber) {
+    _rob: function(event, hex, player) {
         this._setMode("default");
-        this._trigger("Robbed", event, [hex.getPosition(), playerNumber]);
+        this._trigger("Robbed", event, [hex.getPosition(), player]);
     },
 
     _buildSettlement: function(event, node) {
@@ -299,12 +299,12 @@ $.widget("ui.board", {
         return this._getData("mode");
     },
 
-    _setPlayerNumber: function(playerNumber) {
-        this._setData("playerNumber", playerNumber);
+    _setPlayer: function(player) {
+        this._setData("player", player);
     },
 
-    _getPlayerNumber: function() {
-        return this._getData("playerNumber");
+    _getPlayer: function() {
+        return this._getData("player");
     },
 
     _setHex: function(hex) {

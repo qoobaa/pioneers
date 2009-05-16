@@ -93,33 +93,33 @@ Pioneers.Board = function(attributes) {
         return row ? row[position[1]] : undefined;
     };
 
-    this.getSettlements = function(playerNumber) {
+    this.getSettlements = function(player) {
         return $.grep(this.getNodes(), function(node) {
-            return node.isSettlement(playerNumber);
+            return node.isSettlement(player);
         });
     };
 
-    this.getNodesValidForSettlement = function(playerNumber) {
+    this.getNodesValidForSettlement = function(player) {
         return $.grep(this.nodes, function(node) {
-            return node.isValidForSettlement(playerNumber);
+            return node.isValidForSettlement(player);
         });
     };
 
-    this.getNodesValidForFirstSettlement = function(playerNumber) {
+    this.getNodesValidForFirstSettlement = function(player) {
         return $.grep(this.nodes, function(node) {
-            return node.isValidForFirstSettlement(playerNumber);
+            return node.isValidForFirstSettlement(player);
         });
     };
 
-    this.getEdgesValidForRoad = function(playerNumber) {
+    this.getEdgesValidForRoad = function(player) {
         return $.grep(this.edges, function(edge) {
-            return edge.isValidForRoad(playerNumber);
+            return edge.isValidForRoad(player);
         });
     };
 
-    this.getEdgesValidForFirstRoad = function(playerNumber) {
+    this.getEdgesValidForFirstRoad = function(player) {
         return $.grep(this.edges, function(edge) {
-            return edge.isValidForFirstRoad(playerNumber);
+            return edge.isValidForFirstRoad(player);
         });
     };
 

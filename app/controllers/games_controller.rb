@@ -32,13 +32,13 @@ class GamesController < ApplicationController
       format.json do
         nodes = @game.board_nodes.map do |node|
           { position: node.position,
-            playerNumber: node.player_number,
+            player: node.player_number,
             state: node.state,
             id: node.id }
         end
         edges = @game.board_edges.map do |edge|
           { position: edge.position,
-            playerNumber: edge.player_number }
+            player: edge.player_number }
         end
         players = @game.players.map do |player|
           { id: player.id,
@@ -98,7 +98,7 @@ class GamesController < ApplicationController
           cards: @game.cards_count,
           turn: @game.current_turn,
           cardPlayed: @game.current_turn_card_played,
-          playerNumber: @game.current_player_number,
+          player: @game.current_player_number,
           roll: @game.current_dice_roll_value
         }
         render :json => { game: game }

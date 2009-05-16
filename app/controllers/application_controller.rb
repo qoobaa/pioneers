@@ -73,7 +73,8 @@ class ApplicationController < ActionController::Base
   end
 
   def game
-    @game.to_hash(:discardPlayer => :current_discard_player_number,
+    @game.to_hash(:cardPlayed => :current_turn_card_played,
+                  :discardPlayer => :current_discard_player_number,
                   :phase => :phase,
                   :player => :current_player_number,
                   :roll => :current_dice_roll_value,

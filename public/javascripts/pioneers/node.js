@@ -30,8 +30,8 @@ Pioneers.Node = function(board, attributes) {
         return this.position[1];
     };
 
-    this.getPlayerNumber = function() {
-        return this.playerNumber;
+    this.getPlayer = function() {
+        return this.player;
     };
 
     this.getId = function() {
@@ -47,7 +47,7 @@ Pioneers.Node = function(board, attributes) {
     };
 
     this.isSettled = function() {
-        return this.getPlayerNumber() != null;
+        return this.getPlayer() != null;
     };
 
     this.setState = function(state) {
@@ -58,21 +58,21 @@ Pioneers.Node = function(board, attributes) {
         this.id = id;
     };
 
-    this.setPlayerNumber = function(playerNumber) {
-        this.playerNumber = playerNumber;
+    this.setPlayer = function(player) {
+        this.player = player;
     };
 
-    this.isSettlement = function(playerNumber) {
-        if(playerNumber != undefined) {
-            return this.state == "settlement" && this.getPlayerNumber() == playerNumber;
+    this.isSettlement = function(player) {
+        if(player != undefined) {
+            return this.state == "settlement" && this.getPlayer() == player;
         } else {
             return this.state == "settlement";
         }
     };
 
-    this.isCity = function(playerNumber) {
-        if(playerNumber != undefined) {
-            return this.state == "city" && this.getPlayerNumber() == playerNumber;
+    this.isCity = function(player) {
+        if(player != undefined) {
+            return this.state == "city" && this.getPlayer() == player;
         } else {
             return this.state == "city";
         }
@@ -147,26 +147,26 @@ Pioneers.Node = function(board, attributes) {
         });
     };
 
-    this.getRoads = function(playerNumber) {
+    this.getRoads = function(player) {
         return $.grep(this.getEdges(), function(edge) {
-            return edge.getPlayerNumber() == playerNumber;
+            return edge.getPlayer() == player;
         });
     };
 
-    this.hasRoad = function(playerNumber) {
-        return this.getRoads(playerNumber).length != 0;
+    this.hasRoad = function(player) {
+        return this.getRoads(player).length != 0;
     };
 
     this.isValidForFirstSettlement = function() {
         return !this.isSettled() && this.isSettleable() && !this.hasSettlementInNeighbourhood();
     };
 
-    this.isValidForSettlement = function(playerNumber) {
-        return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(playerNumber);
+    this.isValidForSettlement = function(player) {
+        return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(player);
     };
 
-    this.isValidForCity = function(playerNumber) {
-        return this.getPlayerNumber() == playerNumber && this.getState() == "settlement";
+    this.isValidForCity = function(player) {
+        return this.getPlayer() == player && this.getState() == "settlement";
     };
 
     this.init = function(board, attributes) {
@@ -174,7 +174,7 @@ Pioneers.Node = function(board, attributes) {
         this.game = board.game;
         this.position = attributes.position;
         this.id = attributes.id;
-        this.playerNumber = attributes.playerNumber;
+        this.player = attributes.player;
         this.state = attributes.state;
     };
 

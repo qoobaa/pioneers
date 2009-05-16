@@ -32,7 +32,7 @@ $.widget("ui.game", {
         this._setTurn(data.game.turn);
         this._setRoll(data.game.roll);
         this._setCardPlayed(data.game.cardPlayed);
-        this._setPlayerNumber(data.game.playerNumber);
+        this._setPlayer(data.game.player);
         this._createBoard(data.game.board);
         this._createGameInfo(data.game);
         this._createPlayers(data.game.players);
@@ -45,13 +45,13 @@ $.widget("ui.game", {
         var that = this;
         var board = $("<div/>").appendTo(this.element).board({ boardAttributes: boardAttributes });
 
-        board.bind("boardRobbed", function(event, position, playerNumber) {
+        board.bind("boardRobbed", function(event, position, player) {
             var data = {
                 "robbery[row]": position[0],
                 "robbery[col]": position[1]
             };
-            if(playerNumber) {
-                data["robbery[sender_number]"] =  playerNumber;
+            if(player) {
+                data["robbery[sender_number]"] =  player;
             }
             $.post("/games/" + that._getId() + "/robberies", data);
         });
@@ -98,7 +98,7 @@ $.widget("ui.game", {
     _createUserPlayer: function(userPlayerAttributes) {
         if(userPlayerAttributes != undefined) {
             $("<div/>").appendTo(this.element).userPlayer(userPlayerAttributes);
-            this._setUserPlayerNumber(userPlayerAttributes.playerNumber);
+            this._setUserPlayer(userPlayerAttributes.player);
         }
     },
 
@@ -149,114 +149,76 @@ $.widget("ui.game", {
 
     _stompMessageReceived: function(frame) {
         console.log(frame.body);
-        // var message = eval("(" + frame.body + ")");
-        // this["_" + message.event](message);
+        var message = eval("(" + frame.body + ")");
+        var that = this;
+        $.each(message, function(key, value) {
+            that["_" + key + "Update"](value);
+        });
     },
 
-    // game: { phase: "after_roll", player: 1, discardPlayer: 1, winner: null, state: "playing", roll: 7, turn: 21, players: [{ number: 1, resources: 2, points: 3, cards: 3, state: "started" }]}
+    // game: { cardPlayed: false, cards: 10, phase: "after_roll", player: 1, discardPlayer: 1, winner: null, state: "playing", roll: 7, turn: 21, players: [{ number: 1, resources: 2, points: 3, cards: 3, state: "started" }]}
+    _gameUpdate: function(game) {
+        this._setCards(game.cards);
+        this._setPhase(game.phase);
+        this._setPlayer(game.player);
+        this._setDiscardPlayer(game.player);
+        this._setWinner(game.winner);
+        this._setState(game.state);
+        this._setRoll(game.roll);
+        this._setTurn(game.turn);
+        this._playersUpdate(game.players);
+    },
+
+    _playersUpdate: function(players) {
+
+    },
+
     // node: { position: [1, 1], id: 10, player: 1, state: "city" }
+
+    _nodeUpdate: function(node) {
+
+    },
+
     // edge: { position: [2, 2], player: 1 }
+
+    _edgeUpdate: function(edge) {
+
+    },
+
     // robbery: { position: [1, 2], sender: 1, recipient: 2, bricks: 1, grain: 0, lumber: 0, ore: 0, wool: 0 }
+
+    _robberyUpdate: function(robbery) {
+
+    },
+
     // offer: { sender: 1, recipient: null, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 }
+
+    _offerUpdate: function(offer) {
+
+    },
+
     // response: { player: 1, agreed: true }
+
+    _offerResponseUpdate: function(offerResponse) {
+
+    },
+
     // exchange: { player: 1, bricks: 0, grain: -4, lumber: 1, ore: 0, wool: 0 }
+
+    _exchangeUpdate: function(exchange) {
+
+    },
+
     // discard: { player: 1, bricks: 0, grain: -4, lumber: 0, ore: 0, wool: 0 }
+
+    _discardUpdate: function(discard) {
+
+    },
+
     // card: { player: 1, id: 5, state: "tapped", bricks: 0, grain: 0, lumber: 0, ore: 0, wool: 0, resource: null, type: "Card" }
 
-    // stomp events actions
-    _settlementBuilt: function(event) {
-        // { event: "settlementBuilt",
-        //   node: { position: [3, 3], id: 10, player: 1 },
-        //   game: { phase: "after_roll", state: "playing", winner: null },
-        //   player: { number: 1, resources: 2, points: 4 } }
-        $(this.element).find(".board").board("settlementBuilt", event.node);
-    },
+    _cardUpdate: function(card) {
 
-    _cityBuilt: function(event) {
-        // { event: "cityBuilt",
-        //   node: { position: [3, 3] },
-        //   game: { state: "playing", winner: null },
-        //   player: { number: 1, resources: 0, points: 5 } }
-        $(this.element).find(".board").board("cityBuilt", event.node);
-    },
-
-    _roadBuilt: function(event) {
-        // { event: "roadBuilt",
-        //   edge: { position: [3, 3], player: 1 },
-        //   game: { phase: "after_roll", player: 1, winner: null },
-        //   player: { number: 1, resources: 0, points: 6 } }
-        $(this.element).find(".board").board("roadBuilt", event.edge);
-    },
-
-    _robberMoved: function(event) {
-        // { event: "robberyCreated",
-        //   hex: { position: [3, 3] },
-        //   game: { phase: "after_roll", discardPlayer: null },
-        //   players: [{ number: 1, resources: 2 }, { number: 2, resources: 3 }],
-        //   robbery: { sender: 1, recipient: 2, bricks: 1, grain: 0, lumber: 0, ore: 0, wool: 0 } }
-        $(this.element).find(".board").board("robberMoved", event.hex);
-    },
-
-    _diceRolled: function(event) {
-        // { event: "diceRolled",
-        //   game: { phase: "discard", discardPlayer: 1, roll: 7 } }
-    },
-
-    _turnEnded: function(event) {
-        // { event: "turnEnded",
-        //   game: { phase: "before_roll", player: 1, turn: 21, winner: null } }
-    },
-
-    _offerCreated: function(event) {
-        // { event: "offerCreated", offer: { player: 1, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 },
-        //   game: { phase: "offer" } }
-    },
-
-    _offerCancelled: function(event) {
-        // { event: "offerExpired",
-        //   game: { phase: "after_roll" } }
-    },
-
-    _offerAgreed: function(event) {
-        // { event: "offerAgreed",
-        //   offer: { sender: 1, recipient: 2, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 },
-        //   game: { phase: "after_roll" } }
-    },
-
-    _responseCreated: function(event) {
-        // { event: "responseCreated",
-        //   response: { player: 1, agreed: true } }
-    },
-
-    _exchanged: function(event) {
-        // { event: "exchanged",
-        //   exchange: { player: 1, bricks: 0, grain: -4, lumber: 1, ore: 0, wool: 0 } }
-    },
-
-    _discarded: function(event) {
-        // { event: "discarded",
-        //   discard: { player: 1, bricks: 0, grain: -4, lumber: 0, ore: 0, wool: 0 } }
-    },
-
-    _cardBought: function(event) {
-        // { event: "cardBought",
-        //   card: { player: 1, id: 5 } }
-    },
-
-    _cardPlayed: function(event) {
-        // { event: "cardPlayed",
-        //   card: { player: 1, id: 5 },
-        //   game: { phase: "robber", winner: null } }
-    },
-
-    _playerCreated: function(event) {
-        // { event: "playerCreated",
-        //   player: { number: 2, name: "joe" } }
-    },
-
-    _playerStarted: function(event) {
-        // { event: "playerStarted",
-        //   player: { number: 2 } }
     },
 
     // getters and setters
@@ -293,12 +255,20 @@ $.widget("ui.game", {
         return this._getData("state");
     },
 
+    _setWinner: function(winner) {
+        this._setData("winner", winner);
+    },
+
+    _getWinner: function() {
+        return this._getData("winner");
+    },
+
     _setPhase: function(phase) {
         this._setData("phase", phase);
         $(".build").hide();
         switch(phase) {
         case "after_roll":
-            if(this._getUserPlayerNumber() === this._getPlayerNumber()) {
+            if(this._getUserPlayer() === this._getPlayer()) {
                 $(".build").show();
             }
             break;
@@ -317,24 +287,32 @@ $.widget("ui.game", {
         return this._getData("turn");
     },
 
+    _setDiscardPlayer: function(discardPlayer) {
+        this._setData("discardPlayer", discardPlayer);
+    },
+
+    _getDiscardPlayer: function() {
+        return this._getData("discardPlayer");
+    },
+
     _setCardPlayed: function(cardPlayed) {
         this._setData("cardPlayed", cardPlayed);
     },
 
-    _getPlayerNumber: function() {
-        return this._getData("playerNumber");
+    _getPlayer: function() {
+        return this._getData("player");
     },
 
-    _setPlayerNumber: function(playerNumber) {
-        this._setData("playerNumber", playerNumber);
+    _setPlayer: function(player) {
+        this._setData("player", player);
     },
 
-    _getUserPlayerNumber: function() {
-        return this._getData("userPlayerNumber");
+    _getUserPlayer: function() {
+        return this._getData("userPlayer");
     },
 
-    _setUserPlayerNumber: function(userPlayerNumber) {
-        this._setData("userPlayerNumber", userPlayerNumber);
+    _setUserPlayer: function(userPlayer) {
+        this._setData("userPlayer", userPlayer);
     },
 
     _setStomp: function(stomp) {

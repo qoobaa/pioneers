@@ -35,10 +35,10 @@ $.widget("ui.boardEdge", {
         }
     },
 
-    road: function(playerNumber) {
+    road: function(player) {
         var edge = this.getEdge();
         this._clear();
-        $(this.element).addClass("road-" + playerNumber).css({ cursor: "pointer" });
+        $(this.element).addClass("road-" + player).css({ cursor: "pointer" });
     },
 
     getEdge: function() {

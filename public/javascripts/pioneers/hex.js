@@ -102,9 +102,9 @@ Pioneers.Hex = function(board, attributes) {
         });
     };
 
-    this.getRobbableNodes = function(playerNumber) {
+    this.getRobbableNodes = function(player) {
         return $.grep(this.getNodes(), function(node) {
-            return node.isSettled() && node.getPlayerNumber() != playerNumber;
+            return node.isSettled() && node.getPlayer() != player;
         });
     };
 

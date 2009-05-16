@@ -51,16 +51,6 @@ class PlayersController < ApplicationController
     redirect_to game_path(@game)
   end
 
-  def start
-    @player = @game.players.find_by_user_id(@current_user.id)
-    if @player.start
-      flash[:success] = "Successfully started"
-    else
-      flash[:error] = "Could not start"
-    end
-    redirect_to game_path(@game)
-  end
-
   protected
 
   def fetch_game

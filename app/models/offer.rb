@@ -34,6 +34,9 @@ class Offer < ActiveRecord::Base
   validates_presence_of :sender
   validates_associated :sender, :recipient
 
+  delegate :number, :to => :sender, :prefix => true
+  delegate :number, :to => :recipient, :prefix => true, :allow_nil => true
+
   before_validation :sum_sender_resources, :sum_recipient_resources
 
   after_update :trade

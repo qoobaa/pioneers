@@ -39,11 +39,11 @@ Pioneers.Edge = function(board, attributes) {
     };
 
     this.getPlayerNumber = function() {
-        return this.playerNumber;
+        return this.player;
     };
 
-    this.setPlayerNumber = function(playerNumber) {
-        this.playerNumber = playerNumber;
+    this.setPlayerNumber = function(player) {
+        this.player = player;
     };
 
     this.getHexPositions = function() {
@@ -108,19 +108,19 @@ Pioneers.Edge = function(board, attributes) {
         return [this.getLeftNode(), this.getRightNode()];
     };
 
-    this.getSettlements = function(playerNumber) {
+    this.getSettlements = function(player) {
         return $.grep(this.getNodes(), function(node) {
-            return node.playerNumber == playerNumber;
+            return node.player == player;
         });
     };
 
-    this.hasSettlement = function(playerNumber) {
-        return this.getSettlements(playerNumber).length != 0;
+    this.hasSettlement = function(player) {
+        return this.getSettlements(player).length != 0;
     };
 
-    this.hasSettlementWithoutRoad = function(playerNumber) {
-        return $.grep(this.getSettlements(playerNumber), function(settlement) {
-            return !settlement.hasRoad(playerNumber);
+    this.hasSettlementWithoutRoad = function(player) {
+        return $.grep(this.getSettlements(player), function(settlement) {
+            return !settlement.hasRoad(player);
         }).length != 0;
     };
 
@@ -172,50 +172,50 @@ Pioneers.Edge = function(board, attributes) {
         return $.merge(this.getLeftEdges(), this.getRightEdges());
     };
 
-    this.getLeftRoads = function(playerNumber) {
+    this.getLeftRoads = function(player) {
         var leftNode = this.getLeftNode();
-        if(!leftNode.isSettled() || leftNode.getPlayerNumber() == playerNumber) {
+        if(!leftNode.isSettled() || leftNode.getPlayer() == player) {
             return $.grep(this.getLeftEdges(), function(edge) {
-                return edge.playerNumber == playerNumber;
+                return edge.player == player;
             });
         } else {
             return [];
         }
     };
 
-    this.getRightRoads = function(playerNumber) {
+    this.getRightRoads = function(player) {
         var rightNode = this.getRightNode();
-        if(!rightNode.isSettled() || rightNode.getPlayerNumber() == playerNumber) {
+        if(!rightNode.isSettled() || rightNode.getPlayer() == player) {
             return $.grep(this.getRightEdges(), function(edge) {
-                return edge.playerNumber == playerNumber;
+                return edge.player == player;
             });
         } else {
             return [];
         }
     };
 
-    this.getRoads = function(playerNumber) {
-        return $.merge(this.getLeftRoads(playerNumber), this.getRightRoads(playerNumber));
+    this.getRoads = function(player) {
+        return $.merge(this.getLeftRoads(player), this.getRightRoads(player));
     };
 
-    this.hasRoad = function(playerNumber) {
-        return this.getRoads(playerNumber).length != 0;
+    this.hasRoad = function(player) {
+        return this.getRoads(player).length != 0;
     };
 
-    this.isValidForFirstRoad = function(playerNumber) {
-        return !this.isSettled() && this.isSettleable() && this.hasSettlementWithoutRoad(playerNumber);
+    this.isValidForFirstRoad = function(player) {
+        return !this.isSettled() && this.isSettleable() && this.hasSettlementWithoutRoad(player);
     };
 
     this.isValidForSecondRoad = this.isValidForFirstRoad;
 
-    this.isValidForRoad = function(playerNumber) {
-        return !this.isSettled() && (this.hasSettlement(playerNumber) || this.hasRoad(playerNumber));
+    this.isValidForRoad = function(player) {
+        return !this.isSettled() && (this.hasSettlement(player) || this.hasRoad(player));
     };
 
     this.init = function(board, attributes) {
         this.board = board;
         this.position = attributes.position;
-        this.playerNumber = attributes.playerNumber;
+        this.player = attributes.player;
     };
 
     this.init(board, attributes);

@@ -30,28 +30,28 @@ $.widget("ui.boardNode", {
         var node = this.getNode();
         this._clear();
         if(node.isSettled()) {
-            $(this.element).addClass(node.getState() + "-" + node.getPlayerNumber());
+            $(this.element).addClass(node.getState() + "-" + node.getPlayer());
             if(showEffect) $(this.element).effect("pulsate");
         }
     },
 
-    settlement: function(playerNumber) {
+    settlement: function(player) {
         var node = this.getNode();
         this._clear();
-        $(this.element).addClass("settlement-" + playerNumber).css({ cursor: "pointer" });;
+        $(this.element).addClass("settlement-" + player).css({ cursor: "pointer" });;
     },
 
-    city: function(playerNumber) {
+    city: function(player) {
         var node = this.getNode();
         this._clear();
-        playerNumber = playerNumber || node.getPlayerNumber();
-        $(this.element).addClass("city-" + playerNumber).css({ cursor: "pointer" });;
+        player = player || node.getPlayer();
+        $(this.element).addClass("city-" + player).css({ cursor: "pointer" });;
     },
 
-    robbable: function(playerNumber) {
+    robbable: function(player) {
         var node = this.getNode();
         this.reset();
-        $(this.element).addClass("robbable-" + playerNumber).css({ cursor: "pointer" });;
+        $(this.element).addClass("robbable-" + player).css({ cursor: "pointer" });;
     },
 
     getNode: function() {
