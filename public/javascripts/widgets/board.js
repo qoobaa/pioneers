@@ -58,7 +58,7 @@ $.widget("ui.board", {
         this._setMode("default");
     },
 
-    robberMoved: function(hex) {
+    robberMoved: function(robbery) {
         var board = this._getBoard();
         var oldPosition = board.getRobberPosition();
         board.setRobberPosition(hex.position);
@@ -66,23 +66,16 @@ $.widget("ui.board", {
         this.element.find(".hexes .row-" + hex.position[0] + " .col-" + hex.position[1]).boardHex("reset", true);
     },
 
-    settlementBuilt: function(node) {
+    nodeChanged: function(node) {
         var board = this._getBoard();
         var boardNode = board.getNode(node.position);
-        boardNode.setState("settlement");
+        boardNode.setState(node.state);
         boardNode.setPlayer(node.player);
         boardNode.setId(node.id);
         this.element.find(".nodes .row-" + node.position[0] + " .col-" + node.position[1]).boardNode("reset", true);
     },
 
-    cityBuilt: function(node) {
-        var board = this._getBoard();
-        var boardNode = board.getNode(node.position);
-        boardNode.setState("city");
-        this.element.find(".nodes .row-" + node.position[0] + " .col-" + node.position[1]).boardNode("reset", true);
-    },
-
-    roadBuilt: function(edge) {
+    edgeChanged: function(edge) {
         var board = this._getBoard();
         var boardEdge = board.getEdge(edge.position);
         boardEdge.setPlayer(edge.player);
@@ -102,7 +95,7 @@ $.widget("ui.board", {
     },
 
     _createHexes: function() {
-        var boardWidget = this;
+        var that = this;
         var board = this._getBoard();
         var hexesTable = $("<table/>").addClass("hexes").appendTo(this.element);
         var hexesTableBody = $("<tbody/>").appendTo(hexesTable);
@@ -121,7 +114,7 @@ $.widget("ui.board", {
         hexesTable.mouseover(function(event) {
             var boardHex = $(event.target).closest(".hex");
             var hex = boardHex.boardHex("getHex");
-            if(boardWidget._getMode() == "moveRobber" && hex != undefined) {
+            if(that._getMode() == "moveRobber" && hex != undefined) {
                 if(hex.isValidForRobber()) boardHex.boardHex("robber");
             }
         });
@@ -129,14 +122,14 @@ $.widget("ui.board", {
         hexesTable.click(function(event) {
             var boardHex = $(event.target).closest(".hex");
             var hex = boardHex.boardHex("getHex");
-            if(boardWidget._getMode() == "moveRobber" && hex != undefined) {
-                if(hex.isValidForRobber()) boardWidget._moveRobber(event, hex);
+            if(that._getMode() == "moveRobber" && hex != undefined) {
+                if(hex.isValidForRobber()) that._moveRobber(event, hex);
             }
         });
     },
 
     _createNodes: function() {
-        var boardWidget = this;
+        var that = this;
         var board = this._getBoard();
         var nodesTable = $("<table/>").addClass("nodes").appendTo(this.element);
         var nodesTableBody = $("<tbody/>").appendTo(nodesTable);
@@ -153,11 +146,11 @@ $.widget("ui.board", {
         });
 
         nodesTable.mouseover(function(event) {
-            var player = boardWidget._getPlayer();
+            var player = that._getPlayer();
             var boardNode = $(event.target).closest(".node");
             var node = boardNode.boardNode("getNode");
             if(node != undefined) {
-                switch(boardWidget._getMode()) {
+                switch(that._getMode()) {
                 case "buildFirstSettlement":
                     if(node.isValidForFirstSettlement(player)) boardNode.boardNode("settlement", player);
                     break;
@@ -168,7 +161,7 @@ $.widget("ui.board", {
                     if(node.isValidForCity(player)) boardNode.boardNode("city", player);
                     break;
                 case "robbery":
-                    var hex = boardWidget._getHex();
+                    var hex = that._getHex();
                     if($.inArray(node, hex.getRobbableNodes(player)) != -1) boardNode.boardNode("robbable", player);
                     break;
                 }
@@ -176,23 +169,23 @@ $.widget("ui.board", {
         });
 
         nodesTable.click(function(event) {
-            var player = boardWidget._getPlayer();
+            var player = that._getPlayer();
             var boardNode = $(event.target).closest(".node");
             var node = boardNode.boardNode("getNode");
             if(node != undefined) {
-                switch(boardWidget._getMode()) {
+                switch(that._getMode()) {
                 case "buildFirstSettlement":
-                    if(node.isValidForFirstSettlement(player)) boardWidget._buildSettlement(event, node);
+                    if(node.isValidForFirstSettlement(player)) that._buildSettlement(event, node);
                     break;
                 case "buildSettlement":
-                    if(node.isValidForSettlement(player)) boardWidget._buildSettlement(event, node);
+                    if(node.isValidForSettlement(player)) that._buildSettlement(event, node);
                     break;
                 case "buildCity":
-                    if(node.isValidForCity(player)) boardWidget._buildCity(event, node);
+                    if(node.isValidForCity(player)) that._buildCity(event, node);
                     break;
                 case "robbery":
-                    var hex = boardWidget._getHex();
-                    if($.inArray(node, hex.getRobbableNodes(player)) != -1) boardWidget._rob(event, hex, node.getPlayer());
+                    var hex = that._getHex();
+                    if($.inArray(node, hex.getRobbableNodes(player)) != -1) that._rob(event, hex, node.getPlayer());
                     break;
                 }
             }
@@ -200,7 +193,7 @@ $.widget("ui.board", {
     },
 
     _createEdges: function() {
-        var boardWidget = this;
+        var that = this;
         var board = this._getBoard();
         var edgesTable = $("<table/>").addClass("edges").appendTo(this.element);
         var edgesTableBody = $("<tbody/>").appendTo(edgesTable);
@@ -217,11 +210,11 @@ $.widget("ui.board", {
         });
 
         edgesTable.mouseover(function(event) {
-            var player = boardWidget._getPlayer();
+            var player = that._getPlayer();
             var boardEdge = $(event.target).closest(".edge");
             var edge = boardEdge.boardEdge("getEdge");
             if(edge != undefined) {
-                switch(boardWidget._getMode()) {
+                switch(that._getMode()) {
                 case "buildFirstRoad":
                     if(edge.isValidForFirstRoad(player)) boardEdge.boardEdge("road", player);
                     break;
@@ -233,16 +226,16 @@ $.widget("ui.board", {
         });
 
         edgesTable.click(function(event) {
-            var player = boardWidget._getPlayer();
+            var player = that._getPlayer();
             var boardEdge = $(event.target).closest(".edge");
             var edge = boardEdge.boardEdge("getEdge");
             if(edge != undefined) {
-                switch(boardWidget._getMode()) {
+                switch(that._getMode()) {
                 case "buildFirstRoad":
-                    if(edge.isValidForFirstRoad(player)) boardWidget._buildRoad(event, edge);
+                    if(edge.isValidForFirstRoad(player)) that._buildRoad(event, edge);
                     break;
                 case "buildRoad":
-                    if(edge.isValidForRoad(player)) boardWidget._buildRoad(event, edge);
+                    if(edge.isValidForRoad(player)) that._buildRoad(event, edge);
                     break;
                 }
             }
@@ -263,22 +256,22 @@ $.widget("ui.board", {
 
     _rob: function(event, hex, player) {
         this._setMode("default");
-        this._trigger("Robbed", event, [hex.getPosition(), player]);
+        this._trigger("robbed", event, [hex.getPosition(), player]);
     },
 
     _buildSettlement: function(event, node) {
         this._setMode("default");
-        this._trigger("SettlementBuilt", event, [node.getPosition()]);
+        this._trigger("settlementbuilt", event, [node.getPosition()]);
     },
 
     _buildCity: function(event, node) {
         this._setMode("default");
-        this._trigger("CityBuilt", event, [node.getId()]);
+        this._trigger("citybuilt", event, [node.getId()]);
     },
 
     _buildRoad: function(event, edge) {
         this._setMode("default");
-        this._trigger("RoadBuilt", event, [edge.getPosition()]);
+        this._trigger("roadbuilt", event, [edge.getPosition()]);
     },
 
     // getters and setters

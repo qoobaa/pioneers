@@ -109,13 +109,12 @@ class GamesController < ApplicationController
   def update
     @game = Game.find(params[:id])
     @game.user = @current_user
-    if true # @game.update_attributes(params[:game])
-      game = @game.to_hash(:phase => :phase, :discardPlayer => :current_discard_player_number, :roll => :current_dice_roll_value)
-      stomp_send(@game, { event: "turnEnded", game: game })
+    if @game.update_attributes(params[:game])
+      @game.reload
+      stomp_send(@game, { game: game })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 end

@@ -16,24 +16,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.build", {
-    disable: function(element) {
-        if(!element) {
-            $(this.element).addClass("disabled");
-        } else {
-            $(this.element).find("." + element).addClass("disabled");
-        }
-    },
+    // disable: function(element) {
+    //     if(!element) {
+    //         $(this.element).addClass("disabled");
+    //     } else {
+    //         $(this.element).find("." + element).addClass("disabled");
+    //     }
+    // },
 
-    enable: function(element) {
-        if(!element) {
-            $(this.element).removeClass("disabled");
-        } else {
-            $(this.element).find("." + element).removeClass("disabled");
-        }
-    },
+    // enable: function(element) {
+    //     if(!element) {
+    //         $(this.element).removeClass("disabled");
+    //     } else {
+    //         $(this.element).find("." + element).removeClass("disabled");
+    //     }
+    // },
 
     _init: function() {
-        $(this.element).addClass("build");
+        $(this.element).addClass("ui-widget ui-build");
         var that = this;
 
         var div = $("<div/>").appendTo(this.element);
@@ -42,32 +42,32 @@ $.widget("ui.build", {
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("settlement").text("Settlement").click(function(event) {
-            if(!$(that.element).hasClass("disabled") && !$(this).hasClass("disabled")) {
-                that._trigger("Settlement", event);
+            if(!that.options.disabled) {
+                that._trigger("settlementclick", event);
             }
             return false;
         });
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("city").text("City").click(function(event) {
-            if(!$(that.element).hasClass("disabled") && !$(this).hasClass("disabled")) {
-                that._trigger("City", event);
+            if(!that.options.disabled) {
+                that._trigger("cityclick", event);
             }
             return false;
         });
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("road").text("Road").click(function(event) {
-            if(!$(that.element).hasClass("disabled") && !$(this).hasClass("disabled")) {
-                that._trigger("Road", event);
+            if(!that.options.disabled) {
+                that._trigger("roadclick", event);
             }
             return false;
         });
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("card").text("Card").click(function(event) {
-            if(!$(that).hasClass("disabled") && !$(this).hasClass("disabled")) {
-                that._trigger("Card", event);
+            if(!that.options.disabled) {
+                that._trigger("cardclick", event);
             }
             return false;
         });

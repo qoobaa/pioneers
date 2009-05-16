@@ -128,7 +128,8 @@ class ApplicationController < ActionController::Base
                    :grain => :grain,
                    :lumber => :lumber,
                    :ore => :ore,
-                   :wool => :wool)
+                   :wool => :wool,
+                   :state => :state)
   end
 
   def exchange

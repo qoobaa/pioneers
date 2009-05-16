@@ -34,11 +34,13 @@ class Game < ActiveRecord::Base
 
   delegate :id, :to => :current_player, :prefix => true
   delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber_position, :to => :board, :prefix => true
-  delegate :robber?, :value, :to => :current_dice_roll, :prefix => true
+  delegate :robber?, :value, :to => :current_dice_roll, :prefix => true, :allow_nil => true
   delegate :resources, :to => :current_discard_player, :prefix => true
   delegate :number, :to => :winner, :prefix => true, :allow_nil => true
 
   after_update :save_players, :sum_cards_count, :end_game
+
+  attr_accessor :user
 
   state_machine :initial => :preparing do
     event :start_game do
@@ -154,7 +156,7 @@ class Game < ActiveRecord::Base
     end
 
     before_transition :on => :end_turn do |game, transition|
-      game.playing? and game.current_user_turn?(*transition.args)
+      game.playing? and game.current_user_turn?(game.user)
     end
 
     before_transition :on => :end_turn, :do => :next_turn

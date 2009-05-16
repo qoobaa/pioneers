@@ -23,7 +23,7 @@ class NodesController < ApplicationController
   def create
     @node = @game.board_nodes.build(params[:node])
     @node.user = @current_user
-    if true # @node.save
+    if @node.save
       stomp_send(@game, { :node =>  node, :game => game })
       render :nothing => true, :status => :created
     else
@@ -34,7 +34,7 @@ class NodesController < ApplicationController
   def update
     @node = @game.board_nodes.find(params[:id])
     @node.user = @current_user
-    if true # @node.update_attributes(params[:node])
+    if @node.update_attributes(params[:node])
       stomp_send(@game, { :node => node, :game => game })
       render :nothing => true, :status => :created
     else

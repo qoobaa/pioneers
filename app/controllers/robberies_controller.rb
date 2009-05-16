@@ -4,7 +4,7 @@ class RobberiesController < ApplicationController
   def create
     @robbery = @game.robberies.build(params[:robbery])
     @robbery.user = @current_user
-    if true # @robbery.save
+    if @robbery.save
       stomp_send(@game, { :game => game, :robbery => robbery })
       render :nothing => true, :status => :created
     else

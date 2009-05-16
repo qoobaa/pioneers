@@ -23,7 +23,7 @@ class EdgesController < ApplicationController
   def create
     @edge = @game.board_edges.build(params[:edge])
     @edge.user = @current_user
-    if true # @edge.save
+    if @edge.save
       stomp_send(@game, { :edge => edge, :game => game })
       render :nothing => true, :status => :created
     else

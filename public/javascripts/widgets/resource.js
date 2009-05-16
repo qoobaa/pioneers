@@ -17,80 +17,94 @@
 
 $.widget("ui.resource", {
     _init: function() {
-        var widget = this;
-        $("<a href='' class='minus'>-</a>").appendTo(this.element).click(
-            function() {
-                widget.decreaseValue();
-                return false;
-            }
-        );
-        $("<span class='value'></span>").appendTo(this.element);
-        $("<a href='' class='plus'>+</a>").appendTo(this.element).click(
-            function() {
-                widget.increaseValue();
-                return false;
-            }
-        );
-        this._showValue();
+        this.element.addClass("ui-widget ui-resource");
+
+        var that = this;
+
+        $("<a/>").attr("href", "").addClass("ui-resource-minus").text("-").appendTo(this.element).click(function() {
+            that._decrease();
+            return false;
+        });
+        this.valueElement = $("<span/>").addClass("ui-resource-value").appendTo(this.element);
+        $("<a/>").attr("href", "").addClass("ui-resource-plus").text("+").appendTo(this.element).click(function() {
+            that._increase();
+            return false;
+        });
+
+        this._refresh();
     },
 
-    _showValue: function() {
-        var value = this.getValue();
-        var valueElement = this.element.children(".value").text(Math.abs(value));
-        valueElement.removeClass().addClass("value");
-        if(value > 0) valueElement.addClass("positive");
-        else if(value < 0) valueElement.addClass("negative");
+    _refresh: function() {
+        this.valueElement.removeClass("ui-resource-positive ui-resource-negative").text(Math.abs(this.options.value));
+        if(this.options.value > 0) {
+            this.valueElement.addClass("ui-resource-positive");
+        } else if(this.options.value < 0) {
+            this.valueElement.addClass("ui-resource-negative");
+        }
     },
 
-    increaseValue: function() {
-        if(this.getValue() >= 0) this.setValue(this.getValue() + 1);
-        else this.setValue(this.getValue() + this.getStep());
+    _increase: function() {
+        if(this.options.value < 0 && this.options.value + this.options.step <= this.options.max) {
+            this.options.value += this.options.step;
+            this._refresh();
+        } else if (this.options.value >= 0 && this.options.value + 1 <= this.options.max){
+            this.options.value++;
+            this._refresh();
+        }
     },
 
-    decreaseValue: function() {
-        if(this.getValue() > 0) this.setValue(this.getValue() - 1);
-        else if(this.getValue() - this.getStep() >= this.getMin()) this.setValue(this.getValue() - this.getStep());
+    _decrease: function() {
+        if(this.options.value > 0 && this.options.value - 1 >= this.options.min) {
+            this.options.value--;
+            this._refresh();
+        } else if(this.options.value <= 0 && this.options.value - this.options.step >= this.options.min) {
+            this.options.value -= this.options.step;
+            this._refresh();
+        }
     },
 
-    setValue: function(value) {
-        this._setData("value", value);
-        this._showValue();
-        this._trigger("change", value);
+    value: function(newValue) {
+        if(arguments.length) {
+            this.options.value = newValue;
+            this._refresh();
+        }
+        return this.options.value;
     },
 
-    getValue: function() {
-        return this._getData("value");
+    min: function(newMin) {
+        if(arguments.length) {
+            this.options.value = 0;
+            this.options.min = newMin;
+            this._refresh();
+        }
+        return this.options.min;
     },
 
-    getMin: function() {
-        return this._getData("min");
+    max: function(newMax) {
+        if(arguments.length) {
+            this.options.value = 0;
+            this.options.max = newMax;
+            this._refresh();
+        }
+        return this.options.max;
     },
 
-    setMin: function(min) {
-        this._setData("min", min);
-        this.reset();
-    },
-
-    getStep: function() {
-        return this._getData("step");
-    },
-
-    setStep: function(step) {
-        this._setData("step", step);
-        this.reset();
-    },
-
-    reset: function() {
-        this.setValue(0);
+    step: function(newStep) {
+        if(arguments.length) {
+            this.options.value = 0;
+            this.options.step = newStep;
+            this._refresh();
+        }
+        return this.options.step;
     }
 });
 
 $.extend($.ui.resource, {
-    getter: "getValue getMin getStep",
-    setter: "setValue setMin setStep",
+    getter: "value min max step",
     defaults: {
         value: 0,
         step: 4,
-        min: 0
+        min: 0,
+        max: 100
     }
 });

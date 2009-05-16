@@ -15,35 +15,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-$.widget("ui.player", {
-    current: function(current) {
-        if(current && !this.element.hasClass("current")) {
-            this.element.addClass("current", 300);
-        } else if (!current && this.element.hasClass("current")) {
-            this.element.removeClass("current", 300);
-        }
-    },
-
+$.widget("ui.gameinfo", {
     _init: function() {
-        this.element.addClass("ui-widget ui-player");
-        var playerDl = $("<dl/>").appendTo(this.element);
+        this.element.addClass("ui-widget ui-gameinfo");
 
-        $("<dt/>").appendTo(playerDl).text("Name");
-        this.name = $("<dd/>").appendTo(playerDl).addClass("name");
-        $("<dt/>").appendTo(playerDl).text("State");
-        this.state = $("<dd/>").appendTo(playerDl).addClass("state");
-        $("<dt/>").appendTo(playerDl).text("Resources");
-        this.resources = $("<dd/>").appendTo(playerDl).addClass("resources");
-        $("<dt/>").appendTo(playerDl).text("Cards");
-        this.cards = $("<dd/>").appendTo(playerDl).addClass("cards");
-        $("<dt/>").appendTo(playerDl).text("Points");
-        this.points = $("<dd/>").appendTo(playerDl).addClass("points");
+        var gameDl = $("<dl/>").appendTo(this.element);
 
-        this._refresh("name");
-        this._refresh("resources");
-        this._refresh("cards");
-        this._refresh("points");
+        $("<dt/>").appendTo(gameDl).text("State");
+        this.state = $("<dd/>").appendTo(gameDl).addClass("ui-gameinfo-state");
+        $("<dt/>").appendTo(gameDl).text("Phase");
+        this.phase = $("<dd/>").appendTo(gameDl).addClass("ui-gameinfo-phase");
+        $("<dt/>").appendTo(gameDl).text("Turn");
+        this.turn = $("<dd/>").appendTo(gameDl).addClass("ui-gameinfo-turn");
+        $("<dt/>").appendTo(gameDl).text("Roll");
+        this.roll = $("<dd/>").appendTo(gameDl).addClass("ui-gameinfo-roll");
+
         this._refresh("state");
+        this._refresh("phase");
+        this._refresh("turn");
+        this._refresh("roll");
     },
 
     _refresh: function(key, highlight) {
@@ -56,7 +46,6 @@ $.widget("ui.player", {
     _setData: function(key, value) {
         if(this.options[key] !== value) {
             this._trigger(key + "change", null, [value]);
-            this._trigger("change", null, {});
             this.options[key] = value;
             this._refresh(key, true);
         }

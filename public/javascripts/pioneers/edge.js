@@ -35,14 +35,14 @@ Pioneers.Edge = function(board, attributes) {
     };
 
     this.isSettled = function() {
-        return this.getPlayerNumber() != null;
+        return this.getPlayer() != null;
     };
 
-    this.getPlayerNumber = function() {
+    this.getPlayer = function() {
         return this.player;
     };
 
-    this.setPlayerNumber = function(player) {
+    this.setPlayer = function(player) {
         this.player = player;
     };
 

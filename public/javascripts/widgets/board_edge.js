@@ -30,7 +30,7 @@ $.widget("ui.boardEdge", {
         var edge = this.getEdge();
         this._clear();
         if(edge.isSettled()) {
-            $(this.element).addClass("road-" + edge.getPlayerNumber());
+            $(this.element).addClass("road-" + edge.getPlayer());
             if(showEffect) $(this.element).effect("pulsate");
         }
     },

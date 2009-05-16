@@ -20,6 +20,32 @@
 class PlayersController < ApplicationController
   before_filter :require_user, :fetch_game
 
+  def show
+    @player = @game.players.find_by_user_id(@current_user.id)
+    respond_to do |format|
+      format.json do
+        player = @player.to_hash(:number => :number,
+                                 :bricks => :bricks,
+                                 :bricksRate => :bricks_exchange_rate,
+                                 :grain => :grain,
+                                 :grainRate => :grain_exchange_rate,
+                                 :lumber => :lumber,
+                                 :lumberRate => :lumber_exchange_rate,
+                                 :ore => :ore,
+                                 :oreRate => :ore_exchange_rate,
+                                 :wool => :wool,
+                                 :woolRate => :wool_exchange_rate,
+                                 :settlements => :settlements,
+                                 :cities => :cities,
+                                 :roads => :roads,
+                                 :visiblePoints => :visible_points,
+                                 :hiddenPoinds => :hidden_points,
+                                 :cards => [:cards, :id, :type, :state])
+        render :json => { :userPlayer => player }
+      end
+    end
+  end
+
   def create
     @player = @game.players.build
     @player.user = @current_user

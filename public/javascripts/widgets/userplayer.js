@@ -15,35 +15,36 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-$.widget("ui.player", {
-    current: function(current) {
-        if(current && !this.element.hasClass("current")) {
-            this.element.addClass("current", 300);
-        } else if (!current && this.element.hasClass("current")) {
-            this.element.removeClass("current", 300);
-        }
-    },
-
+$.widget("ui.userplayer", {
     _init: function() {
-        this.element.addClass("ui-widget ui-player");
+        this.element.addClass("ui-widget ui-user-player");
+
         var playerDl = $("<dl/>").appendTo(this.element);
+        $("<dt/>").appendTo(playerDl).text("Bricks");
+        this.bricks = $("<dd/>").appendTo(playerDl).addClass("bricks");
+        $("<dt/>").appendTo(playerDl).text("Grain");
+        this.grain = $("<dd/>").appendTo(playerDl).addClass("grain");
+        $("<dt/>").appendTo(playerDl).text("Lumber");
+        this.lumber = $("<dd/>").appendTo(playerDl).addClass("lumber");
+        $("<dt/>").appendTo(playerDl).text("Ore");
+        this.ore = $("<dd/>").appendTo(playerDl).addClass("ore");
+        $("<dt/>").appendTo(playerDl).text("Wool");
+        this.wool = $("<dd/>").appendTo(playerDl).addClass("wool");
+        $("<dt/>").appendTo(playerDl).text("Settlements");
+        this.settlements = $("<dd/>").appendTo(playerDl).addClass("settlements");
+        $("<dt/>").appendTo(playerDl).text("Cities");
+        this.cities = $("<dd/>").appendTo(playerDl).addClass("cities");
+        $("<dt/>").appendTo(playerDl).text("Roads");
+        this.roads = $("<dd/>").appendTo(playerDl).addClass("roads");
 
-        $("<dt/>").appendTo(playerDl).text("Name");
-        this.name = $("<dd/>").appendTo(playerDl).addClass("name");
-        $("<dt/>").appendTo(playerDl).text("State");
-        this.state = $("<dd/>").appendTo(playerDl).addClass("state");
-        $("<dt/>").appendTo(playerDl).text("Resources");
-        this.resources = $("<dd/>").appendTo(playerDl).addClass("resources");
-        $("<dt/>").appendTo(playerDl).text("Cards");
-        this.cards = $("<dd/>").appendTo(playerDl).addClass("cards");
-        $("<dt/>").appendTo(playerDl).text("Points");
-        this.points = $("<dd/>").appendTo(playerDl).addClass("points");
-
-        this._refresh("name");
-        this._refresh("resources");
-        this._refresh("cards");
-        this._refresh("points");
-        this._refresh("state");
+        this._refresh("bricks");
+        this._refresh("grain");
+        this._refresh("lumber");
+        this._refresh("ore");
+        this._refresh("wool");
+        this._refresh("settlements");
+        this._refresh("cities");
+        this._refresh("roads");
     },
 
     _refresh: function(key, highlight) {
@@ -56,7 +57,6 @@ $.widget("ui.player", {
     _setData: function(key, value) {
         if(this.options[key] !== value) {
             this._trigger(key + "change", null, [value]);
-            this._trigger("change", null, {});
             this.options[key] = value;
             this._refresh(key, true);
         }
@@ -69,3 +69,4 @@ $.widget("ui.player", {
         });
     }
 });
+
