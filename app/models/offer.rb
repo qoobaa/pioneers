@@ -18,14 +18,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Offer < ActiveRecord::Base
+  include ToHash
+
   belongs_to :game
   belongs_to :sender, :class_name => "Player"
   belongs_to :recipient, :class_name => "Player"
 
-  has_many :responses
-  has_many :players, :through => :responses
-  has_many :agreed_players, :through => :responses, :source => :player, :conditions => { :responses => { :agreed => true } }
-  has_many :declined_players, :through => :responses, :source => :player, :conditions => { :responses => { :agreed => false } }
+  has_many :offer_responses
+  has_many :players, :through => :offer_responses
+  has_many :agreed_players, :through => :offer_responses, :source => :player, :conditions => { :offer_responses => { :agreed => true } }
+  has_many :declined_players, :through => :offer_responses, :source => :player, :conditions => { :offer_responses => { :agreed => false } }
 
   validates_uniqueness_of :state, :scope => :game_id, :if => :awaiting?
   validates_numericality_of :bricks, :grain, :lumber, :ore, :wool, :only_integer => true, :allow_nil => true

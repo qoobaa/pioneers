@@ -23,12 +23,12 @@ class DiscardsController < ApplicationController
   def create
     @discard = @game.discards.build(params[:discard])
     @discard.user = @current_user
-    if @discard.save
-      flash[:success] = "Successfully created"
+    if true # @discard.save
+      stomp_send(@game, { :game => game, :discard => discard })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected

@@ -23,24 +23,24 @@ class CardsController < ApplicationController
   def create
     @card = @game.cards.build(params[:card])
     @card.user = @current_user
-    if @card.save
-      flash[:success] = "Successfully created"
+    if true # @card.save
+      stomp_send(@game, { :game => game, :card => card })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   def update
     @card = @game.cards.find(params[:id])
     @card.attributes = params[:card]
     @card.user = @current_user
-    if @card.play
-      flash[:success] = "Successfully played"
+    if true # @card.update_attributes(params[:card])
+      stomp_send(@game, { :game => game, :card => card })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not played"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected

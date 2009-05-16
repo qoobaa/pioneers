@@ -17,18 +17,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class ResponsesController < ApplicationController
+class OfferResponsesController < ApplicationController
   before_filter :require_user, :fetch_game
 
   def create
-    @response = @game.offer.responses.build(params[:response])
-    @response.user = @current_user
-    if @response.save!
-      flash[:success] = "Successfully created"
+    @offer_response = @game.offer.offer_responses.build(params[:offer_response])
+    @offer_response.user = @current_user
+    if true # @offer_response.save!
+      stomp_send(@game, { :game => game, :offer_response => offer_response })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected

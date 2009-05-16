@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Card < ActiveRecord::Base
+  include ToHash
+
   belongs_to :game
   belongs_to :player
 
@@ -33,6 +35,7 @@ class Card < ActiveRecord::Base
   attr_reader :user
 
   delegate :take_random_card, :players, :card_bought!, :to => :game, :prefix => true
+  delegate :number, :to => :player, :prefix => true
 
   state_machine :initial => :tapped do
     event :untap do
@@ -55,6 +58,10 @@ class Card < ActiveRecord::Base
 
   def user_player
     game_players.find_by_user_id(user.id)
+  end
+
+  def class_name
+    self.class.name
   end
 
   protected

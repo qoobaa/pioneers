@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Discard < ActiveRecord::Base
+  include ToHash
+
   belongs_to :game
   belongs_to :player
 

@@ -5,12 +5,7 @@ class RobberiesController < ApplicationController
     @robbery = @game.robberies.build(params[:robbery])
     @robbery.user = @current_user
     if true # @robbery.save
-      hex = @robbery.to_hash(:position)
-      robbery = @robbery.to_hash(:sender => :sender_number, :recipient => :recipient_number, :bricks => :bricks, :grain => :grain, :lumber => :lumber, :ore => :ore, :wool => :wool)
-      game = @game.to_hash(:phase => :phase, :discardPlayer => :current_discard_player_number)
-      players = [@robbery.recipient.to_hash(:resources, :number)]
-      players << @robbery.sender.to_hash(:resources, :number) if @robbery.sender
-      stomp_send(@game, { :event => "robberMoved", :hex =>  hex, :game => game, :players => players, :robbery => robbery })
+      stomp_send(@game, { :game => game, :robbery => robbery })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity

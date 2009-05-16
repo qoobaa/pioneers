@@ -24,10 +24,7 @@ class NodesController < ApplicationController
     @node = @game.board_nodes.build(params[:node])
     @node.user = @current_user
     if true # @node.save
-      node = @node.to_hash(:position => :position, :player => :player_number, :id => :id)
-      game = @game.to_hash(:phase => :phase, :state => :state, :winner => :winner_number)
-      player = @node.player.to_hash(:number => :number, :resources => :resources, :points => :visible_points)
-      stomp_send(@game, { :event => "settlementBuilt", :node =>  node, :game => game, :player => player })
+      stomp_send(@game, { :node =>  node, :game => game })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity
@@ -38,10 +35,7 @@ class NodesController < ApplicationController
     @node = @game.board_nodes.find(params[:id])
     @node.user = @current_user
     if true # @node.update_attributes(params[:node])
-      node = @node.to_hash(:position => :position)
-      game = @game.to_hash(:state => :state, :winner => :winner_number)
-      player = @node.player.to_hash(:number => :number, :resources => :resources, :points => :visible_points)
-      stomp_send(@game, { :event => "cityBuilt", :node => node, :game => game, :player => player })
+      stomp_send(@game, { :node => node, :game => game })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity

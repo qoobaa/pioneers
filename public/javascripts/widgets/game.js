@@ -149,48 +149,19 @@ $.widget("ui.game", {
 
     _stompMessageReceived: function(frame) {
         console.log(frame.body);
-        var message = eval("(" + frame.body + ")");
-        this["_" + message.event](message);
-        return undefined;
-        switch(message.event) {
-        case "diceRolled":
-            // { event: "diceRolled", game: { phase: "discard", discardPlayer: 1, roll: 7 } }
-            break;
-        case "turnEnded":
-            // { event: "turnEnded", game: { phase: "before_roll", player: 1, turn: 21 } }
-            break;
-        case "offerCreated":
-            // { event: "offerCreated", offer: { player: 1, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 }, game: { phase: "offer" } }
-            break;
-        case "offerCancelled":
-            // { event: "offerExpired", game: { phase: "after_roll" } }
-            break;
-        case "offerAgreed":
-            // { event: "offerAgreed", offer: { sender: 1, recipient: 2, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 }, game: { phase: "after_roll" } }
-            break;
-        case "responseCreated":
-            // { event: "responseCreated", response: { player: 1, agreed: true } }
-            break;
-        case "exchanged":
-            // { event: "exchanged", exchange: { player: 1, bricks: 0, grain: -4, lumber: 1, ore: 0, wool: 0 } }
-            break;
-        case "discarded":
-            // { event: "discarded", discard: { player: 1, bricks: 0, grain: -4, lumber: 0, ore: 0, wool: 0 } }
-            break;
-        case "cardBought":
-            // { event: "cardBought", card: { player: 1, id: 5 } }
-            break;
-        case "cardPlayed":
-            // { event: "cardPlayed", card: { player: 1, id: 5 }, game: { phase: "robber" } }
-            break;
-        case "playerCreated":
-            // { event: "playerCreated", player: { number: 2, name: "joe" } }
-            break;
-        case "playerStarted":
-            // { event: "playerStarted", player: { number: 2 } }
-            break;
-        }
+        // var message = eval("(" + frame.body + ")");
+        // this["_" + message.event](message);
     },
+
+    // game: { phase: "after_roll", player: 1, discardPlayer: 1, winner: null, state: "playing", roll: 7, turn: 21, players: [{ number: 1, resources: 2, points: 3, cards: 3, state: "started" }]}
+    // node: { position: [1, 1], id: 10, player: 1, state: "city" }
+    // edge: { position: [2, 2], player: 1 }
+    // robbery: { position: [1, 2], sender: 1, recipient: 2, bricks: 1, grain: 0, lumber: 0, ore: 0, wool: 0 }
+    // offer: { sender: 1, recipient: null, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 }
+    // response: { player: 1, agreed: true }
+    // exchange: { player: 1, bricks: 0, grain: -4, lumber: 1, ore: 0, wool: 0 }
+    // discard: { player: 1, bricks: 0, grain: -4, lumber: 0, ore: 0, wool: 0 }
+    // card: { player: 1, id: 5, state: "tapped", bricks: 0, grain: 0, lumber: 0, ore: 0, wool: 0, resource: null, type: "Card" }
 
     // stomp events actions
     _settlementBuilt: function(event) {
@@ -224,6 +195,68 @@ $.widget("ui.game", {
         //   players: [{ number: 1, resources: 2 }, { number: 2, resources: 3 }],
         //   robbery: { sender: 1, recipient: 2, bricks: 1, grain: 0, lumber: 0, ore: 0, wool: 0 } }
         $(this.element).find(".board").board("robberMoved", event.hex);
+    },
+
+    _diceRolled: function(event) {
+        // { event: "diceRolled",
+        //   game: { phase: "discard", discardPlayer: 1, roll: 7 } }
+    },
+
+    _turnEnded: function(event) {
+        // { event: "turnEnded",
+        //   game: { phase: "before_roll", player: 1, turn: 21, winner: null } }
+    },
+
+    _offerCreated: function(event) {
+        // { event: "offerCreated", offer: { player: 1, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 },
+        //   game: { phase: "offer" } }
+    },
+
+    _offerCancelled: function(event) {
+        // { event: "offerExpired",
+        //   game: { phase: "after_roll" } }
+    },
+
+    _offerAgreed: function(event) {
+        // { event: "offerAgreed",
+        //   offer: { sender: 1, recipient: 2, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0 },
+        //   game: { phase: "after_roll" } }
+    },
+
+    _responseCreated: function(event) {
+        // { event: "responseCreated",
+        //   response: { player: 1, agreed: true } }
+    },
+
+    _exchanged: function(event) {
+        // { event: "exchanged",
+        //   exchange: { player: 1, bricks: 0, grain: -4, lumber: 1, ore: 0, wool: 0 } }
+    },
+
+    _discarded: function(event) {
+        // { event: "discarded",
+        //   discard: { player: 1, bricks: 0, grain: -4, lumber: 0, ore: 0, wool: 0 } }
+    },
+
+    _cardBought: function(event) {
+        // { event: "cardBought",
+        //   card: { player: 1, id: 5 } }
+    },
+
+    _cardPlayed: function(event) {
+        // { event: "cardPlayed",
+        //   card: { player: 1, id: 5 },
+        //   game: { phase: "robber", winner: null } }
+    },
+
+    _playerCreated: function(event) {
+        // { event: "playerCreated",
+        //   player: { number: 2, name: "joe" } }
+    },
+
+    _playerStarted: function(event) {
+        // { event: "playerStarted",
+        //   player: { number: 2 } }
     },
 
     // getters and setters

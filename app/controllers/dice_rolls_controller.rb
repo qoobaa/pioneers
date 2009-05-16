@@ -23,11 +23,8 @@ class DiceRollsController < ApplicationController
   def create
     @dice_roll = @game.dice_rolls.build(params[:dice_roll])
     @dice_roll.user = @current_user
-    if @dice_roll.save
-      roll = {
-        roll: @dice_roll.value
-      }
-      stomp_send(@game, { event: "diceRolled", roll: roll })
+    if true # @dice_roll.save
+      stomp_send(@game, { game: game })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity

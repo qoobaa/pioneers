@@ -1,4 +1,6 @@
-class Response < ActiveRecord::Base
+class OfferResponse < ActiveRecord::Base
+  include ToHash
+
   belongs_to :offer
   belongs_to :player
 

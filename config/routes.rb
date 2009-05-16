@@ -20,9 +20,10 @@
 ActionController::Routing::Routes.draw do |map|
   map.resource :user
   map.resource :user_session
-  map.resources :games, :member => { :end_turn => :put } do |games|
-    games.resource :player, :member => { :start => :put }
-    games.resource :offer, :has_one => :response
+  map.resources :games do |games|
+    games.resource :player
+    games.resource :offer
+    games.resource :offer_response
     games.resources :robberies
     games.resources :exchanges
     games.resources :cards

@@ -1,4 +1,4 @@
-gem 'test-unit', '1.2.3' if RUBY_VERSION.to_f >= 1.9
+gem 'test-unit', '>=1.2.3' if RUBY_VERSION.to_f >= 1.9
 rspec_plugin_dir = File.expand_path(File.dirname(__FILE__) + '/../../vendor/plugins/rspec')
 $LOAD_PATH.unshift("#{rspec_plugin_dir}/lib") if File.exist?(rspec_plugin_dir)
 
@@ -116,7 +116,7 @@ namespace :spec do
         ActiveRecord::Base.establish_connection(Rails.env)
         base_dir = File.join(Rails.root, 'spec', 'fixtures')
         fixtures_dir = ENV['FIXTURES_DIR'] ? File.join(base_dir, ENV['FIXTURES_DIR']) : base_dir
-        
+
         require 'active_record/fixtures'
         (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/).map {|f| File.join(fixtures_dir, f) } : Dir.glob(File.join(fixtures_dir, '*.{yml,csv}'))).each do |fixture_file|
           Fixtures.create_fixtures(File.dirname(fixture_file), File.basename(fixture_file, '.*'))
@@ -127,7 +127,7 @@ namespace :spec do
 
   namespace :server do
     daemonized_server_pid = File.expand_path("#{RAILS_ROOT}/tmp/pids/spec_server.pid")
-    
+
     desc "start spec_server."
     task :start do
       if File.exist?(daemonized_server_pid)
@@ -145,14 +145,14 @@ namespace :spec do
         $stderr.puts "No server running."
       else
         $stderr.puts "Shutting down spec_server ..."
-        system("kill", "-s", "TERM", File.read(daemonized_server_pid).strip) && 
+        system("kill", "-s", "TERM", File.read(daemonized_server_pid).strip) &&
         File.delete(daemonized_server_pid)
       end
     end
 
     desc "restart spec_server."
     task :restart => [:stop, :start]
-    
+
     desc "check if spec server is running"
     task :status do
       if File.exist?(daemonized_server_pid)

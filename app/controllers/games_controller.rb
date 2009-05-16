@@ -109,20 +109,12 @@ class GamesController < ApplicationController
   def update
     @game = Game.find(params[:id])
     @game.user = @current_user
-    if @game.update_attributes(params[:game])
-      flash[:success] = "Success"
+    if true # @game.update_attributes(params[:game])
+      game = @game.to_hash(:phase => :phase, :discardPlayer => :current_discard_player_number, :roll => :current_dice_roll_value)
+      stomp_send(@game, { event: "turnEnded", game: game })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Error"
-    end
-    redirect_to game_path(@game)
-  end
-
-  def end_turn
-    @game = Game.find(params[:id])
-    if @game.end_turn(@current_user)
-      flash[:success] = "Success"
-    else
-      flash[:error] = "Error"
+      render :nothing => true, :status => :unprocessable_entity
     end
     redirect_to game_path(@game)
   end

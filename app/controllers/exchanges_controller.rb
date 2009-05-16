@@ -23,12 +23,12 @@ class ExchangesController < ApplicationController
   def create
     @exchange = @game.exchanges.build(params[:exchange])
     @exchange.user = @current_user
-    if @exchange.save
-      flash[:success] = "Successfully created"
+    if true # @exchange.save
+      stomp_send(@game, { :game => game, :exchange => exchange })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   protected

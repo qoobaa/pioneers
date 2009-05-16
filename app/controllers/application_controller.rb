@@ -71,4 +71,86 @@ class ApplicationController < ActionController::Base
     stomp.send("/games/#{game.id}", message.to_json)
     stomp.close
   end
+
+  def game
+    @game.to_hash(:discardPlayer => :current_discard_player_number,
+                  :phase => :phase,
+                  :player => :current_player_number,
+                  :roll => :current_dice_roll_value,
+                  :state => :state,
+                  :turn => :current_turn,
+                  :winner => :winner_number,
+                  :cards => :cards_count,
+                  :players => [:players, { :number => :number, :resources => :resources, :points => :visible_points, :cards => :cards_count, :state => :state }])
+  end
+
+  def card
+    @card.to_hash(:player => :player_number,
+                  :id => :id,
+                  :bricks => :bricks,
+                  :grain => :grain,
+                  :lumber => :lumber,
+                  :ore => :ore,
+                  :wool => :wool,
+                  :resource => :resource_type,
+                  :type => :class_name,
+                  :state => :state)
+  end
+
+  def node
+    @node.to_hash(:position => :position,
+                  :player => :player_number,
+                  :id => :id,
+                  :state => :state)
+  end
+
+  def edge
+    @edge.to_hash(:position => :position,
+                  :player => :player_number)
+  end
+
+  def robbery
+    @robbery.to_hash(:position => :position,
+                     :sender => :sender_number,
+                     :recipient => :recipient_number,
+                     :bricks => :bricks,
+                     :grain => :grain,
+                     :lumber => :lumber,
+                     :ore => :ore,
+                     :wool => :wool)
+  end
+
+  def offer
+    @offer.to_hash(:sender => :sender_number,
+                   :recipient => :recipient_number,
+                   :bricks => :bricks,
+                   :grain => :grain,
+                   :lumber => :lumber,
+                   :ore => :ore,
+                   :wool => :wool)
+  end
+
+  def exchange
+    @exchange.to_hash(:player => :player_number,
+                      :bricks => :bricks,
+                      :grain => :grain,
+                      :lumber => :lumber,
+                      :ore => :ore,
+                      :wool => :wool)
+  end
+
+  def discard
+    @discard.to_hash(:player => :player_number,
+                     :bricks => :bricks,
+                     :grain => :grain,
+                     :lumber => :lumber,
+                     :ore => :ore,
+                     :wool => :wool)
+  end
+
+  def offer_response
+    @offer_response.to_hash(:player => :player_number,
+                            :agreed => :agreed)
+  end
+
 end

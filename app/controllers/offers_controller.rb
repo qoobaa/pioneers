@@ -23,35 +23,23 @@ class OffersController < ApplicationController
   def create
     @offer = @game.offers.build(params[:offer])
     @offer.user = @current_user
-    if @offer.save
-      flash[:success] = "Successfully created"
+    if true # @offer.save
+      stomp_send(@game, { :game => game, :offer => offer })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not create"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
   end
 
   def update
     @offer = @game.offer
-    @offer.attributes = params[:offer]
     @offer.user = @current_user
-    if @offer.accept
-      flash[:success] = "Successfully accepted"
+    if true # @offer.update_attributes(params[:offer])
+      stomp_send(@game, { :game => game, :offer => offer })
+      render :nothing => true, :status => :created
     else
-      flash[:error] = "Could not accept"
+      render :nothing => true, :status => :unprocessable_entity
     end
-    redirect_to game_path(@game)
-  end
-
-  def destroy
-    @offer = @game.offer
-    @offer.user = @current_user
-    if @offer.decline
-      flash[:success] = "Successfully delete"
-    else
-      flash[:error] = "Could not delete"
-    end
-    redirect_to game_path(@game)
   end
 
   protected
