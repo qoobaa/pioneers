@@ -30,7 +30,8 @@ class GamesController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        game = @game.to_hash(:cardPlayed => :current_turn_card_played,
+        game = @game.to_hash(:id => :id,
+                             :cardPlayed => :current_turn_card_played,
                              :discardPlayer => :current_discard_player_number,
                              :discardLimit => :current_discard_resource_limit,
                              :phase => :phase,
@@ -58,7 +59,7 @@ class GamesController < ApplicationController
                                             :settlements => :settlements,
                                             :cities => :cities,
                                             :roads => :roads,
-                                            :visiblePoints => :visible_points,
+                                            :points => :visible_points,
                                             :resources => :resources }],
                              :board => [:board,
                                         { :nodes => [:nodes,

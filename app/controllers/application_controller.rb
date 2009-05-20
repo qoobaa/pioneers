@@ -20,6 +20,8 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
+require "stomp"
+
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   #protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -70,6 +72,8 @@ class ApplicationController < ActionController::Base
     stomp = Stomp::Client.new
     stomp.send("/games/#{game.id}", message.to_json)
     stomp.close
+  rescue Errno::ECONNREFUSED
+    RAILS_DEFAULT_LOGGER.error "!!! The Orbited server appears to be down!"
   end
 
   def game
@@ -102,7 +106,7 @@ class ApplicationController < ActionController::Base
                                  :settlements => :settlements,
                                  :cities => :cities,
                                  :roads => :roads,
-                                 :visiblePoints => :visible_points }])
+                                 :points => :visible_points }])
   end
 
   def card
