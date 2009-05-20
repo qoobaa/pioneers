@@ -25,12 +25,13 @@ class Discard < ActiveRecord::Base
 
   validates_presence_of :player
   validates_associated :player
-  validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
+  validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :less_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
 
   before_validation :discard
   after_save :save_player, :discarded
 
   delegate :players, :discarded!, :to => :game, :prefix => true
+  delegate :number, :to => :player, :prefix => true
 
   attr_reader :user
 
@@ -46,11 +47,11 @@ class Discard < ActiveRecord::Base
   protected
 
   def discard
-    player.ore -= (ore or 0)
-    player.bricks -= (bricks or 0)
-    player.grain -= (grain or 0)
-    player.wool -= (wool or 0)
-    player.lumber -= (lumber or 0)
+    player.ore += (ore or 0)
+    player.bricks += (bricks or 0)
+    player.grain += (grain or 0)
+    player.wool += (wool or 0)
+    player.lumber += (lumber or 0)
   end
 
   def discarded

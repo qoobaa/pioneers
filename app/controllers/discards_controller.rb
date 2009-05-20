@@ -23,7 +23,8 @@ class DiscardsController < ApplicationController
   def create
     @discard = @game.discards.build(params[:discard])
     @discard.user = @current_user
-    if true # @discard.save
+    if @discard.save
+      @game.reload
       stomp_send(@game, { :game => game, :discard => discard })
       render :nothing => true, :status => :created
     else

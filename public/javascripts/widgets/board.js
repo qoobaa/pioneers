@@ -61,9 +61,9 @@ $.widget("ui.board", {
     robberMoved: function(robbery) {
         var board = this._getBoard();
         var oldPosition = board.getRobberPosition();
-        board.setRobberPosition(hex.position);
+        board.setRobberPosition(robbery.position);
         this.element.find(".hexes .row-" + oldPosition[0] + " .col-" + oldPosition[1]).boardHex("reset");
-        this.element.find(".hexes .row-" + hex.position[0] + " .col-" + hex.position[1]).boardHex("reset", true);
+        this.element.find(".hexes .row-" + robbery.position[0] + " .col-" + robbery.position[1]).boardHex("reset", true);
     },
 
     nodeChanged: function(node) {

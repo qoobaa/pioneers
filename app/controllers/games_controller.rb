@@ -30,78 +30,55 @@ class GamesController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        nodes = @game.board_nodes.map do |node|
-          { position: node.position,
-            player: node.player_number,
-            state: node.state,
-            id: node.id }
-        end
-        edges = @game.board_edges.map do |edge|
-          { position: edge.position,
-            player: edge.player_number }
-        end
-        players = @game.players.map do |player|
-          { id: player.id,
-            number: player.number,
-            points: player.visible_points,
-            resources: player.resources,
-            name: player.user_login,
-            state: player.state,
-            cards: player.cards_count }
-        end
-        hexes = @game.board_hexes.map do |hex|
-          { roll: hex.roll,
-            type: hex.hex_type,
-            position: hex.position,
-            harborPosition: hex.harbor_position,
-            harborType: hex.harbor_type }
-        end
-        if @user_player
-          cards = @user_player.cards.map do |card|
-            { id: card.id,
-              type: card.type,
-              state: card.state }
-          end
-          user_player = {
-            cards: cards,
-            number: @user_player.number,
-            bricks: @user_player.bricks,
-            bricksExchangeRate: @user_player.bricks_exchange_rate,
-            grain: @user_player.grain,
-            grainExchangeRate: @user_player.grain_exchange_rate,
-            lumber: @user_player.lumber,
-            lumberExchangeRate: @user_player.lumber_exchange_rate,
-            ore: @user_player.ore,
-            oreExchangeRate: @user_player.ore_exchange_rate,
-            wool: @user_player.wool,
-            woolExchangeRate: @user_player.wool_exchange_rate,
-            settlements: @user_player.settlements,
-            cities: @user_player.cities,
-            roads: @user_player.roads,
-            visiblePoints: @user_player.visible_points,
-            hiddenPoints: @user_player.hidden_points
-          }
-        end
-        game = {
-          board: {
-            size: @game.board_size,
-            hexes: hexes,
-            nodes: nodes,
-            edges: edges,
-            robberPosition: @game.board_robber_position,
-          },
-          userPlayer: user_player,
-          players: players,
-          id: @game.id,
-          state: @game.state,
-          phase: @game.phase,
-          cards: @game.cards_count,
-          turn: @game.current_turn,
-          cardPlayed: @game.current_turn_card_played,
-          player: @game.current_player_number,
-          roll: @game.current_dice_roll_value
-        }
-        render :json => { game: game }
+        game = @game.to_hash(:cardPlayed => :current_turn_card_played,
+                             :discardPlayer => :current_discard_player_number,
+                             :discardLimit => :current_discard_resource_limit,
+                             :phase => :phase,
+                             :player => :current_player_number,
+                             :roll => :current_dice_roll_value,
+                             :state => :state,
+                             :turn => :current_turn,
+                             :winner => :winner_number,
+                             :cards => :cards_count,
+                             :players => [:players,
+                                          { :number => :number,
+                                            :state => :state,
+                                            :name => :user_login,
+                                            :cards => :cards_count,
+                                            :bricks => :bricks,
+                                            :bricksRate => :bricks_exchange_rate,
+                                            :grain => :grain,
+                                            :grainRate => :grain_exchange_rate,
+                                            :lumber => :lumber,
+                                            :lumberRate => :lumber_exchange_rate,
+                                            :ore => :ore,
+                                            :oreRate => :ore_exchange_rate,
+                                            :wool => :wool,
+                                            :woolRate => :wool_exchange_rate,
+                                            :settlements => :settlements,
+                                            :cities => :cities,
+                                            :roads => :roads,
+                                            :visiblePoints => :visible_points,
+                                            :resources => :resources }],
+                             :board => [:board,
+                                        { :nodes => [:nodes,
+                                                     { :position => :position,
+                                                       :player => :player_number,
+                                                       :state => :state,
+                                                       :id => :id }],
+                                          :hexes => [:hexes,
+                                                     { :position => :position,
+                                                       :roll => :roll,
+                                                       :type => :hex_type,
+                                                       :harborPosition => :harbor_position,
+                                                       :harborType => :harbor_type}],
+                                          :edges => [:edges,
+                                                     { :position => :position,
+                                                       :player => :player_number }],
+                                          :size => :size,
+                                          :robberPosition => :robber_position}])
+        game[:userPlayer] = @user_player.number if @user_player
+        render :json => { :game => game }
       end
     end
   end
@@ -110,8 +87,7 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     @game.user = @current_user
     if @game.update_attributes(params[:game])
-      @game.reload
-      stomp_send(@game, { game: game })
+      stomp_send(@game, { :game => game })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity

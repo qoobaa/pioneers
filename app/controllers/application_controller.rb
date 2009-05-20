@@ -73,8 +73,10 @@ class ApplicationController < ActionController::Base
   end
 
   def game
+    @game.reload
     @game.to_hash(:cardPlayed => :current_turn_card_played,
                   :discardPlayer => :current_discard_player_number,
+                  :discardLimit => :current_discard_resource_limit,
                   :phase => :phase,
                   :player => :current_player_number,
                   :roll => :current_dice_roll_value,
@@ -82,10 +84,29 @@ class ApplicationController < ActionController::Base
                   :turn => :current_turn,
                   :winner => :winner_number,
                   :cards => :cards_count,
-                  :players => [:players, { :number => :number, :resources => :resources, :points => :visible_points, :cards => :cards_count, :state => :state }])
+                  :players => [:players,
+                               { :number => :number,
+                                 :state => :state,
+                                 :name => :user_login,
+                                 :cards => :cards_count,
+                                 :bricks => :bricks,
+                                 :bricksRate => :bricks_exchange_rate,
+                                 :grain => :grain,
+                                 :grainRate => :grain_exchange_rate,
+                                 :lumber => :lumber,
+                                 :lumberRate => :lumber_exchange_rate,
+                                 :ore => :ore,
+                                 :oreRate => :ore_exchange_rate,
+                                 :wool => :wool,
+                                 :woolRate => :wool_exchange_rate,
+                                 :settlements => :settlements,
+                                 :cities => :cities,
+                                 :roads => :roads,
+                                 :visiblePoints => :visible_points }])
   end
 
   def card
+    @card.reload
     @card.to_hash(:player => :player_number,
                   :id => :id,
                   :bricks => :bricks,
@@ -99,6 +120,7 @@ class ApplicationController < ActionController::Base
   end
 
   def node
+    @node.reload
     @node.to_hash(:position => :position,
                   :player => :player_number,
                   :id => :id,
@@ -106,11 +128,13 @@ class ApplicationController < ActionController::Base
   end
 
   def edge
+    @edge.reload
     @edge.to_hash(:position => :position,
                   :player => :player_number)
   end
 
   def robbery
+    @robbery.reload
     @robbery.to_hash(:position => :position,
                      :sender => :sender_number,
                      :recipient => :recipient_number,
@@ -122,6 +146,7 @@ class ApplicationController < ActionController::Base
   end
 
   def offer
+    @offer.reload
     @offer.to_hash(:sender => :sender_number,
                    :recipient => :recipient_number,
                    :bricks => :bricks,
@@ -133,6 +158,7 @@ class ApplicationController < ActionController::Base
   end
 
   def exchange
+    @exchange.reload
     @exchange.to_hash(:player => :player_number,
                       :bricks => :bricks,
                       :grain => :grain,
@@ -142,6 +168,7 @@ class ApplicationController < ActionController::Base
   end
 
   def discard
+    @discard.reload
     @discard.to_hash(:player => :player_number,
                      :bricks => :bricks,
                      :grain => :grain,
@@ -151,6 +178,7 @@ class ApplicationController < ActionController::Base
   end
 
   def offer_response
+    @offer_response.reload
     @offer_response.to_hash(:player => :player_number,
                             :agreed => :agreed)
   end

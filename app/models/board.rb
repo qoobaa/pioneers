@@ -19,6 +19,7 @@
 
 class Board < ActiveRecord::Base
   extend ActiveSupport::Memoizable
+  include ToHash
 
   belongs_to :game
 

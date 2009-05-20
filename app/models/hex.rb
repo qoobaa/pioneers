@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Hex < ActiveRecord::Base
+  include ToHash
+
   belongs_to :board
   delegate :width, :height, :size, :robber_position, :nodes, :edges, :hexes, :to => :board, :prefix => true
   delegate :game, :to => :board

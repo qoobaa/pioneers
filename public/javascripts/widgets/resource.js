@@ -45,54 +45,51 @@ $.widget("ui.resource", {
 
     _increase: function() {
         if(this.options.value < 0 && this.options.value + this.options.step <= this.options.max) {
-            this.options.value += this.options.step;
-            this._refresh();
+            this.value(this.options.value + this.options.step);
         } else if (this.options.value >= 0 && this.options.value + 1 <= this.options.max){
-            this.options.value++;
-            this._refresh();
+            this.value(this.options.value + 1);
         }
     },
 
     _decrease: function() {
         if(this.options.value > 0 && this.options.value - 1 >= this.options.min) {
-            this.options.value--;
-            this._refresh();
+            this.value(this.options.value - 1);
         } else if(this.options.value <= 0 && this.options.value - this.options.step >= this.options.min) {
-            this.options.value -= this.options.step;
-            this._refresh();
+            this.value(this.options.value - this.options.step);
         }
     },
 
-    value: function(newValue) {
+    value: function(value) {
         if(arguments.length) {
-            this.options.value = newValue;
+            this.options.value = value;
+            this._trigger("change", null, [value]);
             this._refresh();
         }
         return this.options.value;
     },
 
-    min: function(newMin) {
+    min: function(min) {
         if(arguments.length) {
             this.options.value = 0;
-            this.options.min = newMin;
+            this.options.min = min;
             this._refresh();
         }
         return this.options.min;
     },
 
-    max: function(newMax) {
+    max: function(max) {
         if(arguments.length) {
             this.options.value = 0;
-            this.options.max = newMax;
+            this.options.max = max;
             this._refresh();
         }
         return this.options.max;
     },
 
-    step: function(newStep) {
+    step: function(step) {
         if(arguments.length) {
             this.options.value = 0;
-            this.options.step = newStep;
+            this.options.step = step;
             this._refresh();
         }
         return this.options.step;

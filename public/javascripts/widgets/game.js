@@ -19,7 +19,8 @@ $.widget("ui.game", {
     _init: function() {
         $(this.element).addClass("ui-widget ui-game");
         var that = this;
-        $.getJSON("/games/" + Pioneers.utils.getGameId() + ".json", function(data) {
+        var id = Pioneers.utils.getGameId();
+        $.getJSON("/games/" + id + ".json", function(data) {
             that._gameDataLoaded(data);
         });
     },
@@ -33,7 +34,10 @@ $.widget("ui.game", {
         this._createBoard(this.options.board);
         this._createGameinfo(this.options);
         this._createPlayers(this.options.players);
-        this._createUserplayer(this.options.userPlayer);
+        var userPlayer = $.grep(this.options.players, function(player) {
+            return player.number === that.options.userPlayer;
+        })[0];
+        this._createUserplayer(userPlayer);
         this._createBuild();
         this._createEndTurn();
         this._createRollDice();
@@ -104,24 +108,24 @@ $.widget("ui.game", {
 
     _createBuild: function() {
         var that = this;
-        this.build = $("<div/>").appendTo(this.element).build();
+        this.build = $("<div/>").appendTo(this.element).build().hide();
         this.build.bind("buildsettlementclick", function(event) {
             that.build.build("disable");
-            that.board.board("buildSettlementMode", that.options.userPlayer.number);
+            that.board.board("buildSettlementMode", that.options.userPlayer);
         });
         this.build.bind("buildcityclick", function() {
             that.build.build("disable");
-            that.board.board("buildCityMode", that.options.userPlayer.number);
+            that.board.board("buildCityMode", that.options.userPlayer);
         });
         this.build.bind("buildroadclick", function() {
             that.build.build("disable");
-            that.board.board("buildRoadMode", that.options.userPlayer.number);
+            that.board.board("buildRoadMode", that.options.userPlayer);
         });
     },
 
     _createEndTurn: function() {
         var that = this;
-        $("<a/>").addClass("end-turn").text("End turn").attr("href", "").appendTo(this.element).click(function() {
+        this.endTurn = $("<a/>").addClass("end-turn").text("End turn").attr("href", "").hide().appendTo(this.element).click(function() {
             var data = {
                 _method : "put",
                 "game[phase_event]": "end_turn"
@@ -133,7 +137,7 @@ $.widget("ui.game", {
 
     _createRollDice: function() {
         var that = this;
-        $("<a/>").addClass("roll-dice").text("Roll dice").attr("href", "").appendTo(this.element).click(function() {
+        this.rollDice = $("<a/>").addClass("roll-dice").text("Roll dice").attr("href", "").hide().appendTo(this.element).click(function() {
             var data = {
                 nothing: true // TODO: check Rack or RoR for the bug
             };
@@ -143,7 +147,17 @@ $.widget("ui.game", {
     },
 
     _createDiscard: function() {
-        this.discard = $("<div/>").appendTo(this.element).discard(this.options.userPlayer);
+        var that = this;
+        this.discard = $("<div/>").hide().appendTo(this.element).discard(this.options.userPlayer).bind("discardaccept", function(event, bricks, grain, lumber, ore, wool) {
+            var data = {
+                "discard[bricks]": bricks,
+                "discard[grain]": grain,
+                "discard[lumber]": lumber,
+                "discard[ore]": ore,
+                "discard[wool]": wool
+            };
+            $.post("/games/" + that.options.id + "/discards", data);
+        });
     },
 
     // STOMP part
@@ -243,26 +257,51 @@ $.widget("ui.game", {
             that["player" + this.number].player("current", this.number === that.options.player).player("update", this);
         });
 
-        this._refreshUserPlayer();
-    },
+        if(this._isUserDiscard()) {
+            this.discard.discard("limit", this.options.discardLimit);
+            this.discard.show();
+        } else {
+            this.discard.hide();
+        }
 
-    _refreshUserPlayer: function() {
-        var that = this;
-        $.getJSON("/games/" + this.options.id + "/player.json", function(data) {
-            that._userPlayerDataLoaded(data);
-        });
-    },
+        if(this._isUserBeforeRoll()) {
+            this.rollDice.show();
+        } else {
+            this.rollDice.hide();
+        }
 
-    _userPlayerDataLoaded: function(data) {
-        this.userplayer.userplayer("update", data.userPlayer);
+        if(this._isUserAfterRoll()) {
+            this.endTurn.show();
+            this.build.show();
+        } else {
+            this.endTurn.hide();
+            this.build.hide();
+        }
+
+        if(this._isUserRobber()) {
+            this.board.board("moveRobberMode", this.options.userPlayer);
+        }
     },
 
     // helpers
-    _isUserTurn: function() {
-        return this.options.userPlayer.number === this.options.player;
+    _isUserPhase: function() {
+        return this.options.userPlayer === this.options.player;
+    },
+
+    _isUserBeforeRoll: function() {
+        return this._isUserPhase() && this.options.phase === "before_roll";
+    },
+
+    _isUserAfterRoll: function() {
+        return this._isUserPhase() && this.options.phase === "after_roll";
+    },
+
+    _isUserRobber: function() {
+        return this._isUserPhase() && this.options.phase === "robber";
     },
 
     _isUserDiscard: function() {
-        return this.options.userPlayer.number === this.options.discardPlayer;
+        return this.options.userPlayer === this.options.discardPlayer
+            && this.options.phase === "discard";
     }
 });
