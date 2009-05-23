@@ -23,7 +23,7 @@ class ExchangesController < ApplicationController
   def create
     @exchange = @game.exchanges.build(params[:exchange])
     @exchange.user = @current_user
-    if true # @exchange.save
+    if @exchange.save
       stomp_send(@game, { :game => game, :exchange => exchange })
       render :nothing => true, :status => :created
     else

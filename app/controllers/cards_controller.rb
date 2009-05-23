@@ -23,7 +23,7 @@ class CardsController < ApplicationController
   def create
     @card = @game.cards.build(params[:card])
     @card.user = @current_user
-    if true # @card.save
+    if @card.save
       stomp_send(@game, { :game => game, :card => card })
       render :nothing => true, :status => :created
     else
@@ -35,7 +35,7 @@ class CardsController < ApplicationController
     @card = @game.cards.find(params[:id])
     @card.attributes = params[:card]
     @card.user = @current_user
-    if true # @card.update_attributes(params[:card])
+    if @card.update_attributes(params[:card])
       stomp_send(@game, { :game => game, :card => card })
       render :nothing => true, :status => :created
     else

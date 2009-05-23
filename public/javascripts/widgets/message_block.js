@@ -25,12 +25,12 @@ $.widget("ui.messageblock", {
         this.element.addClass("message-block");
     },
 
-    add: function(type, message, className) {
+    add: function(type, message, classNames) {
         var ul = this.element.find("ul." + type);
         if(ul.length === 0) {
             ul = $("<ul/>").addClass(type).appendTo(this.element);
         }
-        $("<li/>").appendTo(ul).addClass(className).text(message);
+        $("<li/>").appendTo(ul).addClass(classNames).text(message);
     },
 
     remove: function(classNames) {

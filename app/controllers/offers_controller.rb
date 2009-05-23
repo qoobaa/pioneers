@@ -23,7 +23,7 @@ class OffersController < ApplicationController
   def create
     @offer = @game.offers.build(params[:offer])
     @offer.user = @current_user
-    if true # @offer.save
+    if @offer.save
       stomp_send(@game, { :game => game, :offer => offer })
       render :nothing => true, :status => :created
     else
@@ -34,7 +34,7 @@ class OffersController < ApplicationController
   def update
     @offer = @game.offer
     @offer.user = @current_user
-    if true # @offer.update_attributes(params[:offer])
+    if @offer.update_attributes(params[:offer])
       stomp_send(@game, { :game => game, :offer => offer })
       render :nothing => true, :status => :created
     else

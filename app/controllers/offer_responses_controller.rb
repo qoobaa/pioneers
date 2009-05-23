@@ -23,7 +23,7 @@ class OfferResponsesController < ApplicationController
   def create
     @offer_response = @game.offer.offer_responses.build(params[:offer_response])
     @offer_response.user = @current_user
-    if true # @offer_response.save!
+    if @offer_response.save!
       stomp_send(@game, { :game => game, :offer_response => offer_response })
       render :nothing => true, :status => :created
     else
