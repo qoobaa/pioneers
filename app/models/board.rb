@@ -43,33 +43,6 @@ class Board < ActiveRecord::Base
     self.width, self.height = size
   end
 
-  def hexes_groupped
-    (0..10).map do |row|
-      (0..10).map do |col|
-        hexes.detect { |hex| hex.row == row and hex.col == col }
-      end
-    end
-  end
-  memoize :hexes_groupped
-
-  def nodes_groupped
-    (0..10).map do |row|
-      (0..22).map do |col|
-        nodes.detect { |node| node.row == row and node.col == col }
-      end
-    end
-  end
-  memoize :nodes_groupped
-
-  def edges_groupped
-    (0..10).map do |row|
-      (0..29).map do |col|
-        edges.detect { |edge| edge.row == row and edge.col == col }
-      end
-    end
-  end
-  memoize :edges_groupped
-
   def robber_position
     [robber_row, robber_col]
   end
@@ -83,9 +56,6 @@ class Board < ActiveRecord::Base
   def build_hexes
     return if hexes_attributes.blank?
     hexes.clear
-#     hexes_attributes.each_with_index do |attributes, i|
-#       hexes.build(attributes.merge(:position => i.divmod(width))) unless attributes.nil?
-#     end
     hexes_attributes.each { |attributes| hexes.build(attributes) }
   end
 end

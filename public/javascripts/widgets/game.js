@@ -63,6 +63,7 @@ $.widget("ui.game", {
 
         this.board.bind("boardsettlementbuilt", function(event, position) {
             var data = {
+                "node[state_event]": "settle",
                 "node[row]": position[0],
                 "node[col]": position[1]
             };

@@ -33,7 +33,7 @@ class Game < ActiveRecord::Base
   belongs_to :longest_road_player, :class_name => "Player"
 
   delegate :id, :to => :current_player, :prefix => true
-  delegate :hexes, :nodes, :edges, :height, :width, :size, :hexes_groupped, :edges_groupped, :nodes_groupped, :robber_position, :to => :board, :prefix => true
+  delegate :hexes, :nodes, :edges, :height, :width, :size, :robber_position, :to => :board, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true, :allow_nil => true
   delegate :resources, :to => :current_discard_player, :prefix => true
   delegate :number, :to => :winner, :prefix => true, :allow_nil => true

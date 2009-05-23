@@ -20,15 +20,20 @@
 class Node < ActiveRecord::Base
   include ToHash
 
-  state_machine :initial => :settlement do
+  state_machine do
+    event :settle do
+      transition nil => :settlement
+    end
+
     event :expand do
       transition :settlement => :city
     end
 
+    before_transition :on => :settle, :do => :build_settlement
     before_transition :on => :expand, :do => :build_city
   end
 
-  validates_presence_of :player, :board
+  validates_presence_of :player, :board, :state
   validates_associated :player
   validates_uniqueness_of :board_id, :scope => [:row, :col]
   validate :proximity_of_land, :proximity_of_settlements, :possesion_of_road, :player_not_changed
@@ -36,7 +41,6 @@ class Node < ActiveRecord::Base
   belongs_to :board
   belongs_to :player
 
-  before_validation_on_create :build_settlement
   after_save :save_player, :settlement_built
 
   delegate :game, :to => :board
@@ -60,8 +64,7 @@ class Node < ActiveRecord::Base
   end
 
   def self.find_by_positions(positions)
-    #positions.map { |position| find_by_position(position) }.compact
-    find(:all, :conditions => [%Q{(row = ? AND col = ?) OR } * positions.size + %Q{ 0 = 1}, *positions.flatten])
+    find(:all, :conditions => [%Q{(#{quoted_table_name}.row = ? AND #{quoted_table_name}.col = ?) OR } * positions.size + %Q{ 0 = 1}, *positions.flatten])
   end
 
   def position

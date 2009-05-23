@@ -23,8 +23,7 @@
 require "stomp"
 
 class ApplicationController < ActionController::Base
-  helper :all # include all helpers, all the time
-  #protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  helper :all
 
   filter_parameter_logging :password, :password_confirmation
   helper_method :current_user_session, :current_user
@@ -60,7 +59,7 @@ class ApplicationController < ActionController::Base
   end
 
   def store_location
-    session[:return_to] = request.request_uri
+    session[:return_to] = request.request_uri if request.get?
   end
 
   def redirect_back_or_default(default)
@@ -73,7 +72,7 @@ class ApplicationController < ActionController::Base
     stomp.send("/games/#{game.id}", message.to_json)
     stomp.close
   rescue Errno::ECONNREFUSED
-    RAILS_DEFAULT_LOGGER.error "!!! The Orbited server appears to be down!"
+    RAILS_DEFAULT_LOGGER.error "The Orbited server appears to be down!"
   end
 
   def game
@@ -186,5 +185,4 @@ class ApplicationController < ActionController::Base
     @offer_response.to_hash(:player => :player_number,
                             :agreed => :agreed)
   end
-
 end
