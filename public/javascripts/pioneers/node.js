@@ -34,10 +34,6 @@ Pioneers.Node = function(board, attributes) {
         return this.player;
     };
 
-    this.getId = function() {
-        return this.id;
-    };
-
     this.getBoard = function() {
         return this.board;
     };
@@ -52,10 +48,6 @@ Pioneers.Node = function(board, attributes) {
 
     this.setState = function(state) {
         this.state = state;
-    };
-
-    this.setId = function(id) {
-        this.id = id;
     };
 
     this.setPlayer = function(player) {
@@ -173,7 +165,6 @@ Pioneers.Node = function(board, attributes) {
         this.board = board;
         this.game = board.game;
         this.position = attributes.position;
-        this.id = attributes.id;
         this.player = attributes.player;
         this.state = attributes.state;
     };

@@ -72,7 +72,7 @@ class ApplicationController < ActionController::Base
     stomp.send("/games/#{game.id}", message.to_json)
     stomp.close
   rescue Errno::ECONNREFUSED
-    RAILS_DEFAULT_LOGGER.error "The Orbited server appears to be down!"
+    Rails.logger.error "The Orbited server appears to be down!"
   end
 
   def game
@@ -92,20 +92,21 @@ class ApplicationController < ActionController::Base
                                  :state => :state,
                                  :name => :user_login,
                                  :cards => :cards_count,
-                                 :bricks => :bricks,
+                                 # :bricks => :bricks,
                                  :bricksRate => :bricks_exchange_rate,
-                                 :grain => :grain,
+                                 # :grain => :grain,
                                  :grainRate => :grain_exchange_rate,
-                                 :lumber => :lumber,
+                                 # :lumber => :lumber,
                                  :lumberRate => :lumber_exchange_rate,
-                                 :ore => :ore,
+                                 # :ore => :ore,
                                  :oreRate => :ore_exchange_rate,
-                                 :wool => :wool,
+                                 # :wool => :wool,
                                  :woolRate => :wool_exchange_rate,
                                  :settlements => :settlements,
                                  :cities => :cities,
                                  :roads => :roads,
-                                 :points => :visible_points }])
+                                 :points => :visible_points,
+                                 :resources => :resources }])
   end
 
   def card
@@ -126,7 +127,6 @@ class ApplicationController < ActionController::Base
     @node.reload
     @node.to_hash(:position => :position,
                   :player => :player_number,
-                  :id => :id,
                   :state => :state)
   end
 
@@ -140,12 +140,12 @@ class ApplicationController < ActionController::Base
     @robbery.reload
     @robbery.to_hash(:position => :position,
                      :sender => :sender_number,
-                     :recipient => :recipient_number,
-                     :bricks => :bricks,
-                     :grain => :grain,
-                     :lumber => :lumber,
-                     :ore => :ore,
-                     :wool => :wool)
+                     :recipient => :recipient_number)
+                     # :bricks => :bricks,
+                     # :grain => :grain,
+                     # :lumber => :lumber,
+                     # :ore => :ore,
+                     # :wool => :wool)
   end
 
   def offer

@@ -1,0 +1,116 @@
+== Message Block
+
+Implements the common view pattern by which a list of messages are shown at the top, 
+often a combination of flash messages and ActiveRecord validation issues on one or more models.  
+This allows for a nice, stylized block of messages at the top of the page with icons 
+indicating what type of message it is (error, confirmation, warning, etc.)
+
+This view helper acts as a replacement for error_messages_for by taking error messages 
+from your models and combing them with flash messages (multiple types such as error, confirm, etc.) 
+and outputting them to your view.  This plugin comes with an example stylesheet and images.
+
+== Usage
+
+Once you install this, you should now have a set of images at public/images/message_block and 
+a basic stylesheet installed at public/stylesheets/message_block.css.  First you'll want to either 
+reference this in your layout or copy the declarations to your main layout.  Then you can use 
+the helper <tt><%= message_block %></tt> as described below:
+
+The first argument specifies a hash options:
+
+* <tt>:on</tt> - specifies one or many model names for which to check error messages.
+* <tt>:model_error_type</tt> - specifies the message type to use for validation errors; defaults to 'error'
+* <tt>:flash_types</tt> - specifies the keys to check in the flash hash.  Messages will be grouped in ul 
+  lists according to this type.  Defaults to: %w(back confirm error info warn)
+* <tt>:html</tt> - Specifies HTML options for the containing div
+* <tt>:id</tt> - Specifies ID of the containing div; defaults to 'message_block'
+* <tt>:class</tt> - Specifies class name of the containing div; defaults to nothing.
+* <tt>:container</tt> - specifies which block-level element to contain the errors (defaults to :div).
+
+=== Example
+Imagine you have a form for entering a user and a comment:
+
+  <%= message_block :on => [:user, :comment] %>
+
+Imagine also you set these flash variables in the controller:
+  class CommentsController
+    def create
+      flash.now[:error] = "Error A"
+      flash.now[:confirm] = "Confirmation A"  # Note you can use different types
+      flash.now[:warn] = ["Warn A", "Warn B"]  # Can set to an array for multiple messages
+    end
+  end
+
+And let's say that you want to show these messages but also show the validation issues 
+given that both user and comment fail ActiveRecord validation:
+
+  <div id="message_block" class="message_block">
+    <ul class="error">
+      <li>Error A</li>
+      <li>User first name is required.</li>
+      <li>Comment contents is required.</li>
+    </ul>
+    <ul class="confirm">
+      <li>Confirmation A</li>
+    </ul>
+    <ul class="warn">
+      <li>Warn A</li>
+      <li>Warn B</li>
+    </ul>
+  </div>
+
+=== Ajax & JavaScript Integration
+
+Sometimes you'll want to use the message block pattern within JavaScript.  Wouldn't it be nice to just populate 
+the message_block DOM tree based on a JavaScript object not unlike Rails flash?
+
+Included in the plugin is a Prototype JS implementation to make this easier.  Note that this file is *not* automatically 
+copied when the plugin is installed.  Currently only a Prototype version is available (jQuery coming soon!)
+  
+  assets/javascripts/message_block_prototype.js
+
+Example Usage:
+  
+  <div id="something">
+    <%= message_block :on => :job %>
+  </div>
+  
+  <script type="text/javascript">
+    document.observe('dom:loaded', function() {
+      message_block = new MessageBlock('message_block');  // Default ID is message_block, being explicit
+      
+      // Updates with two errors and one confirmation
+      message_block.update({
+        error: ['Error One', 'Error Two'],
+        confirm: ['Confirmation Message']
+      });
+      
+      // Clears the message block
+      message_block.clear();
+      
+      // Same as above...
+      message_block.update({});
+    });
+  </script>
+
+This could be useful if you're interacting with stuff via Ajax, for example:
+
+  # In Controller
+  wants.json do
+    render :status => :unprocessable_entity, :json => { 'error' => @job.errors.full_messages }
+  end
+  
+  # JavaScript Ajax
+  new Ajax.Request("/jobs", {
+    method: 'get',
+    
+    onFailure: function(transport) {
+      this.message_block.update(transport.responseJSON);
+    },
+    
+    onSuccess: function(transport) {
+      this.message_block.clear();
+      
+      // Do something...
+    }
+  });

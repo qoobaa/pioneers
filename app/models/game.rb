@@ -379,11 +379,19 @@ class Game < ActiveRecord::Base
 
   def deal_resources
     players.each do |player|
-      player.bricks = player.lumber = player.ore = player.grain = player.wool = 0
-      player.bricks_exchange_rate = player.grain_exchange_rate = player.lumber_exchange_rate = player.ore_exchange_rate = player.wool_exchange_rate = 4
+      player.bricks = 0
+      player.lumber = 0
+      player.ore = 0
+      player.grain = 0
+      player.wool = 0
+      player.bricks_exchange_rate = 4
+      player.grain_exchange_rate = 4
+      player.lumber_exchange_rate = 4
+      player.ore_exchange_rate = 4
+      player.wool_exchange_rate = 4
       player.army_size = 0
       player.settlements = 5
-      player.cities = 5
+      player.cities = 4
       player.roads = 15
       player.hidden_points = 0
       player.visible_points = 0

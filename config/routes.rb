@@ -33,4 +33,5 @@ ActionController::Routing::Routes.draw do |map|
     games.resources :dice_rolls
     games.resources :discards
   end
+  map.root :controller => "games", :action => "index"
 end

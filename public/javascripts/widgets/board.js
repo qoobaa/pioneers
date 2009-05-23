@@ -266,7 +266,7 @@ $.widget("ui.board", {
 
     _buildCity: function(event, node) {
         this._setMode("default");
-        this._trigger("citybuilt", event, [node.getId()]);
+        this._trigger("citybuilt", event, [node.getPosition()]);
     },
 
     _buildRoad: function(event, edge) {

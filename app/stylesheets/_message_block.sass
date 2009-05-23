@@ -1,0 +1,25 @@
+!message_block_border_color ||= #ecd757
+!message_block_background_color ||= #fcf6d0
+
+=message-block
+  .message-block
+    +clearfix
+    ul
+      +no-bullets
+      :border-top= 1px solid !message_block_border_color
+      :border-bottom= 1px solid !message_block_border_color
+      :background-color= !message_block_background_color
+      :background-position 1em 50%
+      :background-repeat no-repeat
+      &.error
+        :background-image= image_url("message_block/error_m.gif")
+      &.info
+        :background-image= image_url("message_block/info_m.gif")
+      &.notice
+        :background-image= image_url("message_block/notice_m.gif")
+      &.confirm
+        :background-image= image_url("message_block/confirmation_m.gif")
+      &.warn
+        :background-image= image_url("message_block/warn_m.gif")
+      li
+        :margin-left 3em

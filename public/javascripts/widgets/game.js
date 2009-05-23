@@ -63,20 +63,20 @@ $.widget("ui.game", {
 
         this.board.bind("boardsettlementbuilt", function(event, position) {
             var data = {
-                "node[state_event]": "settle",
                 "node[row]": position[0],
-                "node[col]": position[1]
+                "node[col]": position[1],
+                "node[state_event]": "settle"
             };
             $.post("/games/" + that.options.id + "/nodes", data);
             that.build.build("enable");
         });
 
-        this.board.bind("boardcitybuilt", function(event, id) {
+        this.board.bind("boardcitybuilt", function(event, position) {
             var data = {
                 _method: "put",
                 "node[state_event]": "expand"
             };
-            $.post("/games/" + that.options.id + "/nodes/" + id, data);
+            $.post("/games/" + that.options.id + "/nodes/" + position.join(","), data);
             that.build.build("enable");
         });
 

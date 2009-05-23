@@ -32,7 +32,7 @@ class NodesController < ApplicationController
   end
 
   def update
-    @node = @game.board_nodes.find(params[:id])
+    @node = @game.board_nodes.find_by_position(params[:id].split(","))
     @node.user = @current_user
     if @node.update_attributes(params[:node])
       stomp_send(@game, { :node => node, :game => game })
