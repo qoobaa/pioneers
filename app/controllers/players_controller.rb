@@ -20,6 +20,13 @@
 class PlayersController < ApplicationController
   before_filter :require_user, :fetch_game
 
+  def show
+    @player = @game.players.find_by_user_id(@current_user.id)
+    respond_to do |format|
+      format.json { render :json => { :player => player } }
+    end
+  end
+
   def create
     @player = @game.players.build
     @player.user = @current_user

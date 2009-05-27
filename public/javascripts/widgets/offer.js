@@ -15,20 +15,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-$.widget("ui.discard", {
+$.widget("ui.offer", {
     _init: function() {
         var that = this;
-        this.element.addClass("ui-discard ui-widget");
+        this.element.addClass("ui-offer ui-widget");
 
         var ul = $("<ul/>").appendTo(this.element);
         var li;
 
         $.each(this.options.resourceTypes, function(key, value) {
             li = $("<li/>").appendTo(ul).text(value);
-            that[value] = $("<div/>").appendTo(li).addClass("ui-discard-" + value).resource({ step: 1, max: 0, min: -that.options[value], value: 0 });
+            that[value] = $("<div/>").appendTo(li).addClass("ui-offer-" + value).resource({ step: 1, max: 99, min: -that.options[value], value: 0 });
         });
 
-        this.accept = $("<a/>").attr("href", "").addClass("ui-discard-accept ui-state-disabled").text("accept").appendTo(li).click(function(event) {
+        li = $("<li/>").appendTo(ul);
+        this.accept = $("<a/>").appendTo(li).attr("href", "").addClass("ui-offer-accept ui-state-disabled").text("accept").click(function(event) {
             if(that._isValid()) {
                 var values = $.map(that.options.resourceTypes, function(resource) {
                     return that[resource].resource("value");
@@ -51,16 +52,11 @@ $.widget("ui.discard", {
     resources: function(resources) {
         var that = this;
         $.each(this.options.resourceTypes, function(key, value) {
-            if(resource[value]) {
+            if(resources[value]) {
                 that.options[value] = resources[value];
                 that[value].resource("min", -resources[value]);
             }
         });
-        this._reset();
-    },
-
-    limit: function(limit) {
-        this.options.limit = limit;
         this._reset();
     },
 
@@ -73,18 +69,21 @@ $.widget("ui.discard", {
 
     _isValid: function() {
         var that = this;
-        var discarded = 0, resources = 0;
+        var negative = false, positive = false;
         $.each(this.options.resourceTypes, function(key, value) {
-            discarded += that[value].resource("value");
+            var resources = that[value].resource("value");
+            if(resources < 0) {
+                negative = true;
+            }
+            if(resources > 0) {
+                positive = true;
+            }
         });
-        $.each(this.options.resourceTypes, function(key, value) {
-            resources += that.options[value];
-        });
-        return this.options.limit === resources + discarded;
+        return positive && negative;
     }
 });
 
-$.extend($.ui.discard, {
+$.extend($.ui.offer, {
     defaults: {
         resourceTypes: ["bricks", "grain", "lumber", "ore", "wool"]
     }

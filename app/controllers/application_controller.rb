@@ -185,4 +185,27 @@ class ApplicationController < ActionController::Base
     @offer_response.to_hash(:player => :player_number,
                             :agreed => :agreed)
   end
+
+  def player
+    @player.reload
+    @player.to_hash(:number => :number,
+                    :state => :state,
+                    :name => :user_login,
+                    :cards => :cards_count,
+                    :bricks => :bricks,
+                    :bricksRate => :bricks_exchange_rate,
+                    :grain => :grain,
+                    :grainRate => :grain_exchange_rate,
+                    :lumber => :lumber,
+                    :lumberRate => :lumber_exchange_rate,
+                    :ore => :ore,
+                    :oreRate => :ore_exchange_rate,
+                    :wool => :wool,
+                    :woolRate => :wool_exchange_rate,
+                    :settlements => :settlements,
+                    :cities => :cities,
+                    :roads => :roads,
+                    :points => :visible_points,
+                    :resources => :resources)
+  end
 end

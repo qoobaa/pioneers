@@ -8,9 +8,9 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.gem "authlogic"
-  config.gem "chriseppstein-compass", :lib => "compass", :source => "http://gems.github.com"
+  config.gem "chriseppstein-compass", :lib => "compass"
   config.gem "haml-edge", :lib => "haml"
-  config.gem "pager-acts_as_list", :lib => "active_record/acts/list", :source => "http://gems.github.com"
+  config.gem "pager-acts_as_list", :lib => "active_record/acts/list"
   config.gem "qoobaa-to_hash", :lib => "to_hash"
   config.gem "state_machine"
 

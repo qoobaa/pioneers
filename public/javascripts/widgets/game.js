@@ -42,6 +42,8 @@ $.widget("ui.game", {
         this._createEndTurn();
         this._createRollDice();
         this._createDiscard();
+        this._createOffer();
+        this._createExchange();
         this._setupStomp();
         this._refresh();
     },
@@ -149,7 +151,7 @@ $.widget("ui.game", {
 
     _createDiscard: function() {
         var that = this;
-        this.discard = $("<div/>").hide().appendTo(this.element).discard(this.options.userPlayer).bind("discardaccept", function(event, bricks, grain, lumber, ore, wool) {
+        this.discard = $("<div/>").appendTo(this.element).discard(this.options.userPlayer).bind("discardaccept", function(event, bricks, grain, lumber, ore, wool) {
             var data = {
                 "discard[bricks]": bricks,
                 "discard[grain]": grain,
@@ -158,6 +160,34 @@ $.widget("ui.game", {
                 "discard[wool]": wool
             };
             $.post("/games/" + that.options.id + "/discards", data);
+        });
+    },
+
+    _createOffer: function() {
+        var that = this;
+        this.offer = $("<div/>").appendTo(this.element).offer(this.options.userPlayer).bind("offeraccept", function(event, bricks, grain, lumber, ore, wool) {
+            var data = {
+                "offer[bricks]": bricks,
+                "offer[grain]": grain,
+                "offer[lumber]": lumber,
+                "offer[ore]": ore,
+                "offer[wool]": wool
+            };
+            $.post("/games/" + that.options.id + "/offer", data);
+        });
+    },
+
+    _createExchange: function() {
+        var that = this;
+        this.exchange = $("<div/>").appendTo(this.element).exchange(this.options.userPlayer).bind("exchangeaccept", function(event, bricks, grain, lumber, ore, wool) {
+            var data = {
+                "exchange[bricks]": bricks,
+                "exchange[grain]": grain,
+                "exchange[lumber]": lumber,
+                "exchange[ore]": ore,
+                "exchange[wool]": wool
+            };
+            $.post("/games/" + that.options.id + "/exchanges", data);
         });
     },
 
