@@ -44,6 +44,8 @@ $.widget("ui.game", {
         this._createDiscard();
         this._createOffer();
         this._createExchange();
+        this._createUserOffer();
+        this._createOtherOffer();
         this._setupStomp();
         this._refresh();
     },
@@ -188,6 +190,23 @@ $.widget("ui.game", {
                 "exchange[wool]": wool
             };
             $.post("/games/" + that.options.id + "/exchanges", data);
+        });
+    },
+
+    _createUserOffer: function() {
+        var that = this;
+        this.userOffer = $("<div/>").appendTo(this.element).useroffer(this.options.offer).bind("userofferaccepted", function(event, player) {
+            var data = {
+                "offer[recipient_number]": player
+            };
+            $.post("/games/" + that.options.id + "/offer", data);
+        });
+    },
+
+    _createOtherOffer: function() {
+        var that = this;
+        this.otherOffer = $("<div/>").appendTo(this.element).otheroffer(this.options.offer).bind("otherofferaccept", function(event) {
+            alert("dsadsa");
         });
     },
 
