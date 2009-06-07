@@ -32,7 +32,7 @@ class Exchange < ActiveRecord::Base
   after_save :save_player, :exchanged
 
   delegate :players, :exchanged!, :to => :game, :prefix => true
-  delegate :bricks_exchange_rate, :grain_exchange_rate, :lumber_exchange_rate, :ore_exchange_rate, :wool_exchange_rate, :to => :player, :prefix => true
+  delegate :bricks_exchange_rate, :grain_exchange_rate, :lumber_exchange_rate, :ore_exchange_rate, :wool_exchange_rate, :number, :to => :player, :prefix => true
 
   attr_reader :user
 

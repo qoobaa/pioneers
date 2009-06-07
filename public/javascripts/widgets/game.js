@@ -43,8 +43,7 @@ $.widget("ui.game", {
         this._createUserPlayer();
         this._createBuild();
         this._createEndTurn();
-        this._createPlayArmyCard();
-        this._createRollDice();
+        this._createBeforeRoll();
         this._createDiscard();
         this._createOffer();
         this._createExchange();
@@ -123,20 +122,37 @@ $.widget("ui.game", {
         this.build = $("<div/>").appendTo(this.element).build().hide();
         this.build.bind("buildsettlementclick", function(event) {
             that._trigger("message", null, ["info", "select place for settlement"]);
-            that.build.build("disable");
+            that.endTurn.hide();
+            that.exchange.hide();
+            that.offer.hide();
+            that.build.hide();
+            that.cards.hide();
             that.board.board("buildSettlementMode", that.options.userPlayer.number);
         });
         this.build.bind("buildcityclick", function() {
             that._trigger("message", null, ["info", "select settlement to expand"]);
-            that.build.build("disable");
+            that.endTurn.hide();
+            that.exchange.hide();
+            that.offer.hide();
+            that.build.hide();
+            that.cards.hide();
             that.board.board("buildCityMode", that.options.userPlayer.number);
         });
         this.build.bind("buildroadclick", function() {
             that._trigger("message", null, ["info", "select place for road"]);
-            that.build.build("disable");
+            that.endTurn.hide();
+            that.exchange.hide();
+            that.offer.hide();
+            that.build.hide();
+            that.cards.hide();
             that.board.board("buildRoadMode", that.options.userPlayer.number);
         });
         this.build.bind("buildcardclick", function() {
+            that.endTurn.hide();
+            that.exchange.hide();
+            that.offer.hide();
+            that.build.hide();
+            that.cards.hide();
             var data = {
                 nothing: true
             };
@@ -147,6 +163,11 @@ $.widget("ui.game", {
     _createEndTurn: function() {
         var that = this;
         this.endTurn = $("<a/>").addClass("end-turn").text("End turn").attr("href", "").hide().appendTo(this.element).click(function() {
+            that.endTurn.hide();
+            that.exchange.hide();
+            that.offer.hide();
+            that.build.hide();
+            that.cards.hide();
             var data = {
                 _method : "put",
                 "game[phase_event]": "end_turn"
@@ -156,22 +177,19 @@ $.widget("ui.game", {
         });
     },
 
-    _createPlayArmyCard: function() {
+    _createBeforeRoll: function() {
         var that = this;
-        this.playArmyCard = $("<a/>").addClass("play-army-card").text("play army card").attr("href", "").hide().appendTo(this.element).click(function(event, card) {
+        this.beforeRoll = $("<div/>").appendTo(this.element).beforeroll();
+        this.beforeRoll.bind("beforerollarmycardplayed", function(event, card) {
             var data = {
                 "card[state_event]": "play"
             };
             $.post("/games/" + that.options.id + "/cards/" + card.id, data);
             return false;
         });
-    },
-
-    _createRollDice: function() {
-        var that = this;
-        this.rollDice = $("<a/>").addClass("roll-dice").text("Roll dice").attr("href", "").hide().appendTo(this.element).click(function() {
+        this.beforeRoll.bind("beforerolldicerolled", function(event) {
             var data = {
-                nothing: true // FIXME: RoR bug
+                nothing: true
             };
             $.post("/games/" + that.options.id + "/dice_rolls", data);
             return false;
@@ -195,6 +213,11 @@ $.widget("ui.game", {
     _createOffer: function() {
         var that = this;
         this.offer = $("<div/>").appendTo(this.element).offer(this.options.userPlayer).hide().bind("offeraccept", function(event, bricks, grain, lumber, ore, wool) {
+            that.endTurn.hide();
+            that.exchange.hide();
+            that.offer.hide();
+            that.build.hide();
+            that.cards.hide();
             var data = {
                 "offer[bricks]": bricks,
                 "offer[grain]": grain,
@@ -209,6 +232,11 @@ $.widget("ui.game", {
     _createExchange: function() {
         var that = this;
         this.exchange = $("<div/>").appendTo(this.element).exchange(this.options.userPlayer).hide().bind("exchangeaccept", function(event, bricks, grain, lumber, ore, wool) {
+            that.endTurn.hide();
+            that.exchange.hide();
+            that.offer.hide();
+            that.build.hide();
+            that.cards.hide();
             var data = {
                 "exchange[bricks]": bricks,
                 "exchange[grain]": grain,
@@ -294,6 +322,11 @@ $.widget("ui.game", {
             switch(card.type) {
             case "Card::Army":
             case "Card::RoadBuilding":
+                that.build.hide();
+                that.exchange.hide();
+                that.offer.hide();
+                that.endTurn.hide();
+                that.cards.hide();
                 var data = {
                     "_method": "put",
                     "card[state_event]": "play"
@@ -301,11 +334,21 @@ $.widget("ui.game", {
                 $.post("/games/" + that.options.id + "/cards/" + card.id, data);
                 break;
             case "Card::Monopoly":
-                $(this).hide();
+                that.build.hide();
+                that.exchange.hide();
+                that.offer.hide();
+                that.endTurn.hide();
+                that.cards.hide();
+                that._trigger("message", null, ["info", "select resource type"]);
                 that.monopoly.monopoly("card", card).show();
                 break;
             case "Card::YearOfPlenty":
-                $(this).hide();
+                that.build.hide();
+                that.exchange.hide();
+                that.offer.hide();
+                that.endTurn.hide();
+                that.cards.hide();
+                that._trigger("message", null, ["info", "choose two resources"]);
                 that.yearOfPlenty.yearofplenty("card", card).show();
                 break;
             }
@@ -341,9 +384,6 @@ $.widget("ui.game", {
     },
 
     _stompMessageReceived: function(frame) {
-        // if(console && console.log) {
-        //     console.log(frame.body);
-        // }
         var message = eval("(" + frame.body + ")");
         var that = this;
         $.each(message, function(key, value) {
@@ -461,6 +501,8 @@ $.widget("ui.game", {
                                             roads: this.options.userPlayer.roads,
                                             cards: this.options.cards });
 
+            this.beforeRoll.beforeroll("update", { cards: this.options.userPlayer.cards });
+
             this.cards.cards("update", { cards: this.options.userPlayer.cards,
                                          cardPlayed: this.options.cardPlayed });
         }
@@ -494,10 +536,10 @@ $.widget("ui.game", {
         }
 
         if(this._isUserBeforeRoll()) {
-            this._trigger("message", null, ["info", "roll the dice or play army card (which is currently not supported)"]);
-            this.rollDice.show();
+            this._trigger("message", null, ["info", "roll the dice or play army card"]);
+            this.beforeRoll.show();
         } else {
-            this.rollDice.hide();
+            this.beforeRoll.hide();
         }
 
         if(this._isUserAfterRoll()) {

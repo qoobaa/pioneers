@@ -34,7 +34,8 @@ class NodesController < ApplicationController
   def update
     @node = @game.board_nodes.find_by_position(params[:id].split(","))
     @node.user = @current_user
-    if @node.update_attributes(params[:node])
+    @node.attributes = params[:node]
+    if @node.expand
       stomp_send(@game, { :node => node, :game => game })
       render :nothing => true, :status => :created
     else
