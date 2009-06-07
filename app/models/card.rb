@@ -73,9 +73,7 @@ class Card < ActiveRecord::Base
 
   def set_type
     random_card = game_take_random_card
-    if random_card
-      self.type = "Card::#{random_card.to_s.classify}"
-    end
+    self.type = "Card::#{random_card.to_s.classify}" if random_card
   end
 
   def charge_for_card

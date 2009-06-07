@@ -15,11 +15,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-$(function() {
-    var messageBlock = $(".message-block").messageblock();
-    $("#game").game().bind("gamemessage", function(event, type, message) {
-        messageBlock.messageblock("remove").messageblock("add", type, message);
-    }).bind("gameclear", function() {
-        messageBlock.messageblock("remove");
-    });
+$.widget("ui.monopoly", {
+    _init: function() {
+        $(this.element).addClass("ui-widget ui-monopoly");
+        var that = this;
+
+        var ul = $("<ul/>").appendTo(this.element);
+
+        $.each(this.options.resourceTypes, function(key, value) {
+            var li = $("<li/>").appendTo(ul);
+            $("<a/>").appendTo(li).attr("href", "").text(value).click(function(event) {
+                that._trigger("chosen", event, [that.options.card, value]);
+                return false;
+            });
+        });
+    },
+
+    card: function(card) {
+        this.options.card = card;
+    }
+});
+
+$.extend($.ui.monopoly, {
+    defaults: {
+        resourceTypes: ["bricks", "grain", "lumber", "ore", "wool"]
+    }
 });

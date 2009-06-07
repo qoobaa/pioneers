@@ -30,29 +30,36 @@ $.widget("ui.game", {
         $.each(data.game, function(key, value) {
             that.options[key] = value;
         });
+        $.getJSON("/games/" + this.options.id + "/player.json", function(data) {
+            that._userPlayerDataLoaded(data);
+        });
+    },
 
-        this._createBoard(this.options.board);
-        this._createGameinfo(this.options);
-        this._createPlayers(this.options.players);
-        var userPlayer = $.grep(this.options.players, function(player) {
-            return player.number === that.options.userPlayer;
-        })[0];
-        this._createUserplayer(userPlayer);
+    _userPlayerDataLoaded: function(data) {
+        this.options.userPlayer = data.player;
+        this._createBoard();
+        this._createGameinfo();
+        this._createPlayers();
+        this._createUserPlayer();
         this._createBuild();
         this._createEndTurn();
+        this._createPlayArmyCard();
         this._createRollDice();
         this._createDiscard();
         this._createOffer();
         this._createExchange();
         this._createUserOffer();
         this._createOtherOffer();
+        this._createYearOfPlenty();
+        this._createMonopoly();
+        this._createCards();
         this._setupStomp();
         this._refresh();
     },
 
-    _createBoard: function(boardAttributes) {
+    _createBoard: function() {
         var that = this;
-        this.board = $("<div/>").appendTo(this.element).board({ boardAttributes: boardAttributes });
+        this.board = $("<div/>").appendTo(this.element).board({ boardAttributes: this.options.board });
 
         this.board.bind("boardrobbed", function(event, position, player) {
             var data = {
@@ -94,20 +101,20 @@ $.widget("ui.game", {
         });
     },
 
-    _createGameinfo: function(gameAttributes) {
-        this.gameinfo = $("<div/>").appendTo(this.element).gameinfo(gameAttributes);
+    _createGameinfo: function() {
+        this.gameinfo = $("<div/>").appendTo(this.element).gameinfo(this.options);
     },
 
-    _createPlayers: function(playersAttributes) {
+    _createPlayers: function() {
         var that = this;
-        $.each(playersAttributes, function() {
+        $.each(this.options.players, function() {
             that["player" + this.number] = $("<div/>").appendTo(that.element).player(this);
         });
     },
 
-    _createUserplayer: function(userPlayerAttributes) {
-        if(userPlayerAttributes != undefined) {
-            this.userplayer = $("<div/>").appendTo(this.element).userplayer(userPlayerAttributes);
+    _createUserPlayer: function() {
+        if(this.options.userPlayer !== undefined) {
+            this.userPlayer = $("<div/>").appendTo(this.element).userplayer(this.options.userPlayer);
         }
     },
 
@@ -115,16 +122,25 @@ $.widget("ui.game", {
         var that = this;
         this.build = $("<div/>").appendTo(this.element).build().hide();
         this.build.bind("buildsettlementclick", function(event) {
+            that._trigger("message", null, ["info", "select place for settlement"]);
             that.build.build("disable");
-            that.board.board("buildSettlementMode", that.options.userPlayer);
+            that.board.board("buildSettlementMode", that.options.userPlayer.number);
         });
         this.build.bind("buildcityclick", function() {
+            that._trigger("message", null, ["info", "select settlement to expand"]);
             that.build.build("disable");
-            that.board.board("buildCityMode", that.options.userPlayer);
+            that.board.board("buildCityMode", that.options.userPlayer.number);
         });
         this.build.bind("buildroadclick", function() {
+            that._trigger("message", null, ["info", "select place for road"]);
             that.build.build("disable");
-            that.board.board("buildRoadMode", that.options.userPlayer);
+            that.board.board("buildRoadMode", that.options.userPlayer.number);
+        });
+        this.build.bind("buildcardclick", function() {
+            var data = {
+                nothing: true
+            };
+            $.post("/games/" + that.options.id + "/cards", data);
         });
     },
 
@@ -140,11 +156,22 @@ $.widget("ui.game", {
         });
     },
 
+    _createPlayArmyCard: function() {
+        var that = this;
+        this.playArmyCard = $("<a/>").addClass("play-army-card").text("play army card").attr("href", "").hide().appendTo(this.element).click(function(event, card) {
+            var data = {
+                "card[state_event]": "play"
+            };
+            $.post("/games/" + that.options.id + "/cards/" + card.id, data);
+            return false;
+        });
+    },
+
     _createRollDice: function() {
         var that = this;
         this.rollDice = $("<a/>").addClass("roll-dice").text("Roll dice").attr("href", "").hide().appendTo(this.element).click(function() {
             var data = {
-                nothing: true // TODO: check Rack or RoR for the bug
+                nothing: true // FIXME: RoR bug
             };
             $.post("/games/" + that.options.id + "/dice_rolls", data);
             return false;
@@ -153,7 +180,7 @@ $.widget("ui.game", {
 
     _createDiscard: function() {
         var that = this;
-        this.discard = $("<div/>").appendTo(this.element).discard(this.options.userPlayer).bind("discardaccept", function(event, bricks, grain, lumber, ore, wool) {
+        this.discard = $("<div/>").appendTo(this.element).discard(this.options.userPlayer).hide().bind("discardaccept", function(event, bricks, grain, lumber, ore, wool) {
             var data = {
                 "discard[bricks]": bricks,
                 "discard[grain]": grain,
@@ -167,7 +194,7 @@ $.widget("ui.game", {
 
     _createOffer: function() {
         var that = this;
-        this.offer = $("<div/>").appendTo(this.element).offer(this.options.userPlayer).bind("offeraccept", function(event, bricks, grain, lumber, ore, wool) {
+        this.offer = $("<div/>").appendTo(this.element).offer(this.options.userPlayer).hide().bind("offeraccept", function(event, bricks, grain, lumber, ore, wool) {
             var data = {
                 "offer[bricks]": bricks,
                 "offer[grain]": grain,
@@ -181,7 +208,7 @@ $.widget("ui.game", {
 
     _createExchange: function() {
         var that = this;
-        this.exchange = $("<div/>").appendTo(this.element).exchange(this.options.userPlayer).bind("exchangeaccept", function(event, bricks, grain, lumber, ore, wool) {
+        this.exchange = $("<div/>").appendTo(this.element).exchange(this.options.userPlayer).hide().bind("exchangeaccept", function(event, bricks, grain, lumber, ore, wool) {
             var data = {
                 "exchange[bricks]": bricks,
                 "exchange[grain]": grain,
@@ -195,18 +222,94 @@ $.widget("ui.game", {
 
     _createUserOffer: function() {
         var that = this;
-        this.userOffer = $("<div/>").appendTo(this.element).useroffer(this.options.offer).bind("userofferaccepted", function(event, player) {
+        this.userOffer = $("<div/>").appendTo(this.element).useroffer(this.options.offer).hide().bind("userofferaccepted", function(event, player) {
             var data = {
+                "_method": "put",
+                "offer[state_event]": "accept",
                 "offer[recipient_number]": player
             };
             $.post("/games/" + that.options.id + "/offer", data);
+        }).bind("useroffercancelled", function(event) {
+            var data = {
+                "_method": "put",
+                "offer[state_event]": "decline"
+            };
+            $.post("/games/" + that.options.id + "/offer", data);
         });
+        if(this.options.offer != undefined) {
+            $.each(this.options.offer.responses, function(key, value) {
+                that.userOffer.useroffer("response", value);
+            });
+        }
     },
 
     _createOtherOffer: function() {
         var that = this;
-        this.otherOffer = $("<div/>").appendTo(this.element).otheroffer(this.options.offer).bind("otherofferaccept", function(event) {
-            alert("dsadsa");
+        this.otherOffer = $("<div/>").appendTo(this.element).otheroffer(this.options.offer).hide().bind("otherofferaccepted", function(event) {
+            var data = {
+                "offer_response[agreed]": true
+            };
+            $.post("/games/" + that.options.id + "/offer_response", data);
+        }).bind("otherofferdeclined", function(event) {
+            var data = {
+                "offer_response[agreed]": false
+            };
+            $.post("/games/" + that.options.id + "/offer_response", data);
+        });
+    },
+
+    _createYearOfPlenty: function() {
+        var that = this;
+        this.yearOfPlenty = $("<div/>").appendTo(this.element).yearofplenty().hide().bind("yearofplentyaccept", function(event, card, resources) {
+            $(this).hide();
+            var data = {
+                "_method": "put",
+                "card[state_event]": "play",
+                "card[bricks]": resources.bricks,
+                "card[grain]": resources.grain,
+                "card[lumber]": resources.lumber,
+                "card[ore]": resources.ore,
+                "card[wool]": resources.wool
+            };
+            $.post("/games/" + that.options.id + "/cards/" + card.id, data);
+        });
+    },
+
+    _createMonopoly: function() {
+        var that = this;
+        this.monopoly = $("<div/>").appendTo(this.element).monopoly().hide().bind("monopolychosen", function(event, card, resource) {
+            $(this).hide();
+            var data = {
+                "_method": "put",
+                "card[state_event]": "play",
+                "card[resource_type]": resource
+            };
+            $.post("/games/" + that.options.id + "/cards/" + card.id, data);
+        });
+    },
+
+    _createCards: function() {
+        var that = this;
+        this.cards = $("<div/>").appendTo(this.element).cards().hide().bind("cardsplayed", function(event, card) {
+            switch(card.type) {
+            case "Card::Army":
+            case "Card::RoadBuilding":
+                var data = {
+                    "_method": "put",
+                    "card[state_event]": "play"
+                };
+                $.post("/games/" + that.options.id + "/cards/" + card.id, data);
+                break;
+            case "Card::Monopoly":
+                $(this).hide();
+                that.monopoly.monopoly("card", card).show();
+                break;
+            case "Card::YearOfPlenty":
+                $(this).hide();
+                that.yearOfPlenty.yearofplenty("card", card).show();
+                break;
+            }
+            return false;
         });
     },
 
@@ -246,13 +349,12 @@ $.widget("ui.game", {
         $.each(message, function(key, value) {
             that["_" + key + "Received"](value);
         });
-        this._refresh();
+        this._reloadUserPlayer();
     },
 
     // game: { cardPlayed: false, cards: 10, phase: "after_roll", player: 1, discardPlayer: 1, winner: null, state: "playing", roll: 7, turn: 21, players: [{ number: 1, resources: 2, points: 3, cards: 3, state: "started" }]}
     _gameReceived: function(game) {
         var that = this;
-        this.gameinfo.gameinfo("update", game);
         $.each(game, function(key, value) {
             that.options[key] = value;
         });
@@ -275,22 +377,26 @@ $.widget("ui.game", {
 
     // offer: { sender: 1, recipient: null, bricks: 0, grain: -1, lumber: 1, ore: 0, wool: 0, state: "awaiting" }
     _offerReceived: function(offer) {
-
+        this.options.offer = offer;
+        this.userOffer.useroffer("offer", offer);
+        this.otherOffer.otheroffer("offer", offer);
     },
 
     // offerResponse: { player: 1, agreed: true }
-    _offerResponseReceived: function(offerResponse) {
-
+    _offerResponseReceived: function(response) {
+        this.options.offer.responses = this.options.offer.responses || [];
+        this.options.offer.responses.push(response);
+        this.userOffer.useroffer("response", response);
     },
 
     // exchange: { player: 1, bricks: 0, grain: -4, lumber: 1, ore: 0, wool: 0 }
     _exchangeReceived: function(exchange) {
-
+        this._trigger("message", null, ["info", "player " + exchange.player + " exchanged some resources"]); // TODO
     },
 
     // discard: { player: 1, bricks: 0, grain: -4, lumber: 0, ore: 0, wool: 0 }
     _discardReceived: function(discard) {
-
+        this._trigger("message", null, ["info", "player " + discard.player + " discarded some resources"]); // TODO
     },
 
     // card: { player: 1, id: 5, state: "tapped", bricks: 0, grain: 0, lumber: 0, ore: 0, wool: 0, resource: null, type: "Card" }
@@ -298,16 +404,89 @@ $.widget("ui.game", {
 
     },
 
+    _reloadUserPlayer: function() {
+        var that = this;
+        $.getJSON("/games/" + this.options.id + "/player.json", function(data) {
+            that.options.userPlayer = data.player;
+            that._refresh();
+        });
+    },
+
     // refresh
     _refresh: function() {
         var that = this;
 
+        this._trigger("clear");
+
+        // refresh gameinfo
+        this.gameinfo.gameinfo("update", this.options);
+
         // refresh players
-        $.each(this.options.players, function() {
-            that["player" + this.number].player("current", this.number === that.options.player).player("update", this);
+        $.each(this.options.players, function(key, value) {
+            that["player" + value.number].player("current", value.number === that.options.player).player("update", value);
         });
 
+        if(this.options.userPlayer !== undefined) {
+            // refresh userPlayer
+            this.userPlayer.userplayer("update", this.options.userPlayer);
+            this.discard.discard("resources", this.options.userPlayer);
+            this.offer.offer("resources", this.options.userPlayer);
+            this.otherOffer.otheroffer("resources", this.options.userPlayer);
+
+            this.exchange.exchange("resources", { bricks: this.options.userPlayer.bricks,
+                                                  bricksRate: this.options.userPlayer.bricksRate,
+                                                  grain: this.options.userPlayer.grain,
+                                                  grainRate: this.options.userPlayer.grainRate,
+                                                  lumber: this.options.userPlayer.lumber,
+                                                  lumberRate: this.options.userPlayer.lumberRate,
+                                                  ore: this.options.userPlayer.ore,
+                                                  oreRate: this.options.userPlayer.oreRate,
+                                                  wool: this.options.userPlayer.wool,
+                                                  woolRate: this.options.userPlayer.woolRate });
+
+            this.otherOffer.otheroffer("resources", { bricks: this.options.userPlayer.bricks,
+                                                      grain: this.options.userPlayer.grain,
+                                                      lumber: this.options.userPlayer.lumber,
+                                                      ore: this.options.userPlayer.ore,
+                                                      wool: this.options.userPlayer.wool,
+                                                      settlements: this.options.userPlayer.settlements });
+
+            this.build.build("resources", { bricks: this.options.userPlayer.bricks,
+                                            grain: this.options.userPlayer.grain,
+                                            lumber: this.options.userPlayer.lumber,
+                                            ore: this.options.userPlayer.ore,
+                                            wool: this.options.userPlayer.wool,
+                                            settlements: this.options.userPlayer.settlements,
+                                            cities: this.options.userPlayer.cities,
+                                            roads: this.options.userPlayer.roads,
+                                            cards: this.options.cards });
+
+            this.cards.cards("update", { cards: this.options.userPlayer.cards,
+                                         cardPlayed: this.options.cardPlayed });
+        }
+
+        if(this._isUserFirstSettlement()) {
+            this._trigger("message", null, ["info", "build your first settlement"]);
+            this.board.board("buildFirstSettlementMode", this.options.userPlayer.number);
+        }
+
+        if(this._isUserFirstRoad()) {
+            this._trigger("message", null, ["info", "build your first road"]);
+            this.board.board("buildFirstRoadMode", this.options.userPlayer.number);
+        }
+
+        if(this._isUserSecondSettlement()) {
+            this._trigger("message", null, ["info", "build your second settlement"]);
+            this.board.board("buildFirstSettlementMode", this.options.userPlayer.number);
+        }
+
+        if(this._isUserSecondRoad()) {
+            this._trigger("message", null, ["info", "build your second road"]);
+            this.board.board("buildFirstRoadMode", this.options.userPlayer.number);
+        }
+
         if(this._isUserDiscard()) {
+            this._trigger("message", null, ["info", "discard " + (this.options.userPlayer.resources - this.options.discardLimit) + " resources"]);
             this.discard.discard("limit", this.options.discardLimit);
             this.discard.show();
         } else {
@@ -315,27 +494,66 @@ $.widget("ui.game", {
         }
 
         if(this._isUserBeforeRoll()) {
+            this._trigger("message", null, ["info", "roll the dice or play army card (which is currently not supported)"]);
             this.rollDice.show();
         } else {
             this.rollDice.hide();
         }
 
         if(this._isUserAfterRoll()) {
+            this._trigger("message", null, ["info", "click end turn after you finish"]);
             this.endTurn.show();
+            this.cards.show();
+            this.exchange.show();
+            this.offer.show();
             this.build.show();
         } else {
             this.endTurn.hide();
+            this.cards.hide();
+            this.exchange.hide();
+            this.offer.hide();
             this.build.hide();
         }
 
         if(this._isUserRobber()) {
-            this.board.board("moveRobberMode", this.options.userPlayer);
+            this._trigger("message", null, ["info", "move the robber and select settlement or city to rob (if any)"]);
+            this.board.board("moveRobberMode", this.options.userPlayer.number);
+        }
+
+        if(this._isUserOffer()) {
+            this._trigger("message", null, ["info", "wait for responses and select player you want to trade with or cancel the offer"]);
+            this.userOffer.show();
+        } else {
+            this.userOffer.hide();
+        }
+
+        if(this._isOtherOffer()) {
+            this._trigger("message", null, ["info", "player " + this.options.player + " wants to trade"]);
+            this.otherOffer.show();
+        } else {
+            this.otherOffer.hide();
         }
     },
 
     // helpers
     _isUserPhase: function() {
-        return this.options.userPlayer === this.options.player;
+        return this.options.userPlayer.number === this.options.player;
+    },
+
+    _isUserFirstSettlement: function() {
+        return this._isUserPhase() && this.options.phase === "first_settlement";
+    },
+
+    _isUserSecondSettlement: function() {
+        return this._isUserPhase() && this.options.phase === "second_settlement";
+    },
+
+    _isUserFirstRoad: function() {
+        return this._isUserPhase() && this.options.phase === "first_road";
+    },
+
+    _isUserSecondRoad: function() {
+        return this._isUserPhase() && this.options.phase === "second_road";
     },
 
     _isUserBeforeRoll: function() {
@@ -351,7 +569,14 @@ $.widget("ui.game", {
     },
 
     _isUserDiscard: function() {
-        return this.options.userPlayer === this.options.discardPlayer
-            && this.options.phase === "discard";
+        return this.options.userPlayer.number === this.options.discardPlayer && this.options.phase === "discard";
+    },
+
+    _isUserOffer: function() {
+        return this._isUserPhase() && this.options.phase === "offer";
+    },
+
+    _isOtherOffer: function() {
+        return !this._isUserPhase() && this.options.phase === "offer";
     }
 });

@@ -14,6 +14,7 @@ class OfferResponse < ActiveRecord::Base
   delegate :bricks, :grain, :lumber, :ore, :wool, :to => :offer, :prefix => true
   delegate :game, :to => :offer
   delegate :players, :to => :game, :prefix => true
+  delegate :number, :to => :player, :prefix => true
 
   attr_reader :user
 

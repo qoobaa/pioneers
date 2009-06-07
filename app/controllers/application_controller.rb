@@ -92,19 +92,6 @@ class ApplicationController < ActionController::Base
                                  :state => :state,
                                  :name => :user_login,
                                  :cards => :cards_count,
-                                 # :bricks => :bricks,
-                                 :bricksRate => :bricks_exchange_rate,
-                                 # :grain => :grain,
-                                 :grainRate => :grain_exchange_rate,
-                                 # :lumber => :lumber,
-                                 :lumberRate => :lumber_exchange_rate,
-                                 # :ore => :ore,
-                                 :oreRate => :ore_exchange_rate,
-                                 # :wool => :wool,
-                                 :woolRate => :wool_exchange_rate,
-                                 :settlements => :settlements,
-                                 :cities => :cities,
-                                 :roads => :roads,
                                  :points => :visible_points,
                                  :resources => :resources }])
   end
@@ -141,11 +128,6 @@ class ApplicationController < ActionController::Base
     @robbery.to_hash(:position => :position,
                      :sender => :sender_number,
                      :recipient => :recipient_number)
-                     # :bricks => :bricks,
-                     # :grain => :grain,
-                     # :lumber => :lumber,
-                     # :ore => :ore,
-                     # :wool => :wool)
   end
 
   def offer
@@ -191,7 +173,6 @@ class ApplicationController < ActionController::Base
     @player.to_hash(:number => :number,
                     :state => :state,
                     :name => :user_login,
-                    :cards => :cards_count,
                     :bricks => :bricks,
                     :bricksRate => :bricks_exchange_rate,
                     :grain => :grain,
@@ -206,6 +187,7 @@ class ApplicationController < ActionController::Base
                     :cities => :cities,
                     :roads => :roads,
                     :points => :visible_points,
-                    :resources => :resources)
+                    :resources => :resources,
+                    :cards => [:cards, :id, :state, :type])
   end
 end

@@ -28,7 +28,7 @@ $.widget("ui.messageblock", {
     add: function(type, message, classNames) {
         var ul = this.element.find("ul." + type);
         if(ul.length === 0) {
-            ul = $("<ul/>").addClass(type).appendTo(this.element);
+            ul = $("<ul/>").appendTo(this.element).addClass(type);
         }
         $("<li/>").appendTo(ul).addClass(classNames).text(message);
     },

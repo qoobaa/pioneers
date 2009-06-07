@@ -16,22 +16,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 $.widget("ui.build", {
-    // disable: function(element) {
-    //     if(!element) {
-    //         $(this.element).addClass("disabled");
-    //     } else {
-    //         $(this.element).find("." + element).addClass("disabled");
-    //     }
-    // },
-
-    // enable: function(element) {
-    //     if(!element) {
-    //         $(this.element).removeClass("disabled");
-    //     } else {
-    //         $(this.element).find("." + element).removeClass("disabled");
-    //     }
-    // },
-
     _init: function() {
         $(this.element).addClass("ui-widget ui-build");
         var that = this;
@@ -42,7 +26,7 @@ $.widget("ui.build", {
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("settlement").text("Settlement").click(function(event) {
-            if(!that.options.disabled) {
+            if(!that.options.disabled && that._isSettlementEnabled()) {
                 that._trigger("settlementclick", event);
             }
             return false;
@@ -50,7 +34,7 @@ $.widget("ui.build", {
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("city").text("City").click(function(event) {
-            if(!that.options.disabled) {
+            if(!that.options.disabled && that._isCityEnabled()) {
                 that._trigger("cityclick", event);
             }
             return false;
@@ -58,7 +42,7 @@ $.widget("ui.build", {
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("road").text("Road").click(function(event) {
-            if(!that.options.disabled) {
+            if(!that.options.disabled && that._isRoadEnabled()) {
                 that._trigger("roadclick", event);
             }
             return false;
@@ -66,10 +50,33 @@ $.widget("ui.build", {
 
         li = $("<li/>").appendTo(ul);
         $("<a/>").appendTo(li).attr("href", "").addClass("card").text("Card").click(function(event) {
-            if(!that.options.disabled) {
+            if(!that.options.disabled && that._isCardEnabled()) {
                 that._trigger("cardclick", event);
             }
             return false;
         });
+    },
+
+    resources: function(resources) {
+        var that = this;
+        $.each(resources, function(key, value) {
+            that.options[key] = resources[key];
+        });
+    },
+
+    _isSettlementEnabled: function() {
+        return this.options.bricks > 0 && this.options.grain > 0 && this.options.lumber > 0 && this.options.wool > 0 && this.options.settlements > 0;
+    },
+
+    _isCityEnabled: function() {
+        return this.options.grain > 1 && this.options.ore > 2 && this.options.cities > 0;
+    },
+
+    _isRoadEnabled: function() {
+        return this.options.bricks > 0 && this.options.lumber > 0 && this.options.roads > 0;
+    },
+
+    _isCardEnabled: function() {
+        return this.options.grain > 0 && this.options.ore > 0 && this.options.wool > 0 && this.options.cards > 0;
     }
 });

@@ -38,7 +38,8 @@ class Game < ActiveRecord::Base
   delegate :resources, :to => :current_discard_player, :prefix => true
   delegate :number, :to => :winner, :prefix => true, :allow_nil => true
 
-  after_update :save_players, :sum_cards_count, :end_game
+  before_update :sum_cards_count
+  after_update :save_players, :end_game
 
   attr_accessor :user
 

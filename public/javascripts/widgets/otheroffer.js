@@ -27,16 +27,29 @@ $.widget("ui.otheroffer", {
             that[value] = $("<dd/>").appendTo(dl);
         });
 
-        $("<a/>").appendTo(this.element).attr("href", "").text("decline").click(function(event) {
+        this.decline = $("<a/>").appendTo(this.element).attr("href", "").text("decline").click(function(event) {
             that._trigger("declined", event);
             return false;
         });
 
-        $("<a/>").appendTo(this.element).attr("href", "").text("accept").click(function(event) {
-            that._trigger("accepted", event);
+        this.accept = $("<a/>").appendTo(this.element).attr("href", "").text("accept").click(function(event) {
+            if(that._isAcceptable()) {
+                that._trigger("accepted", event);
+            }
             return false;
         });
 
+        this.options.resources = {};
+        this._refresh();
+    },
+
+    resources: function(resources) {
+        var that = this;
+        $.each(this.options.resourceTypes, function(key, value) {
+            if(resources[value] !== undefined) {
+                that.options.resources[value] = resources[value];
+            }
+        });
         this._refresh();
     },
 
@@ -53,6 +66,20 @@ $.widget("ui.otheroffer", {
         $.each(this.options.resourceTypes, function(key, value) {
             that[value].text(that.options[value]);
         });
+        if(this._isAcceptable()) {
+            this.accept.removeClass("ui-disabled");
+        } else {
+            this.accept.addClass("ui-disabled");
+        }
+    },
+
+    _isAcceptable: function() {
+        var that = this;
+        var acceptable = true;
+        $.each(this.options.resourceTypes, function(key, value) {
+            acceptable = acceptable && (that.options.resources[value] - that.options[value] >= 0);
+        });
+        return acceptable;
     }
 });
 

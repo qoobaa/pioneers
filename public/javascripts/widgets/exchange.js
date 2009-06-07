@@ -25,7 +25,7 @@ $.widget("ui.exchange", {
 
         $.each(this.options.resourceTypes, function(key, value) {
             li = $("<li/>").appendTo(ul).text(value);
-            that[value] = $("<div/>").appendTo(li).addClass("ui-exchange-" + value).resource({ step: that.options[value + "ExchangeRate"], max: 99, min: -that.options[value], value: 0 });
+            that[value] = $("<div/>").appendTo(li).addClass("ui-exchange-" + value).resource({ step: that.options[value + "Rate"], max: 99, min: -that.options[value], value: 0 });
         });
 
         li = $("<li/>").appendTo(ul);
@@ -52,13 +52,13 @@ $.widget("ui.exchange", {
     resources: function(resources) {
         var that = this;
         $.each(this.options.resourceTypes, function(key, value) {
-            if(resources[value]) {
+            if(resources[value] !== undefined) {
                 that.options[value] = resources[value];
                 that[value].resource("min", -resources[value]);
             }
-            var rate = resources[value + "ExchangeRate"];
-            if(rate) {
-                that.options[value + "ExchangeRate"] = rate;
+            var rate = resources[value + "Rate"];
+            if(rate !== undefined) {
+                that.options[value + "Rate"] = rate;
                 that[value].resource("step", rate);
             }
         });
@@ -77,7 +77,7 @@ $.widget("ui.exchange", {
         var given = 0, wanted = 0;
         $.each(this.options.resourceTypes, function(key, value) {
             var resources = that[value].resource("value");
-            var rate = that.options[value + "ExchangeRate"];
+            var rate = that.options[value + "Rate"];
             if(resources < 0) {
                 given += -resources / rate;
             } else if (resources > 0) {

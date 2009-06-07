@@ -71,7 +71,6 @@ $.widget("ui.board", {
         var boardNode = board.getNode(node.position);
         boardNode.setState(node.state);
         boardNode.setPlayer(node.player);
-        boardNode.setId(node.id);
         this.element.find(".nodes .row-" + node.position[0] + " .col-" + node.position[1]).boardNode("reset", true);
     },
 
