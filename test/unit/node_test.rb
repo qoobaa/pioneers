@@ -20,9 +20,6 @@
 require 'test_helper'
 
 class NodeTest < Test::Unit::TestCase
-  should_belong_to :map
-  should_belong_to :player
-
   context "With position [3, 10]" do
     setup { @node = Node.new(:position => [3, 10]) }
 
