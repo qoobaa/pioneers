@@ -30,13 +30,24 @@ $.widget("ui.game", {
         $.each(data.game, function(key, value) {
             that.options[key] = value;
         });
-        $.getJSON("/games/" + this.options.id + "/player.json", function(data) {
-            that._userPlayerDataLoaded(data);
+        $.getJSON("/games/" + this.options.id + "/cards.json", function(data) {
+            that._cardsDataLoaded(data);
         });
     },
 
-    _userPlayerDataLoaded: function(data) {
-        this.options.userPlayer = data.player;
+    _userPlayer: function() {
+        var that = this;
+        return $.grep(this.options.players, function(player) {
+            return player.number === that.options.userPlayerNumber;
+        })[0];
+    },
+
+    _userCards: function() {
+        return this.options.userCards;
+    },
+
+    _cardsDataLoaded: function(data) {
+        this.options.userCards = data.cards;
         this._createBoard();
         this._createGameinfo();
         this._createPlayers();
@@ -112,8 +123,8 @@ $.widget("ui.game", {
     },
 
     _createUserPlayer: function() {
-        if(this.options.userPlayer !== undefined) {
-            this.userPlayer = $("<div/>").appendTo(this.element).userplayer(this.options.userPlayer);
+        if(this._userPlayer() !== undefined) {
+            this.userPlayer = $("<div/>").appendTo(this.element).userplayer(this._userPlayer());
         }
     },
 
@@ -127,7 +138,7 @@ $.widget("ui.game", {
             that.offer.hide();
             that.build.hide();
             that.cards.hide();
-            that.board.board("buildSettlementMode", that.options.userPlayer.number);
+            that.board.board("buildSettlementMode", that._userPlayer().number);
         });
         this.build.bind("buildcityclick", function() {
             that._trigger("message", null, ["info", "select settlement to expand"]);
@@ -136,7 +147,7 @@ $.widget("ui.game", {
             that.offer.hide();
             that.build.hide();
             that.cards.hide();
-            that.board.board("buildCityMode", that.options.userPlayer.number);
+            that.board.board("buildCityMode", that._userPlayer().number);
         });
         this.build.bind("buildroadclick", function() {
             that._trigger("message", null, ["info", "select place for road"]);
@@ -145,7 +156,7 @@ $.widget("ui.game", {
             that.offer.hide();
             that.build.hide();
             that.cards.hide();
-            that.board.board("buildRoadMode", that.options.userPlayer.number);
+            that.board.board("buildRoadMode", that._userPlayer().number);
         });
         this.build.bind("buildcardclick", function() {
             that.endTurn.hide();
@@ -198,7 +209,7 @@ $.widget("ui.game", {
 
     _createDiscard: function() {
         var that = this;
-        this.discard = $("<div/>").appendTo(this.element).discard(this.options.userPlayer).hide().bind("discardaccept", function(event, bricks, grain, lumber, ore, wool) {
+        this.discard = $("<div/>").appendTo(this.element).discard(this._userPlayer()).hide().bind("discardaccept", function(event, bricks, grain, lumber, ore, wool) {
             var data = {
                 "discard[bricks]": bricks,
                 "discard[grain]": grain,
@@ -212,7 +223,7 @@ $.widget("ui.game", {
 
     _createOffer: function() {
         var that = this;
-        this.offer = $("<div/>").appendTo(this.element).offer(this.options.userPlayer).hide().bind("offeraccept", function(event, bricks, grain, lumber, ore, wool) {
+        this.offer = $("<div/>").appendTo(this.element).offer(this._userPlayer()).hide().bind("offeraccept", function(event, bricks, grain, lumber, ore, wool) {
             that.endTurn.hide();
             that.exchange.hide();
             that.offer.hide();
@@ -231,7 +242,7 @@ $.widget("ui.game", {
 
     _createExchange: function() {
         var that = this;
-        this.exchange = $("<div/>").appendTo(this.element).exchange(this.options.userPlayer).hide().bind("exchangeaccept", function(event, bricks, grain, lumber, ore, wool) {
+        this.exchange = $("<div/>").appendTo(this.element).exchange(this._userPlayer()).hide().bind("exchangeaccept", function(event, bricks, grain, lumber, ore, wool) {
             that.endTurn.hide();
             that.exchange.hide();
             that.offer.hide();
@@ -389,7 +400,7 @@ $.widget("ui.game", {
         $.each(message, function(key, value) {
             that["_" + key + "Received"](value);
         });
-        this._reloadUserPlayer();
+        this._refresh();
     },
 
     // game: { cardPlayed: false, cards: 10, phase: "after_roll", player: 1, discardPlayer: 1, winner: null, state: "playing", roll: 7, turn: 21, players: [{ number: 1, resources: 2, points: 3, cards: 3, state: "started" }]}
@@ -441,13 +452,13 @@ $.widget("ui.game", {
 
     // card: { player: 1, id: 5, state: "tapped", bricks: 0, grain: 0, lumber: 0, ore: 0, wool: 0, resource: null, type: "Card" }
     _cardReceived: function(card) {
-
+        this._reloadUserCards();
     },
 
-    _reloadUserPlayer: function() {
+    _reloadUserCards: function() {
         var that = this;
-        $.getJSON("/games/" + this.options.id + "/player.json", function(data) {
-            that.options.userPlayer = data.player;
+        $.getJSON("/games/" + this.options.id + "/cards.json", function(data) {
+            that.options.userCards = data.cards;
             that._refresh();
         });
     },
@@ -466,69 +477,69 @@ $.widget("ui.game", {
             that["player" + value.number].player("current", value.number === that.options.player).player("update", value);
         });
 
-        if(this.options.userPlayer !== undefined) {
+        if(this._userPlayer() !== undefined) {
             // refresh userPlayer
-            this.userPlayer.userplayer("update", this.options.userPlayer);
-            this.discard.discard("resources", this.options.userPlayer);
-            this.offer.offer("resources", this.options.userPlayer);
-            this.otherOffer.otheroffer("resources", this.options.userPlayer);
+            this.userPlayer.userplayer("update", this._userPlayer());
+            this.discard.discard("resources", this._userPlayer());
+            this.offer.offer("resources", this._userPlayer());
+            this.otherOffer.otheroffer("resources", this._userPlayer());
 
-            this.exchange.exchange("resources", { bricks: this.options.userPlayer.bricks,
-                                                  bricksRate: this.options.userPlayer.bricksRate,
-                                                  grain: this.options.userPlayer.grain,
-                                                  grainRate: this.options.userPlayer.grainRate,
-                                                  lumber: this.options.userPlayer.lumber,
-                                                  lumberRate: this.options.userPlayer.lumberRate,
-                                                  ore: this.options.userPlayer.ore,
-                                                  oreRate: this.options.userPlayer.oreRate,
-                                                  wool: this.options.userPlayer.wool,
-                                                  woolRate: this.options.userPlayer.woolRate });
+            this.exchange.exchange("resources", { bricks: this._userPlayer().bricks,
+                                                  bricksRate: this._userPlayer().bricksRate,
+                                                  grain: this._userPlayer().grain,
+                                                  grainRate: this._userPlayer().grainRate,
+                                                  lumber: this._userPlayer().lumber,
+                                                  lumberRate: this._userPlayer().lumberRate,
+                                                  ore: this._userPlayer().ore,
+                                                  oreRate: this._userPlayer().oreRate,
+                                                  wool: this._userPlayer().wool,
+                                                  woolRate: this._userPlayer().woolRate });
 
-            this.otherOffer.otheroffer("resources", { bricks: this.options.userPlayer.bricks,
-                                                      grain: this.options.userPlayer.grain,
-                                                      lumber: this.options.userPlayer.lumber,
-                                                      ore: this.options.userPlayer.ore,
-                                                      wool: this.options.userPlayer.wool,
-                                                      settlements: this.options.userPlayer.settlements });
+            this.otherOffer.otheroffer("resources", { bricks: this._userPlayer().bricks,
+                                                      grain: this._userPlayer().grain,
+                                                      lumber: this._userPlayer().lumber,
+                                                      ore: this._userPlayer().ore,
+                                                      wool: this._userPlayer().wool,
+                                                      settlements: this._userPlayer().settlements });
 
-            this.build.build("resources", { bricks: this.options.userPlayer.bricks,
-                                            grain: this.options.userPlayer.grain,
-                                            lumber: this.options.userPlayer.lumber,
-                                            ore: this.options.userPlayer.ore,
-                                            wool: this.options.userPlayer.wool,
-                                            settlements: this.options.userPlayer.settlements,
-                                            cities: this.options.userPlayer.cities,
-                                            roads: this.options.userPlayer.roads,
+            this.build.build("resources", { bricks: this._userPlayer().bricks,
+                                            grain: this._userPlayer().grain,
+                                            lumber: this._userPlayer().lumber,
+                                            ore: this._userPlayer().ore,
+                                            wool: this._userPlayer().wool,
+                                            settlements: this._userPlayer().settlements,
+                                            cities: this._userPlayer().cities,
+                                            roads: this._userPlayer().roads,
                                             cards: this.options.cards });
 
-            this.beforeRoll.beforeroll("update", { cards: this.options.userPlayer.cards });
+            this.beforeRoll.beforeroll("update", { cards: this._userCards() });
 
-            this.cards.cards("update", { cards: this.options.userPlayer.cards,
+            this.cards.cards("update", { cards: this._userCards(),
                                          cardPlayed: this.options.cardPlayed });
         }
 
         if(this._isUserFirstSettlement()) {
             this._trigger("message", null, ["info", "build your first settlement"]);
-            this.board.board("buildFirstSettlementMode", this.options.userPlayer.number);
+            this.board.board("buildFirstSettlementMode", this._userPlayer().number);
         }
 
         if(this._isUserFirstRoad()) {
             this._trigger("message", null, ["info", "build your first road"]);
-            this.board.board("buildFirstRoadMode", this.options.userPlayer.number);
+            this.board.board("buildFirstRoadMode", this._userPlayer().number);
         }
 
         if(this._isUserSecondSettlement()) {
             this._trigger("message", null, ["info", "build your second settlement"]);
-            this.board.board("buildFirstSettlementMode", this.options.userPlayer.number);
+            this.board.board("buildFirstSettlementMode", this._userPlayer().number);
         }
 
         if(this._isUserSecondRoad()) {
             this._trigger("message", null, ["info", "build your second road"]);
-            this.board.board("buildFirstRoadMode", this.options.userPlayer.number);
+            this.board.board("buildFirstRoadMode", this._userPlayer().number);
         }
 
         if(this._isUserDiscard()) {
-            this._trigger("message", null, ["info", "discard " + (this.options.userPlayer.resources - this.options.discardLimit) + " resources"]);
+            this._trigger("message", null, ["info", "discard " + (this._userPlayer().resources - this.options.discardLimit) + " resources"]);
             this.discard.discard("limit", this.options.discardLimit);
             this.discard.show();
         } else {
@@ -559,7 +570,7 @@ $.widget("ui.game", {
 
         if(this._isUserRobber()) {
             this._trigger("message", null, ["info", "move the robber and select settlement or city to rob (if any)"]);
-            this.board.board("moveRobberMode", this.options.userPlayer.number);
+            this.board.board("moveRobberMode", this._userPlayer().number);
         }
 
         if(this._isUserOffer()) {
@@ -579,7 +590,7 @@ $.widget("ui.game", {
 
     // helpers
     _isUserPhase: function() {
-        return this.options.userPlayer.number === this.options.player;
+        return this.options.userPlayerNumber === this.options.player;
     },
 
     _isUserFirstSettlement: function() {
@@ -611,7 +622,7 @@ $.widget("ui.game", {
     },
 
     _isUserDiscard: function() {
-        return this.options.userPlayer.number === this.options.discardPlayer && this.options.phase === "discard";
+        return this.options.userPlayerNumber === this.options.discardPlayer && this.options.phase === "discard";
     },
 
     _isUserOffer: function() {

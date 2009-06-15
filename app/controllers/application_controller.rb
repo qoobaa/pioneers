@@ -93,7 +93,20 @@ class ApplicationController < ActionController::Base
                                  :name => :user_login,
                                  :cards => :cards_count,
                                  :points => :visible_points,
-                                 :resources => :resources }])
+                                 :resources => :resources,
+                                 :bricks => :bricks,
+                                 :bricksRate => :bricks_exchange_rate,
+                                 :grain => :grain,
+                                 :grainRate => :grain_exchange_rate,
+                                 :lumber => :lumber,
+                                 :lumberRate => :lumber_exchange_rate,
+                                 :ore => :ore,
+                                 :oreRate => :ore_exchange_rate,
+                                 :wool => :wool,
+                                 :woolRate => :wool_exchange_rate,
+                                 :settlements => :settlements,
+                                 :cities => :cities,
+                                 :roads => :roads }])
   end
 
   def card
@@ -168,26 +181,8 @@ class ApplicationController < ActionController::Base
                             :agreed => :agreed)
   end
 
-  def player
-    @player.reload
-    @player.to_hash(:number => :number,
-                    :state => :state,
-                    :name => :user_login,
-                    :bricks => :bricks,
-                    :bricksRate => :bricks_exchange_rate,
-                    :grain => :grain,
-                    :grainRate => :grain_exchange_rate,
-                    :lumber => :lumber,
-                    :lumberRate => :lumber_exchange_rate,
-                    :ore => :ore,
-                    :oreRate => :ore_exchange_rate,
-                    :wool => :wool,
-                    :woolRate => :wool_exchange_rate,
-                    :settlements => :settlements,
-                    :cities => :cities,
-                    :roads => :roads,
-                    :points => :visible_points,
-                    :resources => :resources,
-                    :cards => [:cards, :id, :state, :type])
+  def cards
+    @cards.reload
+    @cards.to_hash(:id, :type, :state)
   end
 end
