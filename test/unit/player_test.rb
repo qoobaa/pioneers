@@ -19,8 +19,8 @@
 
 require 'test_helper'
 
-class PlayerTest < Test::Unit::TestCase
-  should_belong_to :game
-  should_have_many :nodes, :edges
-  should_validate_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points
+class PlayerTest < ActiveSupport::TestCase
+  # should_belong_to :game
+  # should_have_many :nodes, :edges
+  # should_validate_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points
 end

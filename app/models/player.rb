@@ -19,6 +19,7 @@
 
 class Player < ActiveRecord::Base
   include ToHash
+  extend AttrModifier
 
   belongs_to :game
   belongs_to :user
@@ -28,17 +29,32 @@ class Player < ActiveRecord::Base
   has_many :exchanges
 
   acts_as_list :scope => :game, :column => "number"
-
   validates_uniqueness_of :user_id, :scope => [:game_id]
-
   delegate :count, :to => :cards, :prefix => true
   delegate :login, :idle?, :to => :user, :prefix => true
-  delegate :start_game, :preparing?, :current_player, :to => :game, :prefix => true
-  validates_numericality_of :bricks, :grain, :ore, :wool, :lumber, :settlements, :cities, :roads, :points,
-                            :visible_points, :hidden_points, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
-  validates_numericality_of :bricks_exchange_rate, :grain_exchange_rate, :lumber_exchange_rate,
-                            :ore_exchange_rate, :wool_exchange_rate, :allow_nil => true,
+  delegate :start_game, :preparing?, :current_player, :to => :game,
+           :prefix => true
+
+  validates_numericality_of :bricks, :grain, :ore, :wool, :lumber,
+                            :settlements, :cities, :roads, :points,
+                            :visible_points, :hidden_points,
+                            :modified_settlements, :modified_bricks,
+                            :modified_grain, :modified_ore,
+                            :modified_wool, :modified_lumber,
+                            :modified_settlements, :modified_cities,
+                            :modified_roads, :modified_visible_points,
+                            :modified_hidden_points,
+                            :greater_than_or_equal_to => 0,
+                            :only_integer => true, :allow_nil => true
+
+  validates_numericality_of :bricks_exchange_rate,
+                            :grain_exchange_rate,
+                            :lumber_exchange_rate, :ore_exchange_rate,
+                            :wool_exchange_rate, :allow_nil => true,
                             :greater_than => 0, :only_integer => true
+
+  attr_modifier :bricks, :grain, :lumber, :ore, :wool, :settlements,
+                :cities, :roads, :visible_points, :hidden_points
 
   before_destroy :game_preparing?
   before_save :sum_resources, :sum_points
@@ -57,8 +73,16 @@ class Player < ActiveRecord::Base
     end
   end
 
+  def random_resource
+    ([:bricks] * bricks +
+     [:lumber] * lumber +
+     [:ore] * ore +
+     [:grain] * grain +
+     [:wool] * wool).rand
+  end
+
   def rob_resource
-    resource_type = ([:bricks] * bricks + [:lumber] * lumber + [:ore] * ore + [:grain] * grain + [:wool] * wool).rand
+    resource_type = random_resource
     self[resource_type] -= 1 if resource_type
     resource_type
   end

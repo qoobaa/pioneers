@@ -17,10 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require 'test_help'
-
-class Test::Unit::TestCase
-  include RR::Adapters::TestUnit
+Factory.define :node do |n|
+  n.state_event "settle"
+  n.association :board, :factory => :board
+  n.association :player, :factory => :player
+  n.position [0, 0]
 end

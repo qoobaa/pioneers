@@ -19,13 +19,20 @@
 
 Factory.define :player do |p|
   p.bricks 0
+  p.bricks_exchange_rate 4
   p.grain 0
+  p.grain_exchange_rate 4
   p.ore 0
+  p.ore_exchange_rate 4
   p.wool 0
+  p.wool_exchange_rate 4
   p.lumber 0
-  p.settlements 0
-  p.cities 0
-  p.roads 0
+  p.lumber_exchange_rate 4
+  p.settlements 5
+  p.cities 4
+  p.roads 15
   p.points 0
-  p.user { |user| user.association(:user) }
+  p.visible_points 0
+  p.hidden_points 0
+  p.association :user, :factory => :user
 end

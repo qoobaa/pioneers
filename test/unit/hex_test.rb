@@ -196,4 +196,24 @@ class HexTest < Test::Unit::TestCase
       assert @hex.harbor_on?([2, 4])
     end
   end
+
+  context "with neighbour node" do
+    setup do
+      @hex = Factory.build(:hex, :hex_type => "forest")
+      @node = Object.new
+      stub(@hex).nodes { [@node] }
+    end
+
+    should "add resources to neighbour nodes without robber when rolled" do
+      stub(@hex).robber? { false }
+      mock(@node).add_resources("lumber")
+      @hex.rolled
+    end
+
+    should "not add resources to neighbour nodes with robber when rolled" do
+      stub(@hex).robber? { true }
+      dont_allow(@node).add_resources
+      @hex.rolled
+    end
+  end
 end

@@ -19,9 +19,9 @@
 
 require 'test_helper'
 
-class NodeTest < Test::Unit::TestCase
+class NodeTest < ActiveSupport::TestCase
   context "With position [3, 10]" do
-    setup { @node = Node.new(:position => [3, 10]) }
+    setup { @node = Factory.build(:node, :position => [3, 10]) }
 
     should "return correct hex positions" do
       assert_equal [[2, 5], [2, 4], [3, 4]], @node.hex_positions
@@ -37,7 +37,7 @@ class NodeTest < Test::Unit::TestCase
   end
 
   context "With position [6, 7]" do
-    setup { @node = Node.new(:position => [6, 7]) }
+    setup { @node = Factory.build(:node, :position => [6, 7]) }
 
     should "return correct hex positions" do
       assert_equal [[5, 3], [6, 2], [6, 3]], @node.hex_positions
@@ -52,285 +52,229 @@ class NodeTest < Test::Unit::TestCase
     end
   end
 
-  context "In first_settlement phase of first player" do
+  context "validations" do
     setup do
-      @game = Game.create!
-      3.times { @game.players << Factory(:player, :settlements => 5) }
-      @game.map = Factory(:map, :hexes_attributes => [{ :hex_type => "forest", :roll => 2 }, { :hex_type => "forest", :roll => 2}, { :hex_type => "sea" }, { :hex_type => "sea" }], :size => [2, 2] )
-      @game.current_player_number = 1
-      @game.aasm_state = "first_settlement"
-      @game.save!
+      @node = Factory.build(:node)
+      @hex = Object.new
+      stub(@hex).settleable? { true }
+      stub(@hex).harbor_on? { false }
+      stub(@node).nodes { [] }
+      stub(@node).hexes { [@hex] }
+      stub(@node).user { @node.player.user }
+      stub(@node).user_player { @node.player }
+      stub(@node).game_settlement_built! { true }
     end
 
-    should "allow to build first settlement by first player" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      assert node.valid?
+    context "in first settlement phase" do
+      setup do
+        stub(@node).game_first_settlement? { true }
+        stub(@node).game_second_settlement? { false }
+        stub(@node).game_after_roll? { false }
+      end
+
+      should "be valid with valid attributes" do
+        assert @node.valid?
+      end
+
+      should "not be valid with node in neighbourhood" do
+        stub(@node).nodes { [Factory.build(:node)] }
+        assert !@node.valid?
+      end
+
+      should "not be valid if position is not settleable" do
+        stub(@hex).settleable? { false }
+        assert !@node.valid?
+      end
+
+      should "not be valid if player has changed" do
+        stub(@node).user_player { Factory.build(:player) }
+        assert !@node.valid?
+      end
+
+      should "take one settlement from player after save" do
+        @node.player.settlements = 5
+        @node.save!
+        assert_equal 4, @node.player.settlements
+      end
+
+      should "modify player's exchange rates if generic harbor" do
+        @node.player.bricks_exchange_rate = 2
+        @node.player.grain_exchange_rate = 2
+        stub(@hex).harbor_on?([0, 0]) { true }
+        stub(@hex).harbor_type { "generic" }
+        @node.save!
+        assert_equal 2, @node.player.bricks_exchange_rate
+        assert_equal 2, @node.player.grain_exchange_rate
+        assert_equal 3, @node.player.lumber_exchange_rate
+        assert_equal 3, @node.player.ore_exchange_rate
+        assert_equal 3, @node.player.wool_exchange_rate
+      end
+
+      should "modify player's exchange rates if lumber harbor" do
+        stub(@hex).harbor_on?([0, 0]) { true }
+        stub(@hex).harbor_type { "lumber" }
+        @node.save!
+        assert_equal 4, @node.player.bricks_exchange_rate
+        assert_equal 4, @node.player.grain_exchange_rate
+        assert_equal 2, @node.player.lumber_exchange_rate
+        assert_equal 4, @node.player.ore_exchange_rate
+        assert_equal 4, @node.player.wool_exchange_rate
+      end
+
+      should "have state 'settlement' after save" do
+        @node.save!
+        assert @node.settlement?
+      end
+
+      should "not be valid when player has not enough settlements" do
+        @node.player.settlements = 0
+        assert !@node.valid?
+      end
+
+      should "not charge player for settlement" do
+        @node.player.attributes = {
+          :bricks => 1,
+          :grain => 1,
+          :lumber => 1,
+          :wool => 1
+        }
+        @node.save!
+        assert_equal 1, @node.player.bricks
+        assert_equal 1, @node.player.grain
+        assert_equal 1, @node.player.lumber
+        assert_equal 1, @node.player.wool
+      end
+
+      should "add one visible victory point to player" do
+        @node.player.visible_points = 1
+        @node.save!
+        assert_equal 2, @node.player.visible_points
+      end
+
+      should "call game_settlement_built! after save" do
+        mock(@node).game_settlement_built!(@node.player.user) { true }
+        @node.save!
+      end
     end
 
-    should "not allow to build settlement by second player" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[1]
-      assert !node.valid?
+    context "in second settlement phase" do
+      setup do
+        stub(@node).game_first_settlement? { false }
+        stub(@node).game_second_settlement? { true }
+        stub(@node).game_after_roll? { false }
+        stub(@hex).resource_type { nil }
+      end
+
+      should "not charge player for settlement" do
+        @node.player.attributes = {
+          :bricks => 1,
+          :grain => 1,
+          :lumber => 1,
+          :ore => 1,
+          :wool => 1
+        }
+        @node.save!
+        assert_equal 1, @node.player.bricks
+        assert_equal 1, @node.player.grain
+        assert_equal 1, @node.player.lumber
+        assert_equal 1, @node.player.ore
+        assert_equal 1, @node.player.wool
+      end
+
+      should "add resources from neighbour hexes" do
+        stub(@hex).resource_type { "lumber" }
+        @node.player.attributes = {
+          :bricks => 1,
+          :grain => 1,
+          :lumber => 1,
+          :ore => 1,
+          :wool => 1
+        }
+        @node.save!
+        assert_equal 1, @node.player.bricks
+        assert_equal 1, @node.player.grain
+        assert_equal 2, @node.player.lumber
+        assert_equal 1, @node.player.ore
+        assert_equal 1, @node.player.wool
+      end
+
+      should "call game_settlement_built! after save" do
+        mock(@node).game_settlement_built!(@node.player.user) { true }
+        @node.save!
+      end
     end
 
-    should "not allow to build second settlement by first player" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      node.save!
-      node = @game.map_nodes.build(:position => [0, 3])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
+    context "in after roll phase" do
+      setup do
+        stub(@node).game_first_settlement? { false }
+        stub(@node).game_second_settlement? { false }
+        stub(@node).game_after_roll? { true }
+        @edge = Object.new
+        stub(@edge).player { @node.player }
+        stub(@node).edges { [@edge] }
+        @node.player.attributes = {
+          :bricks => 1,
+          :grain => 1,
+          :lumber => 1,
+          :ore => 1,
+          :wool => 1
+        }
+      end
 
-    should "not allow to build settlement on the sea" do
-      node = @game.map_nodes.build(:position => [1, 5])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
+      should "charge player for settlement" do
+        @node.save!
+        assert_equal 0, @node.player.bricks
+        assert_equal 0, @node.player.grain
+        assert_equal 0, @node.player.lumber
+        assert_equal 1, @node.player.ore
+        assert_equal 0, @node.player.wool
+      end
 
-    should "add one point to first player after settlement is built" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      node.save!
-      assert_equal 1, @game.players[0].points
-    end
-  end
+      should "not be valid without road" do
+        stub(@node).edges { [] }
+        assert !@node.valid?
+      end
 
-  context "In second_settlement phase of first player with settlement [0, 3] and road [0, 7]" do
-    setup do
-      @game = Game.create!
-      3.times { @game.players << Factory(:player, :settlements => 5, :roads => 15) }
-      @game.map = Factory(:map, :hexes_attributes => [{ :hex_type => "desert" }, { :hex_type => "forest", :roll => 2}, { :hex_type => "sea" }, { :hex_type => "sea" }], :size => [2, 2] )
-      @game.current_player_number = 1
-      @game.aasm_state = "first_settlement"
-      @game.save!
-      node = @game.map_nodes.build(:position => [0, 3])
-      node.player = @game.players[0]
-      node.save!
-      @game.aasm_state = "first_road"
-      @game.save!
-      edge = @game.map_edges.build(:position => [0, 7])
-      edge.player = @game.players[0]
-      edge.save!
-      @game.aasm_state = "second_settlement"
-      @game.save!
-    end
+      should "not be valid with road of other player" do
+        @edge = Object.new
+        stub(@edge).player { Factory.build(:player) }
+        stub(@node).edges { [@edge] }
+        assert !@node.valid?
+      end
 
-    should "allow to build second settlement by first player" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      assert node.valid?
-    end
+      should "not allow to expand settlement if player has not enough resources" do
+        @node.save!
+        @node.reload
+        @node.state_event = "expand"
+        assert !@node.valid?
+      end
 
-    should "add nothing to player resources on [0, 1]" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      node.save!
-      player = @game.players[0].reload
-      assert_equal 0, player.bricks
-      assert_equal 0, player.lumber
-      assert_equal 0, player.ore
-      assert_equal 0, player.grain
-      assert_equal 0, player.wool
-    end
-
-    should "add nothing to player resources on [0, 5]" do
-      node = @game.map_nodes.build(:position => [0, 5])
-      node.player = @game.players[0]
-      node.save!
-      player = @game.players[0].reload
-      assert_equal 0, player.bricks
-      assert_equal 1, player.lumber
-      assert_equal 0, player.ore
-      assert_equal 0, player.grain
-      assert_equal 0, player.wool
-    end
-
-    should "not allow to build settlement by second player" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[1]
-      assert !node.valid?
-    end
-
-    should "not allow to build third settlement by first player" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      node.save!
-      node = @game.map_nodes.build(:position => [0, 3])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
-
-    should "not allow to build settlement on the sea" do
-      node = @game.map_nodes.build(:position => [1, 5])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
-
-    should "add one point to first player after settlement is built" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      node.save!
-      assert_equal 2, @game.players[0].points
-    end
-  end
-
-  context "In first_settlement phase of second player with settlement on [0, 1] and road on [0, 3]" do
-    setup do
-      @game = Game.create!
-      3.times { @game.players << Factory(:player, :settlements => 5, :roads => 15) }
-      @game.map = Factory(:map, :hexes_attributes => [{ :hex_type => "forest", :roll => 2 }, { :hex_type => "forest", :roll => 2}, { :hex_type => "sea" }, { :hex_type => "sea" }], :size => [2, 2] )
-      @game.current_player_number = 1
-      @game.aasm_state = "first_settlement"
-      @game.save!
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      node.save!
-      @game.aasm_state = "first_road"
-      @game.save!
-      edge = @game.map_edges.build(:position => [0, 3])
-      edge.player = @game.players[0]
-      edge.save!
-      @game.current_player_number = 2
-      @game.aasm_state = "first_settlement"
-      @game.save!
-    end
-
-    should "not allow to build settlement by first player" do
-      node = @game.map_nodes.build(:position => [0, 3])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
-
-    should "not allow to build settlement on the same position by second player" do
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[1]
-      assert !node.valid?
-    end
-
-    should "not allow to build settlement too close to first settlement by second player" do
-      node = @game.map_nodes.build(:position => [0, 2])
-      node.player = @game.players[1]
-      assert !node.valid?
-    end
-
-    should "allow to build settlement on correct position by second player" do
-      node = @game.map_nodes.build(:position => [0, 3])
-      node.player = @game.players[1]
-      assert node.valid?
-    end
-
-    should "not allow to build second settlement by second player" do
-      node = @game.map_nodes.build(:position => [0, 3])
-      node.player = @game.players[1]
-      node.save!
-      node = @game.map_nodes.build(:position => [0, 5])
-      node.player = @game.players[1]
-      assert !node.valid?
-    end
-  end
-
-  context "In after_roll phase of first player with settlement(player1) on [0, 1] and road(player1) on [0, 3], settlement(player2) on [1, 3]" do
-    setup do
-      @game = Game.create!
-      3.times { @game.players << Factory(:player, :settlements => 5, :bricks => 5, :ore => 5, :wool => 5, :lumber => 5, :grain => 5, :cities => 5, :roads => 15) }
-      @game.map = Factory(:map, :hexes_attributes => [{ :hex_type => "forest", :roll => 2 }, { :hex_type => "forest", :roll => 2}, { :hex_type => "sea" }, { :hex_type => "sea" }], :size => [2, 2] )
-      @game.current_player_number = 1
-      @game.aasm_state = "first_settlement"
-      @game.save!
-      node = @game.map_nodes.build(:position => [0, 1])
-      node.player = @game.players[0]
-      node.save!
-      @game.aasm_state = "first_road"
-      @game.save!
-      edge = @game.map_edges.build(:position => [0, 3])
-      edge.player = @game.players[0]
-      edge.save!
-      @game.aasm_state = "first_settlement"
-      @game.current_player_number = 2
-      @game.save!
-      node = @game.map_nodes.build(:position => [1, 3])
-      node.player = @game.players[1]
-      node.save!
-      @game.current_player_number = 1
-      @game.aasm_state = "after_roll"
-      @game.save!
-    end
-
-    should "not allow to build on position without road by first player" do
-      node = @game.map_nodes.build(:position => [1, 1])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
-
-    should "allow to build on position with road by first player" do
-      edge = @game.map_edges.build(:position => [1, 2])
-      edge.player = @game.players[0]
-      edge.save!
-      node = @game.map_nodes.build(:position => [1, 1])
-      node.player = @game.players[0]
-      assert node.valid?
-    end
-
-    should "not allow to build settlement by second player" do
-      node = @game.map_nodes.build(:position => [1, 1])
-      node.player = @game.players[1]
-      assert !node.valid?
-    end
-
-    should "not allow to build settlement without resources by first player" do
-      @game.players[0].update_attributes(:bricks => 1)
-      edge = @game.map_edges.build(:position => [1, 2])
-      edge.player = @game.players[0]
-      edge.save!
-      node = @game.map_nodes.build(:position => [1, 1])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
-
-    should "not allow to build settlement without free settlements by first player" do
-      @game.players[0].update_attributes(:settlements => 0)
-      edge = @game.map_edges.build(:position => [1, 2])
-      edge.player = @game.players[0]
-      edge.save!
-      node = @game.map_nodes.build(:position => [1, 1])
-      node.player = @game.players[0]
-      assert !node.valid?
-    end
-
-    should "allow to expand settlement to city by first player" do
-      node = @game.players[0].nodes.first
-      assert node.expand!
-      assert node.valid?
-    end
-
-    should "add one victory point to first player after expansion" do
-      node = @game.players[0].nodes.first
-      node.expand
-      node.save!
-      @game.players[0].reload
-      assert_equal 2, @game.players[0].points
-    end
-
-    should "not allow to expand settlement to city without resources by first player" do
-      @game.players[0].update_attributes(:ore => 0)
-      node = @game.players[0].nodes.first
-      assert !node.expand!
-      assert !node.valid?
-    end
-
-    should "not allow to expand settlement to city without cities by first player" do
-      @game.players[0].update_attributes(:cities => 0)
-      node = @game.players[0].nodes.first
-      assert !node.expand!
-      assert !node.valid?
-    end
-
-    should "not allow to expand settlement of second player" do
-      node = @game.players[1].nodes.first
-      assert !node.expand!
-      assert !node.valid?
+      should "charge player for city if player has enough resources" do
+        @node.save!
+        @node.reload
+        @node.player.attributes = {
+          :bricks => 0,
+          :grain => 2,
+          :lumber => 0,
+          :ore => 3,
+          :wool => 0,
+          :settlements => 4,
+          :cities => 4,
+          :visible_points => 1
+        }
+        @node.state_event = "expand"
+        @node.save!
+        @node.reload
+        assert @node.city?
+        assert_equal 0, @node.player.bricks
+        assert_equal 0, @node.player.grain
+        assert_equal 0, @node.player.lumber
+        assert_equal 0, @node.player.ore
+        assert_equal 0, @node.player.wool
+        assert_equal 5, @node.player.settlements
+        assert_equal 3, @node.player.cities
+        assert_equal 2, @node.player.visible_points
+      end
     end
   end
 end

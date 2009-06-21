@@ -36,7 +36,7 @@ class Node < ActiveRecord::Base
   validates_presence_of :player, :board, :state
   validates_associated :player
   validates_uniqueness_of :board_id, :scope => [:row, :col]
-  validate :proximity_of_land, :proximity_of_settlements, :possesion_of_road, :player_not_changed
+  validate :proximity_of_land, :distance_from_settlements, :possesion_of_road, :player_not_changed
 
   belongs_to :board
   belongs_to :player
@@ -113,12 +113,13 @@ class Node < ActiveRecord::Base
 
   def add_resources(type)
     return if type.nil?
-    player[type] += settlement? ? 1 : 2
-    player.save
+    amount = settlement? ? 1 : 2
+    player.attributes = { "#{type}_modifier" => amount }
+    # player.save
   end
 
   def has_road?
-    edges.detect { |edge| not edge.nil? and edge.player == player } != nil
+    edges.detect { |edge| edge != nil and edge.player == player } != nil
   end
 
   def harbor?
@@ -140,7 +141,7 @@ class Node < ActiveRecord::Base
   end
 
   def add_victory_point
-    player.visible_points += 1
+    player.attributes = { :visible_points_modifier => 1 }
   end
 
   def save_player
@@ -178,14 +179,17 @@ class Node < ActiveRecord::Base
     errors.add :position, "is not settleable" unless position_settleable?
   end
 
-  def proximity_of_settlements
-    errors.add :position, "is too close to another settlement" unless nodes.compact.empty?
+  def position_open?
+    nodes.compact.empty?
+  end
+
+  def distance_from_settlements
+    errors.add :position, "is too close to another settlement" unless position_open?
   end
 
   # settlement - before validation
-
   def build_settlement
-    player.settlements -= 1
+    player.attributes = { :settlements_modifier => -1 }
     add_resources_from_neighbours if game_second_settlement?
     charge_for_settlement if game_after_roll?
     update_exchange_rates if harbor?
@@ -193,24 +197,29 @@ class Node < ActiveRecord::Base
   end
 
   def charge_for_settlement
-    player.lumber -= 1
-    player.grain -= 1
-    player.wool -= 1
-    player.bricks -= 1
+    player.attributes = {
+      :lumber_modifier => -1,
+      :grain_modifier => -1,
+      :wool_modifier => -1,
+      :bricks_modifier => -1
+    }
   end
 
-  # city - before validation (on transition)
-
+  # city - before validation
   def build_city
-    player.settlements += 1
-    player.cities -= 1
+    player.attributes = {
+      :settlements_modifier => 1,
+      :cities_modifier => -1
+    }
     charge_for_city
     add_victory_point
   end
 
   def charge_for_city
-    player.ore -= 3
-    player.grain -= 2
+    player.attributes = {
+      :ore_modifier => -3,
+      :grain_modifier => -2
+    }
   end
 
   def settlement_built
