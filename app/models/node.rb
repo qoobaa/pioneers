@@ -153,7 +153,7 @@ class Node < ActiveRecord::Base
     if harbor_types.include? harbor_type
       player["#{harbor_type}_exchange_rate"] = 2
     else
-      harbor_types.each { |harbor_type| player["#{harbor_type}_exchange_rate"] = 3 unless player["#{harbor_type}_exchange_rate"] < 3}
+      harbor_types.each { |harbor_type| player["#{harbor_type}_exchange_rate"] = 3 unless player["#{harbor_type}_exchange_rate"] < 3 }
     end
   end
 

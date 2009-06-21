@@ -19,7 +19,7 @@
 
 require 'test_helper'
 
-class NodeTest < ActiveSupport::TestCase
+class NodeTest < Test::Unit::TestCase
   context "With position [3, 10]" do
     setup { @node = Factory.build(:node, :position => [3, 10]) }
 
