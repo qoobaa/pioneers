@@ -214,7 +214,7 @@ class Edge < ActiveRecord::Base
   end
 
   def position_of_development_road
-    errors.add :position, "is invalid, no settlements without roads in neighbourhood" if setup_phase? and not has_settlement_without_road?
+    errors.add :position, "is invalid - no settlements without roads in neighbourhood" if setup_phase? and not has_settlement_without_road?
   end
 
   def has_settlement?
@@ -232,13 +232,12 @@ class Edge < ActiveRecord::Base
   # before validation
 
   def build_road
-    player.roads -= 1
+    player.attributes = { :roads_modifier => -1 }
     charge_for_road if game_after_roll?
   end
 
   def charge_for_road
-    player.bricks -= 1
-    player.lumber -= 1
+    player.attributes = { :bricks_modifier => -1, :lumber_modifier => -1 }
   end
 
   def road_built

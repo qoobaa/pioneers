@@ -115,4 +115,129 @@ class EdgeTest < Test::Unit::TestCase
       assert_equal [[0, 21], [1, 19], [1, 22], [1, 21]], @edge.edge_positions
     end
   end
+
+  context "in first road phase" do
+    setup do
+      @edge = Factory.build(:edge)
+      @hex = Object.new
+      stub(@hex).settleable? { true }
+      stub(@edge).hexes { [@hex] }
+      stub(@edge).game_first_road? { true }
+      stub(@edge).game_second_road? { false }
+      stub(@edge).game_after_roll? { false }
+      stub(@edge).user { @edge.player.user }
+      @node = Object.new
+      stub(@node)
+      stub(@node).player { @edge.player }
+      stub(@node).has_road? { false }
+      stub(@edge).nodes { [@node] }
+      stub(@edge).game_road_built!
+    end
+
+    should "be valid with valid attributes" do
+      assert @edge.valid?
+    end
+
+    should "not be valid if position is not settleable" do
+      stub(@hex).settleable? { false }
+      assert !@edge.valid?
+    end
+
+    should "not be valid if neighbour settlement doesn't belong to player" do
+      stub(@node).player { Factory.build(:player) }
+      assert !@edge.valid?
+    end
+
+    should "not be valid if neighbour settlement has road already" do
+      stub(@node).has_road? { true }
+      assert !@edge.valid?
+    end
+
+    should "not be valid if no settlements in neighbourhood" do
+      stub(@edge).nodes { [] }
+      assert !@edge.valid?
+    end
+
+    should "take one road from player" do
+      @edge.player.roads = 15
+      @edge.save!
+      assert_equal 14, @edge.player.roads
+    end
+
+    should "call road_built event after save" do
+      mock(@edge).game_road_built!(@edge.player.user)
+      @edge.save!
+    end
+  end
+
+  context "in after roll phase" do
+    setup do
+      @edge = Factory.build(:edge)
+      @edge.player.attributes = { :bricks => 1, :lumber => 1 }
+      @hex = Object.new
+      stub(@hex).settleable? { true }
+      stub(@edge).hexes { [@hex] }
+      stub(@edge).game_first_road? { false }
+      stub(@edge).game_second_road? { false }
+      stub(@edge).game_after_roll? { true }
+      stub(@edge).user { @edge.player.user }
+      stub(@edge).game_road_built!
+    end
+
+    context "with settlement in neighbourhood" do
+      setup do
+        @node = Object.new
+        stub(@node).player { @edge.player }
+        stub(@edge).nodes { [@node] }
+      end
+
+      should "be valid with valid attributes" do
+        assert @edge.valid?
+      end
+
+      should "not be valid if player has no bricks" do
+        @edge.player.attributes = { :bricks => 0 }
+        assert !@edge.valid?
+      end
+
+      should "not be valid if player has no lumber" do
+        @edge.player.attributes = { :lumber => 0 }
+        assert !@edge.valid?
+      end
+
+      should "not be valid if player has no roads" do
+        @edge.player.attributes = { :roads => 0 }
+        assert !@edge.valid?
+      end
+
+      should "not be valid if settlement doesn't belong to player" do
+        stub(@node).player { Factory.build(:player) }
+        assert !@edge.valid?
+      end
+    end
+
+    context "with road in left neighbourhood" do
+      setup do
+        @edge2 = Object.new
+        stub(@edge2).player { @edge.player }
+        stub(@edge).left_edges { [@edge2] }
+      end
+
+      should "be valid with valid attributes" do
+        assert @edge.valid?
+      end
+
+      should "not be valid if road doesn't belong to player" do
+        stub(@edge2).player { Factory.build(:player) }
+        assert !@edge.valid?
+      end
+
+      should "not be valid if left road belong to player but left settlement doesn't" do
+        @node = Object.new
+        stub(@node).player { Factory.build(:player) }
+        stub(@edge).left_node { @node }
+        assert !@edge.valid?
+      end
+    end
+  end
 end
