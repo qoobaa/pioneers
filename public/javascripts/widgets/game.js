@@ -372,8 +372,9 @@ $.widget("ui.game", {
     _setupStomp: function() {
         var that = this;
         document.domain = document.domain;
-        Orbited.settings.hostname = "localhost";
+        Orbited.settings.hostname = "pioneers";
         Orbited.settings.port = "8000";
+        Orbited.settings.log = true;
         Orbited.settings.protocol = "http";
         Orbited.settings.streaming = true;
         TCPSocket = Orbited.TCPSocket;
@@ -387,7 +388,7 @@ $.widget("ui.game", {
         $(window).bind("beforeunload", function() {
             that.stomp.reset();
         });
-        this.stomp.connect("localhost", "61613");
+        this.stomp.connect("pioneers", "61613");
     },
 
     _stompConnected: function(frame) {

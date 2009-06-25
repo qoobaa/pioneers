@@ -29,13 +29,13 @@
 
 (function() {
 
-    
+
     var HANDSHAKE_TIMEOUT = 30000;
     var RETRY_INTERVAL = 250;
     var RETRY_TIMEOUT = 30000;
-    
+
     Orbited = {};
-    
+
     Orbited.settings = {};
     Orbited.settings.hostname = document.domain;
     Orbited.settings.port = (location.port.length > 0) ? location.port : 80;
@@ -48,8 +48,8 @@
     Orbited.settings.pageLoggerWidth = null;
     Orbited.settings.enableFFPrivileges = false;
     Orbited.singleton = {};
-    
-    
+
+
     // Orbited CometSession Errors
     Orbited.Errors = {};
     Orbited.Errors.ConnectionTimeout = 101;
@@ -57,13 +57,13 @@
     Orbited.Errors.UserConnectionReset = 103;
     Orbited.Errors.Unauthorized = 106;
     Orbited.Errors.RemoteConnectionFailed = 108;
-    
+
     Orbited.Statuses = {};
     Orbited.Statuses.ServerClosedConnection = 201;
     Orbited.Statuses.SocketControlKilled = 301;
-    
+
     Orbited.util = {};
-    
+
     Orbited.util.browser = null;
     if (typeof(ActiveXObject) != "undefined") {
         Orbited.util.browser = 'ie';
@@ -74,7 +74,7 @@
     } else if((typeof window.addEventStream) === 'function') {
         Orbited.util.browser = 'opera';
     }
-    
+
 
     ////
     // NB: Base64 code was borrowed from Dojo; we had to fix decode for not
@@ -84,16 +84,16 @@
     //     See http://bugs.dojotoolkit.org/ticket/7400
     (function(){
         Orbited.base64 = {};
-        
+
         var p = "=";
         var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        
+
         if (window.btoa && window.btoa('1') == 'MQ==') {
             Orbited.base64.encode = function(data) { return btoa(data); };
             Orbited.base64.decode = function(data) { return atob(data); };
             return;
         }
-        
+
         Orbited.base64.encode=function(/* String */ba){
             //  summary
             //  Encode a string as a base64-encoded string
@@ -127,8 +127,8 @@
             }
             return s.join("");  //    string
         };
-        
-        
+
+
         Orbited.base64.decode=function(/* string */str){
             //  summary
             //  Convert a base64-encoded string to an array of bytes
@@ -151,21 +151,21 @@
             return out.join(""); //     string
         };
     })();
-    
+
 
 
 
     Orbited.loggers = {};
     Orbited.Loggers = {};
     Orbited.util.loggingSystem = null;
-    
+
     if (window.Log4js) {
         Orbited.util.loggingSystem = 'log4js';
     }
     else if (window.console && console.firebug && console.firebug != "1.3.0") {
         Orbited.util.loggingSystem = 'firebug';
     }
-    
+
     Orbited.getLogger = function(name) {
         if (!Orbited.loggers[name]) {
             var logger = null;
@@ -176,7 +176,7 @@
             case 'log4js':
             logger = new Orbited.Loggers.Log4jsLogger(name);
             break;
-            
+
             default:
             logger = new Orbited.Loggers.PageLogger(name);
             break;
@@ -185,10 +185,10 @@
         }
         return Orbited.loggers[name];
     };
-    
+
     // TODO: is it confusing to have Orbited.Loggers be the various logging classes
     //     and Orbited.loggers be actual instances of logging classes?
-    
+
     Orbited.Loggers.FirebugLogger = function(name) {
         var self = this;
         self.name = name;
@@ -250,7 +250,7 @@
             if(Orbited.settings.pageLoggerWidth) {
                 p.style.height = Orbited.settings.pageLoggerWidth;
             }
-            
+
             p.style.overflow = "scroll";
             document.body.appendChild(p);
             Orbited.singleton.pageLoggerPane = p;
@@ -310,7 +310,7 @@
         var logger = Log4js.getLogger(log4jsName);
         self.logger = logger;
         logger.setLevel(Log4js.Level.OFF);
-        
+
         var generateOutput = function(args) {
             var newArgs = [ name + ":" ];
             for (var i = 0; i < args.length; ++i) {
@@ -318,7 +318,7 @@
             }
             return newArgs.join(" ");
         };
-        
+
         self.setLevel = function(level) {
             logger.setLevel(level);
         };
@@ -477,7 +477,7 @@
                         // START new URL way
                         //              sessionUrl.extendPath(sessionKey)
                         // END: new URL way
-                        
+
                         // START: old URL way
                         if (sessionUrl.path[sessionUrl.path.length] != '/') {
                             sessionUrl.path += '/';
@@ -500,7 +500,7 @@
             };
             xhr.send(null);
         };
-        
+
         /*
      * self.send is only callable when readyState is OPEN. It will queue the data
      * up for delivery as soon as the upstream xhr is ready.
@@ -524,7 +524,7 @@
                 doSend();
             }
         };
-        
+
         /*
      * self.close sends a close frame to the server, at the end of the queue.
      * It also sets the readyState to CLOSING so that no further data may be
@@ -549,7 +549,7 @@
                 doSend();
             }
         };
-        
+
         /* self.reset is a way to close immediately. The send queue will be discarded
      * and a close frame will be sent to the server. onclose is called immediately
      * without waiting for a reply from the server.
@@ -585,17 +585,17 @@
                     //     trigger onclose
                     //     -mcarter 7-29-08
                     break;
-                
+
                 case self.READY_STATE_CLOSED:
                     break;
             }
         };
-        
+
         self.cleanup = function() {
             self.readyState = self.READY_STATE_CLOSED;
             cometTransport.close();
         }
-        
+
         var transportOnReadFrame = function(frame) {
 ;;;         self.logger.debug('transportOnReadFrame');
 ;;;         self.logger.debug('READ FRAME: ', frame.id, frame.name, frame.data ? frame.data.length : '');
@@ -759,7 +759,7 @@
                 cometTransport.close();
             }
             self.onclose(code);
-            
+
         };
 
         var resetTimeout = function() {
@@ -769,7 +769,7 @@
         };
         var unsetTimeout = function() {
             window.clearTimeout(timeoutTimer);
-            
+
         };
         var timedOut = function() {
 ;;;         self.logger.debug('timed out!');
@@ -782,7 +782,7 @@
     Orbited.CometSession.prototype.READY_STATE_OPEN        = 3;
     Orbited.CometSession.prototype.READY_STATE_CLOSING    = 4;
     Orbited.CometSession.prototype.READY_STATE_CLOSED    = 5;
-    
+
     var currentTCPSocketId = 0;
     var openSockets = {};
 
@@ -1056,7 +1056,7 @@
             method = null;
             data = null;
             requestHeaders = {};
-            
+
         };
         reset();
         self.onreadystatechange = function() { };
@@ -1106,7 +1106,7 @@
             self.onreadystatechange();
             }
         };
-        
+
 
 
         //    self.abort = function() {
@@ -1128,7 +1128,7 @@
             }
             return responseHeaders[key];
         };
-        
+
         var receive = function(payload) {
 ;;;         self.logger.debug('received', payload);
             switch(payload[0]) {
@@ -1179,7 +1179,7 @@
             var id = msg.shift();
             var dataString = msg.join(" ");
             var data = Orbited.JSON.parse(dataString);
-            
+
             Orbited.singleton.XSDR.receiveCbs[id](data);
             }
             if (cmd == "queues")
@@ -1419,7 +1419,7 @@
                 argSize = parseInt(stream.slice(offset+1, commaPos));
                 argEnd = commaPos +1 + argSize;
             }
-            
+
             if (stream.length < argEnd) {
                 return;
             }
@@ -1761,7 +1761,7 @@ Orbited.CometTransports.LongPoll.ie = 0.9
                 if (typeof(xhr)== "undefined" || xhr == null) {
                     throw new Error("how did this happen?");
                 }
-                
+
                 if (Orbited.settings.enableFFPrivileges) {
                     try {
                         netscape.security.PrivilegeManager.enablePrivilege('UniversalBrowserRead');
@@ -1812,7 +1812,7 @@ Orbited.CometTransports.LongPoll.ie = 0.9
                 self.close();
             }
         };
-        
+
         var reconnect = function() {
 ;;;         self.logger.debug('reconnect...');
             if (xhr.readyState < 4 && xhr.readyState > 0) {
@@ -1886,7 +1886,7 @@ Orbited.CometTransports.LongPoll.ie = 0.9
                     receivedPacket(frameCopy);
                 }
             }
-            
+
         };
         var receivedPacket = function(args) {
 ;;;         self.logger.debug('receivedPacket...');
@@ -2086,12 +2086,12 @@ Orbited.CometTransports.Poll.ie = 0.5
             document.body.appendChild(source);
             }
             source.addEventListener('payload', receivePayload, false);
-            
+
             //      source.addEventListener('heartbeat', receiveHeartbeat, false);
             // start up the heartbeat timer...
             //      receiveHeartbeat();
         };
-        
+
         var receivePayload = function(event) {
             var data = eval(event.data);
             if (typeof(data) != 'undefined') {
@@ -2100,7 +2100,7 @@ Orbited.CometTransports.Poll.ie = 0.5
                 receive(packet[0], packet[1], packet[2]);
             }
             }
-            
+
         };
         /*    var receiveHeartbeat = function() {
                window.clearTimeout(heartbeatTimer);
@@ -2131,7 +2131,7 @@ Orbited.CometTransports.Poll.ie = 0.5
         };
     };
     Orbited.CometTransports.SSE.prototype.logger = Orbited.getLogger("Orbited.CometTransports.SSE");
-    
+
     Orbited.CometTransports.SSE.opera = 1.0;
     Orbited.CometTransports.SSE.opera8 = 1.0;
     Orbited.CometTransports.SSE.opera9 = 1.0;
@@ -2153,11 +2153,11 @@ Orbited.CometTransports.Poll.ie = 0.5
 
         var domainIndex = _url.indexOf('/', protocolIndex+3);
         if (domainIndex == -1) domainIndex=_url.length;
-            
+
         var hashIndex = _url.indexOf("#", domainIndex);
         if (hashIndex != -1) self.hash = _url.slice(hashIndex+1);
         else hashIndex = _url.length;
-            
+
         var uri = _url.slice(domainIndex, hashIndex);
         var qsIndex = uri.indexOf('?');
         if (qsIndex == -1) qsIndex=uri.length;
@@ -2165,7 +2165,7 @@ Orbited.CometTransports.Poll.ie = 0.5
         self.path = uri.slice(0, qsIndex);
         self.qs = uri.slice(qsIndex+1);
         if (self.path == "") self.path = "/";
-            
+
         var domain = _url.slice(protocolIndex+3, domainIndex);
         var portIndex = domain.indexOf(":");
         if (portIndex == -1) {
@@ -2176,7 +2176,7 @@ Orbited.CometTransports.Poll.ie = 0.5
             self.port = parseInt(domain.slice(portIndex+1));
         }
         if (isNaN(this.port)) throw new Error("Invalid _url");
-            
+
         self.domain = domain.slice(0, portIndex);
 
         self.render = function() {
@@ -2203,7 +2203,7 @@ Orbited.CometTransports.Poll.ie = 0.5
         }
         self.isSameDomain = function(_url) {
             _url = new Orbited.URL(_url);
-            
+
             if (!_url.domain || !self.domain)
             return true;
             return (_url.port == self.port && _url.domain == self.domain);
@@ -2323,7 +2323,7 @@ Orbited.CometTransports.Poll.ie = 0.5
         }
         return [ret.join(""), j];
     };
-    
+
     // TODO rename to encode
     Orbited.utf8.encode = function(text) {
         var ret = [];
@@ -2405,12 +2405,12 @@ Orbited.CometTransports.Poll.ie = 0.5
 
 
             function quote(string) {
-            
+
             // If the string contains no control characters, no quote characters, and no
             // backslash characters, then we can safely slap some quotes around it.
             // Otherwise we must also replace the offending characters with safe escape
             // sequences.
-            
+
             escapeable.lastIndex = 0;
             return escapeable.test(string) ?
                 '"' + string.replace(escapeable, function (a) {
@@ -2423,7 +2423,7 @@ Orbited.CometTransports.Poll.ie = 0.5
                 }) + '"' :
             '"' + string + '"';
             }
-            
+
 
             function str(key, holder) {
 
@@ -2700,4 +2700,4 @@ replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
             //    alert("Error! " + e.name + ": " + e.message);
             }
         })();
-        
+
