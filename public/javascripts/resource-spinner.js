@@ -20,16 +20,17 @@
 // application.  Likewise, all the methods added will be available for
 // all controllers.
 
-YUI.add('resource-spinner', function(Y) {
+YUI.add("resource-spinner", function(Y) {
     var RESOURCE_SPINNER = "resource-spinner",
+        BOUNDING_BOX = "boundingBox",
         CONTENT_BOX = "contentBox",
-        INPUT_CLASS = Y.ClassNameManager.getClassName(RESOURCE_SPINNER, "value"),
-        INPUT_TEMPLATE = '<input type="text" class="' + INPUT_CLASS + '">',
+        getCN = Y.ClassNameManager.getClassName,
+        C_INPUT = getCN(RESOURCE_SPINNER, "value"),
+        C_LABEL = getCN(RESOURCE_SPINNER, "label"),
+        INPUT_TEMPLATE = '<input type="text" class="' + C_INPUT + '">',
         BUTTON_TEMPLATE = '<button type="button"></button>',
-        Widget = Y.Widget,
-        Node = Y.Node,
-        isNumber = Y.Lang.isNumber,
-        bind = Y.bind;
+        LABEL_TEMPLATE = '<label class="' + C_LABEL + '"></label>',
+        isNumber = Y.Lang.isNumber;
 
     function ResourceSpinner() {
         ResourceSpinner.superclass.constructor.apply(this, arguments);
@@ -53,37 +54,32 @@ YUI.add('resource-spinner', function(Y) {
             step: {
                 value: 4
             },
-
+            label: {
+                value: "Resources"
+            },
             strings: {
                 value: {
-                    increment: "Increment",
-                    decrement: "Decrement"
+                    increment: "+",
+                    decrement: "-"
                 }
             }
         }
     });
 
-    Y.extend(ResourceSpinner, Widget, {
-        initializer: function() {
-
-        },
-
-        destructor: function() {
-
-        },
-
+    Y.extend(ResourceSpinner, Y.Widget, {
         renderUI: function() {
             this._renderDecrementButton();
             this._renderInput();
             this._renderIncrementButton();
+            this._renderLabel();
         },
 
         bindUI: function() {
             this.after("valueChange", this._afterValueChange);
 
-            Y.on("click", bind(this._onDecrementClick, this), this.decrementNode);
-            Y.on("click", bind(this._onIncrementClick, this), this.incrementNode);
-            Y.on("change", bind(this._onInputChange, this));
+            Y.on("click", Y.bind(this._onDecrementClick, this), this.decrementNode);
+            Y.on("click", Y.bind(this._onIncrementClick, this), this.incrementNode);
+            Y.on("change", Y.bind(this._onInputChange, this));
         },
 
         _onDecrementClick: function(event) {
@@ -118,25 +114,34 @@ YUI.add('resource-spinner', function(Y) {
             this._uiSetValue(event.newVal);
         },
 
-        syncUI : function() {
+        syncUI: function() {
             this._uiSetValue(this.get("value"));
         },
 
-        _renderInput : function() {
+        _renderInput: function() {
             var contentBox = this.get(CONTENT_BOX),
-                input = contentBox.query("." + INPUT_CLASS),
                 strings = this.get("strings");
 
-            if(!input) {
-                input = Node.create(INPUT_TEMPLATE);
-                contentBox.appendChild(input);
-            }
+            var input = Y.Node.create(INPUT_TEMPLATE);
+            contentBox.appendChild(input);
 
             this.inputNode = input;
         },
 
-        _renderDecrementButton : function() {
-            var contentBox = this.get("contentBox"),
+        _renderLabel: function() {
+            var contentBox = this.get(CONTENT_BOX),
+                labelString = this.get("label");
+
+            var label = Y.Node.create(LABEL_TEMPLATE);
+            label.set("innerHTML", labelString);
+
+            contentBox.insertBefore(label, this.decrementNode);
+
+            this.labelNode = label;
+        },
+
+        _renderDecrementButton: function() {
+            var contentBox = this.get(CONTENT_BOX),
                 strings = this.get("strings");
 
             var decrement = this._createButton(strings.decrement, this.getClassName("decrement"));
@@ -144,8 +149,8 @@ YUI.add('resource-spinner', function(Y) {
             this.decrementNode = contentBox.appendChild(decrement);
         },
 
-        _renderIncrementButton : function() {
-            var contentBox = this.get("contentBox"),
+        _renderIncrementButton: function() {
+            var contentBox = this.get(CONTENT_BOX),
                 strings = this.get("strings");
 
             var increment = this._createButton(strings.increment, this.getClassName("increment"));
@@ -153,8 +158,8 @@ YUI.add('resource-spinner', function(Y) {
             this.incrementNode = contentBox.appendChild(increment);
         },
 
-        _createButton : function(text, className) {
-            var button = Node.create(BUTTON_TEMPLATE);
+        _createButton: function(text, className) {
+            var button = Y.Node.create(BUTTON_TEMPLATE);
 
             button.set("innerHTML", text);
             button.set("title", text);
@@ -163,7 +168,7 @@ YUI.add('resource-spinner', function(Y) {
             return button;
         },
 
-        _uiSetValue : function(value) {
+        _uiSetValue: function(value) {
             this.inputNode.set("value", value);
         },
 
@@ -171,7 +176,10 @@ YUI.add('resource-spinner', function(Y) {
             var min = this.get("min"),
                 max = this.get("max");
 
-            return (isNumber(value) && value >= min && value <= max && this._followsStep(value));
+            return (isNumber(value) &&
+                    value >= min &&
+                    value <= max &&
+                    this._followsStep(value));
         },
 
         _followsStep: function(value) {
@@ -186,6 +194,4 @@ YUI.add('resource-spinner', function(Y) {
 
     Y.ResourceSpinner = ResourceSpinner;
 
-}, '3.0.0b1', { requires: ["widget"] });
-
-
+}, '0.0.1', { requires: ["widget"] });
