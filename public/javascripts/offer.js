@@ -50,7 +50,7 @@ YUI.add("offer", function(Y) {
 
     Y.extend(Offer, Resources, {
         _validateValue: function(value) {
-            return bind(Offer.superclass._validateValue, this, value)() &&
+            return Offer.superclass._validateValue.apply(this, arguments) &&
                 this._isValidOffer(value);
         },
 

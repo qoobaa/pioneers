@@ -20,46 +20,49 @@
 // application.  Likewise, all the methods added will be available for
 // all controllers.
 
-YUI.add("discard", function(Y) {
-    var DISCARD = "discard",
+YUI.add("year-of-plenty", function(Y) {
+    var YEAR_OF_PLENTY = "year-of-plenty",
         CONTENT_BOX = "contentBox",
         Resources = Y.Resources,
         bind = Y.bind;
 
-    function Discard() {
-        Discard.superclass.constructor.apply(this, arguments);
+    function YearOfPlenty() {
+        YearOfPlenty.superclass.constructor.apply(this, arguments);
     }
 
-    Y.mix(Discard, {
-        NAME: DISCARD,
+    Y.mix(YearOfPlenty, {
+        NAME: YEAR_OF_PLENTY,
         ATTRS: {
             label: {
-                value: "Discard"
+                value: "Year of plenty"
             },
-            limit: {
-                value: 0
+            max: {
+                value: {
+                    bricks: 2,
+                    grain: 2,
+                    lumber: 2,
+                    ore: 2,
+                    wool: 2
+                }
             }
         }
     });
 
-    Y.extend(Discard, Resources, {
+    Y.extend(YearOfPlenty, Resources, {
         _validateValue: function(value) {
-            return Discard.superclass._validateValue.apply(this, arguments) &&
-                this._isValidDiscard(value);
+            return YearOfPlenty.superclass._validateValue.apply(this, arguments) &&
+                this._isValidYearOfPlenty(value);
         },
 
-        _isValidDiscard: function(value) {
-            var min = this.get("min"),
-                limit = this.get("limit");
-
-            return -min.bricks + value.bricks +
-                -min.grain + value.grain +
-                -min.lumber + value.lumber +
-                -min.ore + value.ore +
-                -min.wool + value.wool === limit;
+        _isValidYearOfPlenty: function(value) {
+            return value.bricks +
+                value.grain +
+                value.lumber +
+                value.ore +
+                value.wool === 2;
         }
     });
 
-    Y.Discard = Discard;
+    Y.YearOfPlenty = YearOfPlenty;
 
 }, '0.0.1', { requires: ["resources"] });

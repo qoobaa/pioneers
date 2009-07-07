@@ -59,7 +59,7 @@ YUI.add("exchange", function(Y) {
 
     Y.extend(Exchange, Resources, {
         _validateValue: function(value) {
-            return bind(Exchange.superclass._validateValue, this, value)() &&
+            return Exchange.superclass._validateValue.apply(this, arguments) &&
                 this._isValidExchange(value);
         },
 

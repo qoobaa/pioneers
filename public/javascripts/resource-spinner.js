@@ -76,6 +76,9 @@ YUI.add("resource-spinner", function(Y) {
 
         bindUI: function() {
             this.after("valueChange", this._afterValueChange);
+            this.after("minChange", this._afterMinChange);
+            this.after("maxChange", this._afterMaxChange);
+            this.after("stepChange", this._afterStepChange);
 
             Y.on("click", Y.bind(this._onDecrementClick, this), this.decrementNode);
             Y.on("click", Y.bind(this._onIncrementClick, this), this.incrementNode);
@@ -83,24 +86,32 @@ YUI.add("resource-spinner", function(Y) {
         },
 
         _onDecrementClick: function(event) {
-            var value = this.get("value"),
-                step = this.get("step");
-            if(value > 0) {
-                this.set("value", value - 1);
-            } else {
-                this.set("value", value - step);
-            }
+            var value = this.get("value");
+            this.set("value", this._decrementValue(value));
             this._syncUI();
         },
 
-        _onIncrementClick: function(event) {
-            var value = this.get("value"),
-                step = this.get("step");
-            if(value >= 0) {
-                this.set("value", value + 1);
+        _decrementValue: function(value) {
+            var step = this.get("step");
+            if(value > 0) {
+                return value - 1;
             } else {
-                this.set("value", value + step);
+                return value - step;
             }
+        },
+
+        _incrementValue: function(value) {
+            var step = this.get("step");
+            if(value >= 0) {
+                return value + 1;
+            } else {
+                return value + step;
+            }
+        },
+
+        _onIncrementClick: function(event) {
+            var value = this.get("value");
+            this.set("value", this._incrementValue(value));
             this._syncUI();
         },
 
@@ -112,10 +123,40 @@ YUI.add("resource-spinner", function(Y) {
 
         _afterValueChange: function(event) {
             this._uiSetValue(event.newVal);
+            this._uiSyncButtons(event.newVal);
+        },
+
+        _afterMinChange: function(event) {
+            if(!this._validateValue(this.get("value"))) {
+                this.set("value", 0);
+            }
+            this._uiSyncButtons(this.get("value"));
+        },
+
+        _afterMaxChange: function(event) {
+            if(!this._validateValue(this.get("value"))) {
+                this.set("value", 0);
+            }
+            this._uiSyncButtons(this.get("value"));
+        },
+
+        _afterStepChange: function(event) {
+            if(!this._validateValue(this.get("value"))) {
+                this.set("value", 0);
+            }
+            this._uiSyncButtons(this.get("value"));
         },
 
         syncUI: function() {
             this._uiSetValue(this.get("value"));
+            this._uiSyncButtons(this.get("value"));
+        },
+
+        _uiSyncButtons: function(value) {
+            var incrementedValue = this._incrementValue(value),
+                decrementedValue = this._decrementValue(value);
+            this.decrementNode.set("disabled", !this._validateValue(decrementedValue));
+            this.incrementNode.set("disabled", !this._validateValue(incrementedValue));
         },
 
         _renderInput: function() {
