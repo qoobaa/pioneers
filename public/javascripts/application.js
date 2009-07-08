@@ -30,9 +30,13 @@ YUI({ modules: {
     "monopoly": {
         fullpath: "/javascripts/monopoly.js",
         requires: ["resources"]
+    },
+    "cards": {
+        fullpath: "/javascripts/cards.js",
+        requires: ["resources", "collection"]
     }
 }
-    }).use("exchange", "discard", "offer", "build", "year-of-plenty", "monopoly", function(Y) {
+    }).use("exchange", "discard", "offer", "build", "year-of-plenty", "monopoly", "cards", function(Y) {
         exchange = new Y.Exchange();
         exchange.render();
         exchange.after("valueChange", function(event) {
@@ -66,4 +70,9 @@ YUI({ modules: {
         monopoly.after("lumber", function() { console.log("lumber"); });
         monopoly.after("ore", function() { console.log("ore"); });
         monopoly.after("wool", function() { console.log("wool"); });
+        cards = new Y.Cards();
+        cards.render();
+        cards.after("card", function(event, card) {
+            console.log(event.details[0]);
+        });
 });
