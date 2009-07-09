@@ -25,6 +25,7 @@ YUI.add("pioneers-board", function(Y) {
         BOARD = "pioneers-board",
         augment = Y.augment,
         Attribute = Y.Attribute,
+        merge = Y.merge,
         extend = Y.extend,
         Base = Y.Base,
         map = Y.Array.map,
@@ -129,7 +130,7 @@ YUI.add("pioneers-board", function(Y) {
 
             this.hexes2D = this._array2D(height);
             this.hexes = map(hexes, function(hex) {
-                var h = new Hex(that, hex);
+                var h = new Hex(merge(hex, { board: that }));
                 that.hexes2D[h.row()][h.col()] = h;
                 return h;
             });
@@ -143,7 +144,7 @@ YUI.add("pioneers-board", function(Y) {
 
             this.nodes2D = this._array2D(height);
             this.nodes = map(nodes, function(node) {
-                var n = new Node(that, node);
+                var n = new Node(merge(node, { board: that}));
                 that.nodes2D[n.row()][n.col()] = n;
                 return n;
             });
@@ -151,7 +152,7 @@ YUI.add("pioneers-board", function(Y) {
             each(hexes, function(hex) {
                 each(hex.nodePositions(), function(position) {
                     if(!that.node(position)) {
-                        var n = new Node(that, { position: position });
+                        var n = new Node({ board: that, position: position });
                         that.nodes.push(n);
                         that.nodes2D[n.row()][n.row()] = n;
                     }
@@ -167,7 +168,7 @@ YUI.add("pioneers-board", function(Y) {
 
             this.edges2D = this._array2D(height);
             this.edges = map(edges, function(edge) {
-                var n = new Edge(that, edge);
+                var n = new Edge(merge(edge, { board: that }));
                 that.edges2D[n.row()][n.col()] = n;
                 return n;
             });
@@ -175,7 +176,7 @@ YUI.add("pioneers-board", function(Y) {
             each(hexes, function(hex) {
                 each(hex.edgePositions(), function(position) {
                     if(!that.edge(position)) {
-                        var n = new Edge(that, { position: position });
+                        var n = new Edge({ board: that, position: position });
                         that.edges.push(n);
                         that.edges2D[n.row()][n.row()] = n;
                     }
