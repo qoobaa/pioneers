@@ -24,13 +24,16 @@ YUI.add("cards", function(Y) {
     var CARDS = "cards",
         CARD = "card",
         CONTENT_BOX = "contentBox",
+        YEAR_OF_PLENTY = "year-of-plenty",
+        MONOPOLY = "monopoly",
         getCN = Y.ClassNameManager.getClassName,
         BUTTON_TEMPLATE = '<button type="button"></button>',
         C_LABEL = getCN(CARDS, "label"),
         LABEL_TEMPLATE = '<label class="' + C_LABEL + '"></label>',
         Widget = Y.Widget,
+        YearOfPlenty = Y.YearOfPlenty,
+        Monopoly = Y.Monopoly,
         Node = Y.Node,
-        isNumber = Y.Lang.isNumber,
         bind = Y.bind;
 
     function Cards() {
@@ -42,10 +45,11 @@ YUI.add("cards", function(Y) {
         ATTRS: {
             cards: {
                 value: [
-                    // { type: "army", id: 5, state: "untapped" },
-                    // { type: "army", id: 6, state: "tapped" },
-                    // { type: "victoryPoint", id: 10, state: "untapped" },
-                    // { type: "yearOfPlenty", id: 8, state: "untapped" }
+                    { type: "army", id: 5, state: "untapped" },
+                    { type: "monopoly", id: 100, state: "untapped" },
+                    { type: "army", id: 6, state: "tapped" },
+                    { type: "victoryPoint", id: 10, state: "untapped" },
+                    { type: "yearOfPlenty", id: 8, state: "untapped" }
                 ]
             },
             strings: {
@@ -69,10 +73,25 @@ YUI.add("cards", function(Y) {
         renderUI: function() {
             this._renderLabel();
             this._renderButtons();
+            this._renderYearOfPlenty();
+            this._renderMonopoly();
         },
 
         bindUI: function() {
             this.after("cardsChange", bind(this._afterCardsChange, this));
+            this.monopoly.after("afterMonopoly", bind(this._monopoly, this));
+            this.yearOfPlenty.after("afterYearOfPlenty", bind(this._yearOfPlenty, this));
+        },
+
+        _afterMonopoly: function(event) {
+            this.monopoly.hide();
+            this.fire(CARD, event.details[0]);
+        },
+
+        _afterYearOfPlenty: function(event) {
+            this.yearOfPlenty.set("value", {bricks: 0, grain: 0, lumber: 0, ore: 0, wool: 0});
+            this.yearOfPlenty.hide();
+            this.fire(CARD, event.details[0]);
         },
 
         _afterCardsChange: function(event) {
@@ -105,8 +124,45 @@ YUI.add("cards", function(Y) {
             Y.on("click", bind(this._cardClicked, this, card), cardNode);
         },
 
+        _renderYearOfPlenty: function() {
+            var contentBox = this.get(CONTENT_BOX),
+                className = this.getClassName(YEAR_OF_PLENTY);
+
+            var yearOfPlentyNode = Node.create('<div class="' + className + '"></div>');
+            this.yearOfPlenty = new YearOfPlenty({ contentBox: yearOfPlentyNode });
+
+            contentBox.appendChild(yearOfPlentyNode);
+            this.yearOfPlenty.render();
+            this.yearOfPlenty.hide();
+        },
+
+        _renderMonopoly: function() {
+            var contentBox = this.get(CONTENT_BOX),
+                className = this.getClassName(MONOPOLY);
+
+            var monopolyNode = Node.create('<div class="' + className + '"></div>');
+            this.monopoly = new Monopoly({ contentBox: monopolyNode });
+
+            contentBox.appendChild(monopolyNode);
+            this.monopoly.render();
+            this.monopoly.hide();
+        },
+
         _cardClicked: function(card) {
-            this.fire(CARD, card);
+            switch(card.type) {
+            case "monopoly":
+                this.monopoly.set("card", card);
+                this.yearOfPlenty.hide();
+                this.monopoly.show();
+                break;
+            case "yearOfPlenty":
+                this.yearOfPlenty.set("card", card);
+                this.monopoly.hide();
+                this.yearOfPlenty.show();
+                break;
+            default:
+                this.fire(CARD, { id: card.id });
+            }
         },
 
         _renderLabel: function() {

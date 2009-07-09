@@ -33,6 +33,9 @@ YUI.add("year-of-plenty", function(Y) {
     Y.mix(YearOfPlenty, {
         NAME: YEAR_OF_PLENTY,
         ATTRS: {
+            card: {
+                value: null
+            },
             label: {
                 value: "Year of plenty"
             },
@@ -49,9 +52,26 @@ YUI.add("year-of-plenty", function(Y) {
     });
 
     Y.extend(YearOfPlenty, Resources, {
+        bindUI: function() {
+            YearOfPlenty.superclass.bindUI.apply(this, arguments);
+            this.after("cardChange", bind(this._afterCardChange, this));
+        },
+
+        _afterCardChange: function(event) {
+            this._uiSyncButton(this._getSpinnersValues());
+        },
+
         _validateValue: function(value) {
             return YearOfPlenty.superclass._validateValue.apply(this, arguments) &&
                 this._isValidYearOfPlenty(value);
+        },
+
+        _onAcceptClick: function() {
+            var value = this._getSpinnersValues(),
+                card = this.get("card");
+            value.id = card.id;
+            this.set("card", null);
+            this.fire("yearOfPlenty", value);
         },
 
         _isValidYearOfPlenty: function(value) {
@@ -59,7 +79,8 @@ YUI.add("year-of-plenty", function(Y) {
                 value.grain +
                 value.lumber +
                 value.ore +
-                value.wool === 2;
+                value.wool === 2 &&
+                this.get("card") !== null;
         }
     });
 

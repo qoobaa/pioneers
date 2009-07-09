@@ -27,6 +27,7 @@ YUI.add("monopoly", function(Y) {
         LUMBER = "lumber",
         ORE = "ore",
         WOOL = "wool",
+        CARD = "card",
         CONTENT_BOX = "contentBox",
         getCN = Y.ClassNameManager.getClassName,
         C_BRICKS = getCN(MONOPOLY, BRICKS),
@@ -49,6 +50,9 @@ YUI.add("monopoly", function(Y) {
     Y.mix(Monopoly, {
         NAME: MONOPOLY,
         ATTRS: {
+            card: {
+                value: null
+            },
             strings: {
                 value: {
                     label: "Monopoly",
@@ -69,11 +73,31 @@ YUI.add("monopoly", function(Y) {
         },
 
         bindUI: function() {
-            Y.on("click", bind(this.fire, this, BRICKS), this.bricksNode);
-            Y.on("click", bind(this.fire, this, GRAIN), this.grainNode);
-            Y.on("click", bind(this.fire, this, LUMBER), this.lumberNode);
-            Y.on("click", bind(this.fire, this, ORE), this.oreNode);
-            Y.on("click", bind(this.fire, this, WOOL), this.woolNode);
+            this.after("cardChange", bind(this._afterCardChange, this));
+            Y.on("click", bind(this._buttonClicked, this, BRICKS), this.bricksNode);
+            Y.on("click", bind(this._buttonClicked, this, GRAIN), this.grainNode);
+            Y.on("click", bind(this._buttonClicked, this, LUMBER), this.lumberNode);
+            Y.on("click", bind(this._buttonClicked, this, ORE), this.oreNode);
+            Y.on("click", bind(this._buttonClicked, this, WOOL), this.woolNode);
+        },
+
+        _buttonClicked: function(type) {
+            var card = this.get("card");
+            this.set("card", null);
+            this.fire(MONOPOLY, { id: card.id, resourceType: type });
+        },
+
+        _afterCardChange: function(event) {
+            this._uiSyncButtons(event.newVal);
+        },
+
+        syncUI: function() {
+            this._uiSyncButtons(this.get("card"));
+        },
+
+        _uiSyncButtons: function(card) {
+            var contentBox = this.get(CONTENT_BOX);
+            contentBox.queryAll("button").set("disabled", card === null);
         },
 
         _renderButtons: function() {
