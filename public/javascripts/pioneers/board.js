@@ -43,13 +43,12 @@ YUI.add("pioneers-board", function(Y) {
 
     Board.ATTRS =  {
         hexes: {
-            value: []
         },
         nodes: {
-            value: []
         },
         edges: {
-            value: []
+        },
+        size: {
         }
     };
 
@@ -123,6 +122,14 @@ YUI.add("pioneers-board", function(Y) {
             return robberPosition[1];
         },
 
+        height: function() {
+            return this.get("size")[0];
+        },
+
+        width: function() {
+            return this.get("size")[1];
+        },
+
         _createHexes: function() {
             var that = this,
                 hexes = this.get("hexes"),
@@ -139,8 +146,7 @@ YUI.add("pioneers-board", function(Y) {
         _createNodes: function() {
             var that = this,
                 nodes = this.get("nodes"),
-                hexes = this.get("hexes"),
-                height = this.get("height");
+                height = this.height();
 
             this.nodes2D = this._array2D(height);
             this.nodes = map(nodes, function(node) {
@@ -149,12 +155,12 @@ YUI.add("pioneers-board", function(Y) {
                 return n;
             });
 
-            each(hexes, function(hex) {
+            each(this.hexes, function(hex) {
                 each(hex.nodePositions(), function(position) {
-                    if(!that.node(position)) {
+                    if(that.node(position) === undefined) {
                         var n = new Node({ board: that, position: position });
                         that.nodes.push(n);
-                        that.nodes2D[n.row()][n.row()] = n;
+                        that.nodes2D[n.row()][n.col()] = n;
                     }
                 });
             });
@@ -163,22 +169,21 @@ YUI.add("pioneers-board", function(Y) {
         _createEdges: function() {
             var that = this,
                 edges = this.get("edges"),
-                hexes = this.get("hexes"),
-                height = this.get("height");
+                height = this.height();
 
             this.edges2D = this._array2D(height);
             this.edges = map(edges, function(edge) {
-                var n = new Edge(merge(edge, { board: that }));
-                that.edges2D[n.row()][n.col()] = n;
-                return n;
+                var e = new Edge(merge(edge, { board: that }));
+                that.edges2D[e.row()][e.col()] = e;
+                return e;
             });
 
-            each(hexes, function(hex) {
+            each(this.hexes, function(hex) {
                 each(hex.edgePositions(), function(position) {
-                    if(!that.edge(position)) {
-                        var n = new Edge({ board: that, position: position });
-                        that.edges.push(n);
-                        that.edges2D[n.row()][n.row()] = n;
+                    if(that.edge(position) === undefined) {
+                        var e = new Edge({ board: that, position: position });
+                        that.edges.push(e);
+                        that.edges2D[e.row()][e.col()] = e;
                     }
                 });
             });

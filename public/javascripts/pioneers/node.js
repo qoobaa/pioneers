@@ -41,7 +41,14 @@ YUI.add("pioneers-node", function(Y) {
     Node.NAME = NODE;
 
     Node.ATTRS =  {
-
+        board: {
+        },
+        position: {
+        },
+        state: {
+        },
+        player: {
+        }
     };
 
     extend(Node, Base, {

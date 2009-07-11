@@ -39,7 +39,14 @@ YUI.add("pioneers-hex", function(Y) {
     Hex.NAME = HEX;
 
     Hex.ATTRS =  {
-
+        position: {
+        },
+        type: {
+        },
+        harborType: {
+        },
+        board: {
+        }
     };
 
     extend(Hex, Base, {

@@ -41,7 +41,12 @@ YUI.add("pioneers-edge", function(Y) {
     Edge.NAME = EDGE;
 
     Edge.ATTRS =  {
-
+        board: {
+        },
+        position: {
+        },
+        player: {
+        }
     };
 
     extend(Edge, Base, {
