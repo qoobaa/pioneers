@@ -30,7 +30,7 @@ YUI.add("pioneers-node", function(Y) {
         Base = Y.Base,
         map = Y.Array.map,
         each = Y.Array.each,
-        grep = Y.Array.grep,
+        filter = Y.Array.filter,
         find = Y.Array.find,
         isValue = Y.Lang.isValue;
 
@@ -67,11 +67,11 @@ YUI.add("pioneers-node", function(Y) {
         },
 
         isSettlement: function(otherPlayer) {
-            this._hasPlayerAndState(otherPlayer, "settlement");
+            return this._hasPlayerAndState(otherPlayer, "settlement");
         },
 
         isCity: function(otherPlayer) {
-            this._hasPlayerAndState(otherPlayer, "city");
+            return this._hasPlayerAndState(otherPlayer, "city");
         },
 
         hexPositions: function() {
@@ -124,7 +124,7 @@ YUI.add("pioneers-node", function(Y) {
         },
 
         roads: function(player) {
-            return $.grep(this.edges(), function(edge) {
+            return $.filter(this.edges(), function(edge) {
                 return edge.get("player") === player;
             });
         },

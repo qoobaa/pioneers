@@ -30,7 +30,7 @@ YUI.add("pioneers-edge", function(Y) {
         Base = Y.Base,
         map = Y.Array.map,
         each = Y.Array.each,
-        grep = Y.Array.grep,
+        filter = Y.Array.filter,
         find = Y.Array.find,
         isValue = Y.Lang.isValue;
 
@@ -59,14 +59,11 @@ YUI.add("pioneers-edge", function(Y) {
                 row = this.row();
 
             if(col % 3 == 0) {
-                return [[row, col / 3 - 1],
-                        [row, col / 3 - 2]];
+                return [[row, col / 3 - 1], [row, col / 3 - 2]];
             } else if(col % 3 == 1) {
-                return [[row - 1, (col - 1) / 3 - 1],
-                        [row, (col - 1) / 3 - 1]];
+                return [[row - 1, (col - 1) / 3 - 1], [row, (col - 1) / 3 - 1]];
             } else {
-                return [[row - 1, (col - 2) / 3],
-                        [row, (col - 2) / 3 - 1]];
+                return [[row - 1, (col - 2) / 3], [row, (col - 2) / 3 - 1]];
             }
         },
 
@@ -117,7 +114,7 @@ YUI.add("pioneers-edge", function(Y) {
         },
 
         settlements: function(player) {
-            return grep(this.nodes(), function(node) {
+            return filter(this.nodes(), function(node) {
                 return node.isSettlement(player);
             });
         },
@@ -150,24 +147,16 @@ YUI.add("pioneers-edge", function(Y) {
                 row = this.row();
 
             if(col % 3 == 0) {
-                return [[row, col + 1],
-                        [row, col - 1]];
+                return [[row, col + 1], [row, col - 1]];
             } else if(col % 3 === 1) {
-                return [[row - 1, col + 2],
-                        [row, col + 1]];
+                return [[row - 1, col + 2], [row, col + 1]];
             } else {
-                return [[row, col + 2],
-                        [row, col + 1]];
+                return [[row, col + 2], [row, col + 1]];
             }
         },
 
         edgePositions: function() {
-            var leftEdgePositions = this.leftEdgePositions(),
-                rightEdgePositions = this.rightEdgePositions();
-
-            // can't find merge for arrays :-/
-            return [leftEdgePositions[0], leftEdgePositions[1],
-                    rightEdgePositions[0], rightEdgePositions[1]];
+            return this.leftEdgePositions().concat(this.rightEdgePositions());
         },
 
         leftEdges: function() {
@@ -188,7 +177,7 @@ YUI.add("pioneers-edge", function(Y) {
             var leftNode = this.leftNode(),
                 leftEdges = this.leftEdges();
             if(!leftNode.isSettled() || leftNode.get("player") === player) {
-                return grep(leftEdges, function(edge) {
+                return filter(leftEdges, function(edge) {
                     return edge.player == player;
                 });
             } else {
@@ -200,7 +189,7 @@ YUI.add("pioneers-edge", function(Y) {
             var rightNode = this.rightNode(),
                 rightEdges = this.rightEdges();
             if(!rightNode.isSettled() || rightNode.get("player") === player) {
-                return grep(rightEdges, function(edge) {
+                return filter(rightEdges, function(edge) {
                     return edge.player == player;
                 });
             } else {
@@ -209,10 +198,7 @@ YUI.add("pioneers-edge", function(Y) {
         },
 
         getRoads: function(player) {
-            var leftRoad = this.leftRoad(player),
-                rightRoad = this.rightRoad(player);
-
-            return [leftRoad[0], leftRoad[1], rightRoad[0], rightRoad[1]];
+            return this.leftRoad(player).concat(this.rightRoad(player));
         },
 
         hasRoad: function(player) {

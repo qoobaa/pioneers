@@ -30,7 +30,7 @@ YUI.add("pioneers-board", function(Y) {
         Base = Y.Base,
         map = Y.Array.map,
         each = Y.Array.each,
-        grep = Y.Array.grep,
+        filter = Y.Array.filter,
         Hex = pioneers.Hex,
         Edge = pioneers.Edge,
         Node = pioneers.Node;
@@ -49,6 +49,8 @@ YUI.add("pioneers-board", function(Y) {
         edges: {
         },
         size: {
+        },
+        robberPosition: {
         }
     };
 
@@ -83,31 +85,31 @@ YUI.add("pioneers-board", function(Y) {
         },
 
         settlements: function(player) {
-            return grep(this.nodes, function(node) {
+            return filter(this.nodes, function(node) {
                 return node.isSettlement(player);
             });
         },
 
         nodesValidForSettlement: function(player) {
-            return grep(this.nodes, function(node) {
+            return filter(this.nodes, function(node) {
                 return node.isValidForSettlement(player);
             });
         },
 
         nodesValidForFirstSettlement: function(player) {
-            return grep(this.nodes, function(node) {
+            return filter(this.nodes, function(node) {
                 return node.isValidForFirstSettlement(player);
             });
         },
 
         edgesValidForRoad: function(player) {
-            return grep(this.edges, function(edge) {
+            return filter(this.edges, function(edge) {
                 return edge.isValidForRoad(player);
             });
         },
 
         edgesValidForFirstRoad: function(player) {
-            return grep(this.edges, function(edge) {
+            return filter(this.edges, function(edge) {
                 return edge.isValidForFirstRoad(player);
             });
         },
@@ -126,8 +128,24 @@ YUI.add("pioneers-board", function(Y) {
             return this.get("size")[0];
         },
 
+        nodeHeight: function() {
+            return this.height() + 1;
+        },
+
+        edgeHeight: function() {
+            return this.height() + 1;
+        },
+
         width: function() {
             return this.get("size")[1];
+        },
+
+        nodeWidth: function() {
+            return this.width() * 2 + 2;
+        },
+
+        edgeWidth: function() {
+            return this.width() * 3 + 5;
         },
 
         _createHexes: function() {

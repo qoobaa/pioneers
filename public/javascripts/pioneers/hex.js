@@ -30,7 +30,7 @@ YUI.add("pioneers-hex", function(Y) {
         Position = pioneers.Position,
         map = Y.Array.map,
         each = Y.Array.each,
-        grep = Y.Array.grep;
+        filter = Y.Array.filter;
 
     var Hex = function() {
         pioneers.Hex.superclass.constructor.apply(this, arguments);
@@ -45,7 +45,11 @@ YUI.add("pioneers-hex", function(Y) {
         },
         harborType: {
         },
+        harborPosition: {
+        },
         board: {
+        },
+        roll: {
         }
     };
 
@@ -95,7 +99,7 @@ YUI.add("pioneers-hex", function(Y) {
         },
 
         robbableNodes: function(player) {
-            return grep(this.nodes(), function(node) {
+            return filter(this.nodes(), function(node) {
                 return node.isSettled() && node.get("player") !== player;
             });
         },

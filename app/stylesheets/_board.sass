@@ -1,0 +1,182 @@
+/*
+  Pioneers - web game based on the Settlers of Catan board game.
+
+  Copyright (C) 2009 Jakub Kuźma <qoobaa@gmail.com>
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+!board_height = 7
+!board_width = 7
+!board_hex_width = 95px
+!board_hex_width2 = !board_hex_width / 2
+!board_hex_height = 80px
+!board_hex_height2 = !board_hex_height / 2
+!board_hex_x_offset = 15px
+!board_hex_y_offset = 10px
+!board_hex_offset = !board_hex_x_offset + !board_hex_y_offset
+!board_node_width = 24px
+!board_node_width2 = !board_node_width / 2
+!board_node_height = 24px
+!board_node_height2 = !board_node_height / 2
+!board_edge_width = 48px
+!board_edge_width2 = !board_edge_width / 2
+!board_edge_height = 48px
+!board_edge_height2 = !board_edge_height / 2
+
+=board
+  @for !row from 1 to !board_height + 1
+    @for !col from 1 to !board_width + 1
+      .yui-board-board-size-#{!row + "-" + !col}
+        :height= !row * !board_hex_height + (!row - 1) * !board_hex_height2
+        :width= !col * (!board_hex_width - !board_hex_offset) + !board_hex_offset
+
+  .yui-board-content
+    :background= image_url("board-background.png")
+
+  .yui-board-hex
+    :width= !board_hex_width
+    :height= !board_hex_height
+    :text-align center
+    :line-height= !board_hex_height
+    :position absolute
+
+  .yui-board-hex-forest
+    :background= image_url("forest.png")
+  .yui-board-hex-hill
+    :background= image_url("hill.png")
+  .yui-board-hex-mountain
+    :background= image_url("mountain.png")
+  .yui-board-hex-pasture
+    :background= image_url("pasture.png")
+  .yui-board-hex-field
+    :background= image_url("field.png")
+  .yui-board-hex-sea
+    :background= image_url("sea.png")
+  .yui-board-hex-desert
+    :background= image_url("desert.png")
+
+  @for !row from 0 to !board_height + 1
+    .yui-board-hexes-row-#{!row}
+      :position absolute
+      :top= !row * !board_hex_height
+
+  @for !col from 0 to !board_width + 1
+    .yui-board-hexes-col-#{!col}
+      :top= !col * !board_hex_height2
+      :left= !col * (!board_hex_width - !board_hex_offset)
+
+  .yui-board-hex-harbor,.yui-board-hex-robber,.yui-board-hex-roll
+    :display block
+    :width= !board_hex_width
+    :height !board_hex_height
+    :text-align center
+    :font-weight bold
+    :line-height= !board_hex_height
+
+  .yui-board-hexes-robber
+    :display none
+
+  @for !position from 0 to 6
+    .yui-board-harbor-generic-#{!position}
+      :background= image_url("harbor-generic-#{!position}.png")
+  @for !position from 0 to 6
+    .yui-board-harbor-bricks-#{!position}
+      :background= image_url("harbor-generic-#{!position}.png")
+  @for !position from 0 to 6
+    .yui-board-harbor-grain-#{!position}
+      :background= image_url("harbor-generic-#{!position}.png")
+  @for !position from 0 to 6
+    .yui-board-harbor-lumber-#{!position}
+      :background= image_url("harbor-generic-#{!position}.png")
+  @for !position from 0 to 6
+    .yui-board-harbor-ore-#{!position}
+      :background= image_url("harbor-generic-#{!position}.png")
+  @for !position from 0 to 6
+    .yui-board-harbor-wool-#{!position}
+      :background= image_url("harbor-generic-#{!position}.png")
+
+  .yui-board-node
+    :width= !board_node_width
+    :height= !board_node_height
+    :z-index 2
+    :position absolute
+    :background= image_url("settlement-player-1.png")
+
+  @for !row from 0 to !board_height + 2
+    .yui-board-nodes-row-#{!row}
+      :position absolute
+      :top= !row * !board_hex_height
+
+  @for !col from 0 to !board_width * 2 + 2
+    .yui-board-nodes-col-#{!col}
+      :top= floor((!col + 1) / 2) * !board_hex_height2 - !board_node_height2 - !board_hex_height2
+      @if !col % 2 == 0
+        :left= floor(!col / 2) * (!board_hex_width - !board_hex_offset) - !board_node_width2
+      @else
+        :left= floor(!col / 2) * (!board_hex_width - !board_hex_offset) - !board_node_width2 + !board_hex_offset
+
+  .yui-board-settlement-1
+    :background= image_url("settlement-player-1.png")
+  .yui-board-settlement-2
+    :background= image_url("settlement-player-2.png")
+  .yui-board-settlement-3
+    :background= image_url("settlement-player-3.png")
+  .yui-board-city-1
+    :background= image_url("city-player-1.png")
+  .yui-board-city-2
+    :background= image_url("city-player-2.png")
+  .yui-board-city-3
+    :background= image_url("city-player-3.png")
+
+  .yui-board-edge
+    :z-index 1
+    :width= !board_edge_width
+    :height= !board_edge_height
+    :position absolute
+
+  @for !row from 0 to !board_height + 2
+    .yui-board-edges-row-#{!row}
+      :position absolute
+      :top= !row * !board_hex_height
+
+  @for !col from 0 to !board_width * 3 + 5
+    .yui-board-edges-col-#{!col}
+      @if !col % 3 == 0
+        :left= floor(!col / 3) * (!board_hex_width - !board_hex_offset) - !board_edge_height2 - 58px
+        :top= floor(!col / 3) * !board_hex_height2 - !board_hex_height2 - !board_edge_height2 + 20px
+        .yui-board-road-1
+          :background= image_url("road-0-player-1.png")
+        .yui-board-road-2
+          :background= image_url("road-0-player-2.png")
+        .yui-board-road-3
+          :background= image_url("road-0-player-3.png")
+      @else
+        @if !col % 3 == 1
+          :left= floor(!col / 3) * (!board_hex_width - !board_hex_offset) - !board_edge_width
+          :top= floor(!col / 3) * !board_hex_height2 - !board_hex_height2 - !board_edge_height2
+          .yui-board-road-1
+            :background= image_url("road-1-player-1.png")
+          .yui-board-road-2
+            :background= image_url("road-1-player-2.png")
+          .yui-board-road-3
+            :background= image_url("road-1-player-3.png")
+        @else
+          :left= floor(!col / 3) * (!board_hex_width - !board_hex_offset) - !board_edge_width2 + 10px
+          :top= floor(!col / 3) * !board_hex_height2 - !board_hex_height2 - !board_edge_height2 + 20px
+          .yui-board-road-1
+            :background= image_url("road-2-player-1.png")
+          .yui-board-road-2
+            :background= image_url("road-2-player-2.png")
+          .yui-board-road-3
+            :background= image_url("road-2-player-3.png")
