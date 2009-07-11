@@ -84,6 +84,18 @@ YUI.add("pioneers-board", function(Y) {
             return row ? row[position[1]] : undefined;
         },
 
+        settledNodes: function() {
+            return filter(this.nodes, function(node) {
+                return node.isSettled();
+            });
+        },
+
+        settledEdges: function() {
+            return filter(this.edges, function(edge) {
+                return edge.isSettled();
+            });
+        },
+
         settlements: function(player) {
             return filter(this.nodes, function(node) {
                 return node.isSettlement(player);

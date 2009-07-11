@@ -35,6 +35,7 @@ YUI.add("board", function(Y) {
         ROLL = "roll",
         HARBOR = "harbor",
         SIZE = "size",
+        ROAD = "road",
         getCN = Y.ClassNameManager.getClassName,
         C_BOARD = getCN(BOARD, BOARD),
         C_ROBBER = getCN(BOARD, HEX, ROBBER),
@@ -50,6 +51,8 @@ YUI.add("board", function(Y) {
         Widget = Y.Widget,
         Node = Y.Node,
         isNumber = Y.Lang.isNumber,
+        isValue = Y.Lang.isValue,
+        each = Y.each,
         bind = Y.bind,
         pioneers = Y.namespace("pioneers");
 
@@ -234,6 +237,67 @@ YUI.add("board", function(Y) {
             tr.addClass(className);
 
             return tr;
+        },
+
+        syncUI: function() {
+            this._uiSyncRobber(this.board.get("robberPosition"));
+            this._uiSyncNodes();
+            this._uiSyncEdges();
+        },
+
+        _uiSyncRobber: function(position, oldPosition) {
+            var robberClass = this.getClassName(ROBBER);
+
+            if(isValue(oldPosition)) {
+                var robberNode = this._findBoardNode(HEXES, oldPosition);
+                robberNode.removeClass(robberClass);
+            }
+
+            var robberNode = this._findBoardNode(HEXES, position);
+            robberNode.addClass(robberClass);
+        },
+
+        _uiSyncNodes: function() {
+            var that = this;
+            each(this.board.settledNodes(), function(node) {
+                that._uiSyncNode(node);
+            });
+        },
+
+        _uiSyncNode: function(node) {
+            var position = node.get("position"),
+                state = node.get("state"),
+                player = node.get("player"),
+                nodeNode = this._findBoardNode(NODES, position),
+                oldClass = this.getClassName("settlement", player),
+                newClass = this.getClassName(state, player);
+            nodeNode.removeClass(oldClass);
+            nodeNode.addClass(newClass);
+        },
+
+        _uiSyncEdges: function() {
+            var that = this;
+            each(this.board.settledEdges(), function(edge) {
+                that._uiSyncEdge(edge);
+            });
+        },
+
+        _uiSyncEdge: function(edge) {
+            var position = edge.get("position"),
+                player = edge.get("player"),
+                edgeNode = this._findBoardNode(EDGES, position),
+                roadClass = this.getClassName(ROAD, player);
+            edgeNode.addClass(roadClass);
+        },
+
+        _findBoardNode: function(type, position) {
+            var row = position[0],
+                col = position[1],
+                contentBox = this.get(CONTENT_BOX),
+                rowClass = this.getClassName(type, ROW, row),
+                colClass = this.getClassName(type, COL, col),
+                node = contentBox.query("." + rowClass + " ." + colClass);
+            return node;
         }
     });
 

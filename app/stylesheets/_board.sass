@@ -16,8 +16,8 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-!board_height = 7
-!board_width = 7
+!board_height = 10
+!board_width = 10
 !board_hex_width = 95px
 !board_hex_width2 = !board_hex_width / 2
 !board_hex_height = 80px
@@ -43,6 +43,7 @@
 
   .yui-board-content
     :background= image_url("board-background.png")
+    :padding 50px
 
   .yui-board-hex
     :width= !board_hex_width
@@ -77,15 +78,23 @@
       :left= !col * (!board_hex_width - !board_hex_offset)
 
   .yui-board-hex-harbor,.yui-board-hex-robber,.yui-board-hex-roll
-    :display block
     :width= !board_hex_width
     :height !board_hex_height
     :text-align center
     :font-weight bold
     :line-height= !board_hex_height
 
-  .yui-board-hexes-robber
+  .yui-board-hex-harbor,.yui-board-hex-roll
+    :display block
+
+  .yui-board-hex-robber
     :display none
+
+  .yui-board-robber
+    .yui-board-hex-roll
+      :display none
+    .yui-board-hex-robber
+      :display block
 
   @for !position from 0 to 6
     .yui-board-harbor-generic-#{!position}
@@ -111,7 +120,6 @@
     :height= !board_node_height
     :z-index 2
     :position absolute
-    :background= image_url("settlement-player-1.png")
 
   @for !row from 0 to !board_height + 2
     .yui-board-nodes-row-#{!row}
@@ -165,18 +173,18 @@
         @if !col % 3 == 1
           :left= floor(!col / 3) * (!board_hex_width - !board_hex_offset) - !board_edge_width
           :top= floor(!col / 3) * !board_hex_height2 - !board_hex_height2 - !board_edge_height2
-          .yui-board-road-1
+          &.yui-board-road-1
             :background= image_url("road-1-player-1.png")
-          .yui-board-road-2
+          &.yui-board-road-2
             :background= image_url("road-1-player-2.png")
-          .yui-board-road-3
+          &.yui-board-road-3
             :background= image_url("road-1-player-3.png")
         @else
           :left= floor(!col / 3) * (!board_hex_width - !board_hex_offset) - !board_edge_width2 + 10px
           :top= floor(!col / 3) * !board_hex_height2 - !board_hex_height2 - !board_edge_height2 + 20px
-          .yui-board-road-1
+          &.yui-board-road-1
             :background= image_url("road-2-player-1.png")
-          .yui-board-road-2
+          &.yui-board-road-2
             :background= image_url("road-2-player-2.png")
-          .yui-board-road-3
+          &.yui-board-road-3
             :background= image_url("road-2-player-3.png")
