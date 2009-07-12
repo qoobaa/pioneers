@@ -80,7 +80,7 @@ YUI.add("pioneers-edge", function(Y) {
 
         isSettleable: function() {
             return isValue(find(this.hexes(), function(hex) {
-                return hex.isSettleable();
+                return hex && hex.isSettleable();
             }));
         },
 
@@ -136,7 +136,7 @@ YUI.add("pioneers-edge", function(Y) {
 
         hasSettlementWithoutRoad: function(player) {
             return isValue(find(this.settlements(player), function(settlement) {
-                return !settlement.hasRoad(player);
+                return settlement && !settlement.hasRoad(player);
             }));
         },
 
