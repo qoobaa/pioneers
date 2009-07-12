@@ -79,7 +79,7 @@
 
   .yui-board-hex-harbor,.yui-board-hex-robber,.yui-board-hex-roll
     :width= !board_hex_width
-    :height !board_hex_height
+    :height= !board_hex_height
     :text-align center
     :font-weight bold
     :line-height= !board_hex_height
@@ -163,11 +163,11 @@
       @if !col % 3 == 0
         :left= floor(!col / 3) * (!board_hex_width - !board_hex_offset) - !board_edge_height2 - 58px
         :top= floor(!col / 3) * !board_hex_height2 - !board_hex_height2 - !board_edge_height2 + 20px
-        .yui-board-road-1
+        &.yui-board-road-1
           :background= image_url("road-0-player-1.png")
-        .yui-board-road-2
+        &.yui-board-road-2
           :background= image_url("road-0-player-2.png")
-        .yui-board-road-3
+        &.yui-board-road-3
           :background= image_url("road-0-player-3.png")
       @else
         @if !col % 3 == 1

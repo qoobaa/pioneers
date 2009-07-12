@@ -22,7 +22,9 @@
 
 YUI.add("pioneers-position", function(Y) {
     var pioneers = Y.namespace("pioneers"),
-        map = Y.Array.map;
+        map = Y.Array.map,
+        reject = Y.Array.reject,
+        isValue = Y.Lang.isValue;
 
     var Position = function() {
 
@@ -39,23 +41,35 @@ YUI.add("pioneers-position", function(Y) {
     };
 
     Position.prototype.hexes = function() {
-        var board = this.get("board");
-        return map(this.hexPositions(), function(position) {
-            return board.hex(position);
+        var board = this.get("board"),
+            hexes = map(this.hexPositions(), function(position) {
+                return board.hex(position);
+            });
+
+        return reject(hexes, function(hex) {
+            return !isValue(hex);
         });
     };
 
     Position.prototype.nodes = function() {
-        var board = this.get("board");
-        return map(this.nodePositions(), function(position) {
-            return board.node(position);
+        var board = this.get("board"),
+            nodes = map(this.nodePositions(), function(position) {
+                return board.node(position);
+            });
+
+        return reject(nodes, function(node) {
+            return !isValue(node);
         });
     };
 
     Position.prototype.edges = function() {
-        var board = this.get("board");
-        return map(this.edgePositions(), function(position) {
-            return board.edge(position);
+        var board = this.get("board"),
+            edges = map(this.edgePositions(), function(position) {
+                return board.edge(position);
+            });
+
+        return reject(edges, function(edge) {
+            return !isValue(edge);
         });
     };
 

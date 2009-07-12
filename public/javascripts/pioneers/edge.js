@@ -30,6 +30,7 @@ YUI.add("pioneers-edge", function(Y) {
         Base = Y.Base,
         map = Y.Array.map,
         each = Y.Array.each,
+        reject = Y.Array.reject,
         filter = Y.Array.filter,
         find = Y.Array.find,
         isValue = Y.Lang.isValue;
@@ -52,6 +53,10 @@ YUI.add("pioneers-edge", function(Y) {
     extend(Edge, Base, {
         isSettled: function() {
             return isValue(this.get("player"));
+        },
+
+        isRoad: function(player) {
+            return this.get("player") === player;
         },
 
         hexPositions: function() {
@@ -120,7 +125,7 @@ YUI.add("pioneers-edge", function(Y) {
         },
 
         hasSettlement: function(player) {
-            return !!getSettlements(player).length;
+            return !!this.settlements(player).length;
         },
 
         hasSettlementWithoutRoad: function(player) {
@@ -168,7 +173,7 @@ YUI.add("pioneers-edge", function(Y) {
 
         rightEdges: function() {
             var board = this.get("board");
-            return $.map(this.rightEdgePositions(), function(position) {
+            return map(this.rightEdgePositions(), function(position) {
                 return board.edge(position);
             });
         },
@@ -197,8 +202,8 @@ YUI.add("pioneers-edge", function(Y) {
             }
         },
 
-        getRoads: function(player) {
-            return this.leftRoad(player).concat(this.rightRoad(player));
+        roads: function(player) {
+            return this.leftRoads(player).concat(this.rightRoads(player));
         },
 
         hasRoad: function(player) {

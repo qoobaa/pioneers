@@ -35,17 +35,27 @@ YUI.add("board", function(Y) {
         ROLL = "roll",
         HARBOR = "harbor",
         SIZE = "size",
+        SETTLEMENT = "settlement",
+        CITY = "city",
         ROAD = "road",
+        OK = "ok",
+        NO = "no",
         getCN = Y.ClassNameManager.getClassName,
         C_BOARD = getCN(BOARD, BOARD),
-        C_ROBBER = getCN(BOARD, HEX, ROBBER),
-        C_ROLL = getCN(BOARD, HEX, ROLL),
+        C_ROBBER_SPAN = getCN(BOARD, HEX, ROBBER),
+        C_ROLL_SPAN = getCN(BOARD, HEX, ROLL),
+        C_HEX = getCN(BOARD, HEX),
+        C_NODE = getCN(BOARD, NODE),
+        C_EDGE = getCN(BOARD, EDGE),
+        C_ROBBER = getCN(BOARD, ROBBER),
+        C_OK = getCN(BOARD, OK),
+        C_NO = getCN(BOARD, NO),
         BOARD_TEMPLATE = '<table class="' + C_BOARD + '"></table>',
         TBODY_TEMPLATE = '<tbody></tbody>',
         TR_TEMPLATE = '<tr></tr>',
         TD_TEMPLATE = '<td></td>',
-        ROBBER_TEMPLATE = '<span class="' + C_ROBBER + '">robber</span>',
-        ROLL_TEMPLATE = '<span class="' + C_ROLL + '"></span>',
+        ROBBER_TEMPLATE = '<span class="' + C_ROBBER_SPAN + '">robber</span>',
+        ROLL_TEMPLATE = '<span class="' + C_ROLL_SPAN + '"></span>',
         HARBOR_TEMPLATE = '<span></span>',
         CONTENT_BOX = "contentBox",
         Widget = Y.Widget,
@@ -54,6 +64,7 @@ YUI.add("board", function(Y) {
         isValue = Y.Lang.isValue,
         each = Y.each,
         bind = Y.bind,
+        find = Y.Array.find,
         pioneers = Y.namespace("pioneers");
 
     function Board() {
@@ -64,6 +75,14 @@ YUI.add("board", function(Y) {
         NAME: BOARD,
         ATTRS: {
             board: {
+            },
+            player: {
+            },
+            // "firstSettlement", "settlement", "first road", "road", "city", "robber", "rob"
+            mode: {
+                value: "default"
+            },
+            robberPosition: {
             }
         }
     });
@@ -125,7 +144,8 @@ YUI.add("board", function(Y) {
                 harborType = hex.get("harborType"),
                 type = hex.get("type"),
                 roll = hex.get("roll"),
-                className = this.getClassName(HEX),
+                position = hex.get("position"),
+                className = C_HEX,
                 typeClassName = this.getClassName(HEX, type),
                 harborClassName = this.getClassName(HEX, HARBOR),
                 harborTypeClassName = this.getClassName(HARBOR, harborType, harborPosition),
@@ -152,6 +172,8 @@ YUI.add("board", function(Y) {
                 harborSpan.set("innerHTML", harborType);
                 colNode.appendChild(harborSpan);
             }
+
+            colNode.setAttribute("position", position.join());
 
             return colNode;
         },
@@ -181,11 +203,12 @@ YUI.add("board", function(Y) {
         },
 
         _createNode: function(node) {
-            var col = node.col(),
+            var position = node.get("position"),
                 colNode = Node.create(TD_TEMPLATE),
-                className = this.getClassName(NODE);
+                className = C_NODE;
 
             colNode.addClass(className);
+            colNode.setAttribute("position", position.join());
 
             return colNode;
         },
@@ -215,10 +238,12 @@ YUI.add("board", function(Y) {
         },
 
         _createEdge: function(edge) {
-            var className = this.getClassName(EDGE),
+            var position = edge.get("position"),
+                className = C_EDGE,
                 colNode = Node.create(TD_TEMPLATE);
 
             colNode.addClass(className);
+            colNode.setAttribute("position", position.join());
 
             return colNode;
         },
@@ -240,54 +265,78 @@ YUI.add("board", function(Y) {
         },
 
         syncUI: function() {
-            this._uiSyncRobber(this.board.get("robberPosition"));
+            this._uiSyncHex(this.board.get("robberPosition"));
             this._uiSyncNodes();
             this._uiSyncEdges();
         },
 
-        _uiSyncRobber: function(position, oldPosition) {
-            var robberClass = this.getClassName(ROBBER);
+        _uiSyncHex: function(position) {
+            var hex = this.board.hex(position),
+                hexNode = this._findBoardNode(HEXES, position),
+                robberClass = C_ROBBER;
 
-            if(isValue(oldPosition)) {
-                var robberNode = this._findBoardNode(HEXES, oldPosition);
-                robberNode.removeClass(robberClass);
+            this._removeClasses(hexNode);
+
+            if(hex.hasRobber()) {
+                hexNode.addClass(robberClass);
             }
-
-            var robberNode = this._findBoardNode(HEXES, position);
-            robberNode.addClass(robberClass);
         },
 
         _uiSyncNodes: function() {
             var that = this;
             each(this.board.settledNodes(), function(node) {
-                that._uiSyncNode(node);
+                that._uiSyncNode(node.get("position"));
             });
         },
 
-        _uiSyncNode: function(node) {
-            var position = node.get("position"),
+        _uiSyncNode: function(position) {
+            var node = this.board.node(position),
                 state = node.get("state"),
                 player = node.get("player"),
+                isSettled = node.isSettled(),
                 nodeNode = this._findBoardNode(NODES, position),
-                oldClass = this.getClassName("settlement", player),
-                newClass = this.getClassName(state, player);
-            nodeNode.removeClass(oldClass);
-            nodeNode.addClass(newClass);
+                className = this.getClassName(state, player);
+
+            this._removeClasses(nodeNode);
+
+            if(isSettled) {
+                nodeNode.addClass(className);
+            }
         },
 
         _uiSyncEdges: function() {
             var that = this;
             each(this.board.settledEdges(), function(edge) {
-                that._uiSyncEdge(edge);
+                that._uiSyncEdge(edge.get("position"));
             });
         },
 
-        _uiSyncEdge: function(edge) {
-            var position = edge.get("position"),
+        _uiSyncEdge: function(position) {
+            var edge = this.board.edge(position),
                 player = edge.get("player"),
+                isSettled = edge.isSettled(),
                 edgeNode = this._findBoardNode(EDGES, position),
-                roadClass = this.getClassName(ROAD, player);
-            edgeNode.addClass(roadClass);
+                className = this.getClassName(ROAD, player);
+
+            this._removeClasses(edgeNode);
+
+            if(isSettled) {
+                edgeNode.addClass(className);
+            }
+        },
+
+        _removeClasses: function(node){
+            node.removeClass(C_ROBBER);
+            node.removeClass(C_NO);
+            node.removeClass(C_OK);
+            for(var i = 0; i < 5; i++) {
+                var settlementClassName = this.getClassName(SETTLEMENT, i),
+                    cityClassName = this.getClassName(CITY, i),
+                    roadClassName = this.getClassName(ROAD, i);
+                node.removeClass(settlementClassName);
+                node.removeClass(cityClassName);
+                node.removeClass(roadClassName);
+            }
         },
 
         _findBoardNode: function(type, position) {
@@ -297,7 +346,221 @@ YUI.add("board", function(Y) {
                 rowClass = this.getClassName(type, ROW, row),
                 colClass = this.getClassName(type, COL, col),
                 node = contentBox.query("." + rowClass + " ." + colClass);
+
             return node;
+        },
+
+        bindUI: function() {
+            var hexNodes = Y.all("." + C_HEX),
+                nodeNodes = Y.all("." + C_NODE),
+                edgeNodes = Y.all("." + C_EDGE);
+
+            hexNodes.on("mouseover", bind(this._hexesMouseOver, this));
+            hexNodes.on("mouseout", bind(this._hexesMouseOut, this));
+            hexNodes.on("click", bind(this._hexesClick, this));
+            nodeNodes.on("mouseover", bind(this._nodesMouseOver, this));
+            nodeNodes.on("mouseout", bind(this._nodesMouseOut, this));
+            nodeNodes.on("click", bind(this._nodesClick, this));
+            edgeNodes.on("mouseover", bind(this._edgesMouseOver, this));
+            edgeNodes.on("mouseout", bind(this._edgesMouseOut, this));
+            edgeNodes.on("click", bind(this._edgesClick, this));
+        },
+
+        _hexesMouseOver: function(event) {
+            var mode = this.get("mode"),
+                hexNode = event.currentTarget,
+                position = hexNode.getAttribute("position").split(","),
+                hex = this.board.hex(position);
+
+            if(mode === "robber") {
+                hexNode.addClass(C_ROBBER);
+                if(hex.isRobbable()) {
+                    hexNode.addClass(C_OK);
+                } else {
+                    hexNode.addClass(C_NO);
+                }
+            }
+        },
+
+        _hexesMouseOut: function(event) {
+            var mode = this.get("mode"),
+                hexNode = event.currentTarget,
+                position = hexNode.getAttribute("position").split(",");
+
+            if(mode === "robber") {
+                this._uiSyncHex(position);
+            }
+        },
+
+        _hexesClick: function(event) {
+            var mode = this.get("mode"),
+                hexNode = event.currentTarget,
+                position = hexNode.getAttribute("position").split(","),
+                hex = this.board.hex(position);
+
+            if(mode === "robber") {
+                if(hex.isRobbable()) {
+                    this.set("mode", "rob");
+                    this.set("robberPosition", position);
+                }
+            }
+        },
+
+        _nodesMouseOver: function(event) {
+            var mode = this.get("mode"),
+                nodeNode = event.currentTarget,
+                position = nodeNode.getAttribute("position").split(","),
+                node = this.board.node(position),
+                player = this.get("player"),
+                className;
+
+            switch(mode) {
+            case "firstSettlement":
+                className = this.getClassName(SETTLEMENT, player);
+                nodeNode.addClass(className);
+                if(node.isValidForFirstSettlement(player)) {
+                    nodeNode.addClass(C_OK);
+                } else {
+                    nodeNode.addClass(C_NO);
+                }
+                break;
+            case "settlement":
+                className = this.getClassName(SETTLEMENT, player);
+                nodeNode.addClass(className);
+                if(node.isValidForSettlement(player)) {
+                    nodeNode.addClass(C_OK);
+                } else {
+                    nodeNode.addClass(C_NO);
+                }
+                break;
+            case "city":
+                className = this.getClassName(SETTLEMENT, player);
+                nodeNode.addClass(className);
+                if(node.isValidForCity(player)) {
+                    nodeNode.addClass(C_OK);
+                } else {
+                    nodeNode.addClass(C_NO);
+                }
+                break;
+            case "rob":
+                var robberPosition = this.get("robberPosition");
+                if(node.hasHexInNeighbourhood(robberPosition)) {
+                    nodeNode.addClass(C_OK);
+                } else {
+                    nodeNode.addClass(C_NO);
+                }
+                break;
+            }
+        },
+
+        _nodesMouseOut: function(event) {
+            var mode = this.get("mode"),
+                nodeNode = event.currentTarget,
+                position = nodeNode.getAttribute("position").split(",");
+
+            if(mode === "firstSettlement" ||
+               mode === "settlement" ||
+               mode === "city" ||
+               mode === "rob") {
+                this._uiSyncNode(position);
+            }
+        },
+
+        _nodesClick: function(event) {
+            var mode = this.get("mode"),
+                nodeNode = event.currentTarget,
+                position = nodeNode.getAttribute("position").split(","),
+                node = this.board.node(position),
+                player = this.get("player");
+
+            switch(mode) {
+            case "firstSettlement":
+                if(node.isValidForFirstSettlement(player)) {
+                    this.set("mode", "default");
+                    // TODO: fire settlement built
+                }
+                break;
+            case "settlement":
+                if(node.isValidForSettlement(player)) {
+                    this.set("mode", "default");
+                    // TODO: fire settlement built
+                }
+                break;
+            case "city":
+                if(node.isValidForCity(player)) {
+                    this.set("mode", "default");
+                    // TODO: fire city built
+                }
+                break;
+            case "rob":
+                if(node.hasHexInNeighbourhood(robberPosition)) {
+                    this.set("mode", "default");
+                    // TODO: fire robbed
+                }
+                break;
+            }
+        },
+
+        _edgesMouseOver: function(event) {
+            var mode = this.get("mode"),
+                edgeNode = event.currentTarget,
+                position = edgeNode.getAttribute("position").split(","),
+                edge = this.board.edge(position),
+                player = this.get("player"),
+                className = this.getClassName(ROAD, player);
+
+            switch(mode) {
+            case "firstRoad":
+                edgeNode.addClass(className);
+                if(edge.isValidForFirstRoad(player)) {
+                    edgeNode.addClass(C_OK);
+                } else {
+                    edgeNode.addClass(C_NO);
+                }
+                break;
+            case "road":
+                edgeNode.addClass(className);
+                if(edge.isValidForRoad(player)) {
+                    edgeNode.addClass(C_OK);
+                } else {
+                    edgeNode.addClass(C_NO);
+                }
+                break;
+            }
+        },
+
+        _edgesMouseOut: function(event) {
+            var mode = this.get("mode"),
+                edgeNode = event.currentTarget,
+                position = edgeNode.getAttribute("position").split(",");
+
+            if(mode === "firstRoad" || mode === "road") {
+                this._uiSyncEdge(position);
+            }
+        },
+
+        _edgesClick: function(event) {
+            var mode = this.get("mode"),
+                edgeNode = event.currentTarget,
+                position = edgeNode.getAttribute("position").split(","),
+                edge = this.board.edge(position),
+                player = this.get("player"),
+                className = this.getClassName(ROAD, player);
+
+            switch(mode) {
+            case "firstRoad":
+                if(edge.isValidForFirstRoad(player)) {
+                    this.set("mode", "default");
+                    // TODO: fire road built
+                }
+                break;
+            case "road":
+                if(edge.isValidForRoad(player)) {
+                    this.set("mode", "default");
+                    // TODO: fire road built
+                }
+                break;
+            }
         }
     });
 

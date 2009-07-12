@@ -112,6 +112,15 @@ YUI.add("pioneers-node", function(Y) {
             }));
         },
 
+        hasHexInNeighbourhood: function(position) {
+            var row = position[0],
+                col = position[1];
+
+            return isValue(find(this.hexes(), function(hex) {
+                return row === hex.row() && col === hex.col();
+            }));
+        },
+
         edgePositions: function() {
             var col = this.col(),
                 row = this.row();
@@ -124,13 +133,13 @@ YUI.add("pioneers-node", function(Y) {
         },
 
         roads: function(player) {
-            return $.filter(this.edges(), function(edge) {
-                return edge.get("player") === player;
+            return filter(this.edges(), function(edge) {
+                return edge.isRoad(player);
             });
         },
 
         hasRoad: function(player) {
-            return !this.roads(player).length;
+            return !!this.roads(player).length;
         },
 
         isValidForFirstSettlement: function() {
