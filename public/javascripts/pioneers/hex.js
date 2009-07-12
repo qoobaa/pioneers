@@ -100,7 +100,7 @@ YUI.add("pioneers-hex", function(Y) {
 
         robbableNodes: function(player) {
             return filter(this.nodes(), function(node) {
-                return node.isSettled() && node.get("player") !== player;
+                return node && node.isSettled() && !node.isSettled(player);
             });
         },
 

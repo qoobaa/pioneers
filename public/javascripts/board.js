@@ -396,12 +396,17 @@ YUI.add("board", function(Y) {
             var mode = this.get("mode"),
                 hexNode = event.currentTarget,
                 position = hexNode.getAttribute("position").split(","),
+                player = this.get("player"),
                 hex = this.board.hex(position);
 
             if(mode === "robber") {
                 if(hex.isRobbable()) {
-                    this.set("mode", "rob");
                     this.set("robberPosition", position);
+                    if(hex.robbableNodes(player).length) {
+                        this.set("mode", "robbery");
+                    } else {
+                        this.set("mode", "default");
+                    }
                 }
             }
         },
@@ -410,6 +415,7 @@ YUI.add("board", function(Y) {
             var mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = nodeNode.getAttribute("position").split(","),
+                robberPosition = this.get("robberPosition"),
                 node = this.board.node(position),
                 player = this.get("player"),
                 className;
@@ -418,6 +424,7 @@ YUI.add("board", function(Y) {
             case "firstSettlement":
                 className = this.getClassName(SETTLEMENT, player);
                 nodeNode.addClass(className);
+
                 if(node.isValidForFirstSettlement(player)) {
                     nodeNode.addClass(C_OK);
                 } else {
@@ -427,6 +434,7 @@ YUI.add("board", function(Y) {
             case "settlement":
                 className = this.getClassName(SETTLEMENT, player);
                 nodeNode.addClass(className);
+
                 if(node.isValidForSettlement(player)) {
                     nodeNode.addClass(C_OK);
                 } else {
@@ -436,15 +444,20 @@ YUI.add("board", function(Y) {
             case "city":
                 className = this.getClassName(SETTLEMENT, player);
                 nodeNode.addClass(className);
+
                 if(node.isValidForCity(player)) {
                     nodeNode.addClass(C_OK);
                 } else {
                     nodeNode.addClass(C_NO);
                 }
                 break;
-            case "rob":
-                var robberPosition = this.get("robberPosition");
-                if(node.hasHexInNeighbourhood(robberPosition)) {
+            case "robbery":
+                var hex = this.board.hex(robberPosition),
+                    isNodeRobbable = !!find(hex.robbableNodes(player), function(hexNode) {
+                        return hexNode && hexNode.col() === node.col() && hexNode.row() === node.row();
+                    });
+
+                if(isNodeRobbable) {
                     nodeNode.addClass(C_OK);
                 } else {
                     nodeNode.addClass(C_NO);
@@ -458,10 +471,7 @@ YUI.add("board", function(Y) {
                 nodeNode = event.currentTarget,
                 position = nodeNode.getAttribute("position").split(",");
 
-            if(mode === "firstSettlement" ||
-               mode === "settlement" ||
-               mode === "city" ||
-               mode === "rob") {
+            if(mode === "firstSettlement" || mode === "settlement" || mode === "city" || mode === "rob") {
                 this._uiSyncNode(position);
             }
         },
@@ -470,6 +480,7 @@ YUI.add("board", function(Y) {
             var mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = nodeNode.getAttribute("position").split(","),
+                robberPosition = this.get("robberPosition"),
                 node = this.board.node(position),
                 player = this.get("player");
 
@@ -492,8 +503,13 @@ YUI.add("board", function(Y) {
                     // TODO: fire city built
                 }
                 break;
-            case "rob":
-                if(node.hasHexInNeighbourhood(robberPosition)) {
+            case "robbery":
+                var hex = this.board.hex(robberPosition),
+                    isNodeRobbable = !!find(hex.robbableNodes(player), function(hexNode) {
+                        return hexNode && hexNode.col() === node.col() && hexNode.row() === node.row();
+                    });
+
+                if(isNodeRobbable) {
                     this.set("mode", "default");
                     // TODO: fire robbed
                 }
