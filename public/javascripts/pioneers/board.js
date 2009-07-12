@@ -161,62 +161,59 @@ YUI.add("pioneers-board", function(Y) {
         },
 
         _createHexes: function() {
-            var that = this,
-                hexes = this.get("hexes"),
+            var hexes = this.get("hexes"),
                 height = this.get("height");
 
             this.hexes2D = this._array2D(height);
             this.hexes = map(hexes, function(hex) {
-                var h = new Hex(merge(hex, { board: that }));
-                that.hexes2D[h.row()][h.col()] = h;
+                var h = new Hex(merge(hex, { board: this }));
+                this.hexes2D[h.row()][h.col()] = h;
                 return h;
-            });
+            }, this);
         },
 
         _createNodes: function() {
-            var that = this,
-                nodes = this.get("nodes"),
+            var nodes = this.get("nodes"),
                 height = this.height();
 
             this.nodes2D = this._array2D(height);
             this.nodes = map(nodes, function(node) {
-                var n = new Node(merge(node, { board: that}));
-                that.nodes2D[n.row()][n.col()] = n;
+                var n = new Node(merge(node, { board: this }));
+                this.nodes2D[n.row()][n.col()] = n;
                 return n;
-            });
+            }, this);
 
             each(this.hexes, function(hex) {
                 each(hex.nodePositions(), function(position) {
-                    if(that.node(position) === undefined) {
-                        var n = new Node({ board: that, position: position });
-                        that.nodes.push(n);
-                        that.nodes2D[n.row()][n.col()] = n;
+                    if(!this.node(position)) {
+                        var n = new Node({ board: this, position: position });
+                        this.nodes.push(n);
+                        this.nodes2D[n.row()][n.col()] = n;
                     }
-                });
-            });
+                }, this);
+            }, this);
         },
 
         _createEdges: function() {
-            var that = this,
-                edges = this.get("edges"),
+            var edges = this.get("edges"),
                 height = this.height();
 
             this.edges2D = this._array2D(height);
             this.edges = map(edges, function(edge) {
-                var e = new Edge(merge(edge, { board: that }));
-                that.edges2D[e.row()][e.col()] = e;
+                var e = new Edge(merge(edge, { board: this }));
+                this.edges2D[e.row()][e.col()] = e;
                 return e;
-            });
+            }, this);
 
             each(this.hexes, function(hex) {
                 each(hex.edgePositions(), function(position) {
-                    if(that.edge(position) === undefined) {
-                        var e = new Edge({ board: that, position: position });
-                        that.edges.push(e);
-                        that.edges2D[e.row()][e.col()] = e;
+                    if(!this.edge(position)) {
+                        var e = new Edge({ board: this, position: position });
+                        this.edges.push(e);
+                        this.edges2D[e.row()][e.col()] = e;
                     }
-                });
-            });
+                }, this);
+            }, this);
         }
     });
 

@@ -62,6 +62,7 @@ YUI.add("board", function(Y) {
         Node = Y.Node,
         isNumber = Y.Lang.isNumber,
         isValue = Y.Lang.isValue,
+        isArray = Y.Lang.isArray,
         each = Y.each,
         bind = Y.bind,
         find = Y.Array.find,
@@ -265,36 +266,38 @@ YUI.add("board", function(Y) {
         },
 
         syncUI: function() {
-            this._uiSyncHex(this.board.get("robberPosition"));
+            this._uiSyncHexes();
             this._uiSyncNodes();
             this._uiSyncEdges();
         },
 
-        _uiSyncHex: function(position) {
-            var hex = this.board.hex(position),
-                hexNode = this._findBoardNode(HEXES, position),
-                robberClass = C_ROBBER;
+        _uiSyncHexes: function() {
+            each(this.board.hexes, function(hex) {
+                this._uiSyncHex(hex);
+            }, this);
+        },
+
+        _uiSyncHex: function(hex) {
+            var hexNode = this._findBoardNode(HEXES, hex);
 
             this._removeClasses(hexNode);
 
             if(hex.hasRobber()) {
-                hexNode.addClass(robberClass);
+                hexNode.addClass(C_ROBBER);
             }
         },
 
         _uiSyncNodes: function() {
-            var that = this;
             each(this.board.settledNodes(), function(node) {
-                that._uiSyncNode(node.get("position"));
-            });
+                this._uiSyncNode(node);
+            }, this);
         },
 
-        _uiSyncNode: function(position) {
-            var node = this.board.node(position),
-                state = node.get("state"),
+        _uiSyncNode: function(node) {
+            var state = node.get("state"),
                 player = node.get("player"),
                 isSettled = node.isSettled(),
-                nodeNode = this._findBoardNode(NODES, position),
+                nodeNode = this._findBoardNode(NODES, node),
                 className = this.getClassName(state, player);
 
             this._removeClasses(nodeNode);
@@ -305,17 +308,15 @@ YUI.add("board", function(Y) {
         },
 
         _uiSyncEdges: function() {
-            var that = this;
             each(this.board.settledEdges(), function(edge) {
-                that._uiSyncEdge(edge.get("position"));
-            });
+                this._uiSyncEdge(edge);
+            }, this);
         },
 
-        _uiSyncEdge: function(position) {
-            var edge = this.board.edge(position),
-                player = edge.get("player"),
+        _uiSyncEdge: function(edge) {
+            var player = edge.get("player"),
                 isSettled = edge.isSettled(),
-                edgeNode = this._findBoardNode(EDGES, position),
+                edgeNode = this._findBoardNode(EDGES, edge),
                 className = this.getClassName(ROAD, player);
 
             this._removeClasses(edgeNode);
@@ -340,9 +341,14 @@ YUI.add("board", function(Y) {
         },
 
         _findBoardNode: function(type, position) {
-            var row = position[0],
-                col = position[1],
-                contentBox = this.get(CONTENT_BOX),
+            if(isArray(position)) {
+                var row = position[0],
+                    col = position[1];
+            } else {
+                var row = position.row(),
+                    col = position.col();
+            }
+            var contentBox = this.get(CONTENT_BOX),
                 rowClass = this.getClassName(type, ROW, row),
                 colClass = this.getClassName(type, COL, col),
                 node = contentBox.query("." + rowClass + " ." + colClass);
@@ -385,10 +391,11 @@ YUI.add("board", function(Y) {
         _hexesMouseOut: function(event) {
             var mode = this.get("mode"),
                 hexNode = event.currentTarget,
-                position = hexNode.getAttribute("position").split(",");
+                position = hexNode.getAttribute("position").split(","),
+                hex = this.board.hex(position);
 
             if(mode === "robber") {
-                this._uiSyncHex(position);
+                this._uiSyncHex(hex);
             }
         },
 
@@ -469,10 +476,11 @@ YUI.add("board", function(Y) {
         _nodesMouseOut: function(event) {
             var mode = this.get("mode"),
                 nodeNode = event.currentTarget,
-                position = nodeNode.getAttribute("position").split(",");
+                position = nodeNode.getAttribute("position").split(","),
+                node = this.board.node(position);
 
             if(mode === "firstSettlement" || mode === "settlement" || mode === "city" || mode === "rob") {
-                this._uiSyncNode(position);
+                this._uiSyncNode(node);
             }
         },
 
@@ -548,10 +556,11 @@ YUI.add("board", function(Y) {
         _edgesMouseOut: function(event) {
             var mode = this.get("mode"),
                 edgeNode = event.currentTarget,
-                position = edgeNode.getAttribute("position").split(",");
+                position = edgeNode.getAttribute("position").split(","),
+                edge = this.board.edge(position);
 
             if(mode === "firstRoad" || mode === "road") {
-                this._uiSyncEdge(position);
+                this._uiSyncEdge(edge);
             }
         },
 
