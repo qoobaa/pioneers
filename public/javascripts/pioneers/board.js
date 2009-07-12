@@ -86,43 +86,43 @@ YUI.add("pioneers-board", function(Y) {
 
         settledNodes: function() {
             return filter(this.nodes, function(node) {
-                return node.isSettled();
+                return node && node.isSettled();
             });
         },
 
         settledEdges: function() {
             return filter(this.edges, function(edge) {
-                return edge.isSettled();
+                return edge && edge.isSettled();
             });
         },
 
         settlements: function(player) {
             return filter(this.nodes, function(node) {
-                return node.isSettlement(player);
+                return node && node.isSettlement(player);
             });
         },
 
         nodesValidForSettlement: function(player) {
             return filter(this.nodes, function(node) {
-                return node.isValidForSettlement(player);
+                return node && node.isValidForSettlement(player);
             });
         },
 
         nodesValidForFirstSettlement: function(player) {
             return filter(this.nodes, function(node) {
-                return node.isValidForFirstSettlement(player);
+                return node && node.isValidForFirstSettlement(player);
             });
         },
 
         edgesValidForRoad: function(player) {
             return filter(this.edges, function(edge) {
-                return edge.isValidForRoad(player);
+                return edge && edge.isValidForRoad(player);
             });
         },
 
         edgesValidForFirstRoad: function(player) {
             return filter(this.edges, function(edge) {
-                return edge.isValidForFirstRoad(player);
+                return edge && edge.isValidForFirstRoad(player);
             });
         },
 

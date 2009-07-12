@@ -51,8 +51,14 @@ YUI.add("pioneers-edge", function(Y) {
     };
 
     extend(Edge, Base, {
-        isSettled: function() {
-            return isValue(this.get("player"));
+        isSettled: function(player) {
+            var edgePlayer = this.get("player");
+
+            if(arguments.length) {
+                return edgePlayer === player;
+            } else {
+                return isValue(edgePlayer);
+            }
         },
 
         isRoad: function(player) {
@@ -120,7 +126,7 @@ YUI.add("pioneers-edge", function(Y) {
 
         settlements: function(player) {
             return filter(this.nodes(), function(node) {
-                return node.isSettlement(player);
+                return node && node.isSettlement(player);
             });
         },
 
@@ -181,9 +187,10 @@ YUI.add("pioneers-edge", function(Y) {
         leftRoads: function(player) {
             var leftNode = this.leftNode(),
                 leftEdges = this.leftEdges();
-            if(!leftNode.isSettled() || leftNode.get("player") === player) {
+
+            if(!leftNode.isSettled() || leftNode.isSettled(player)) {
                 return filter(leftEdges, function(edge) {
-                    return edge.player == player;
+                    return edge && edge.isSettled(player);
                 });
             } else {
                 return [];
@@ -193,9 +200,10 @@ YUI.add("pioneers-edge", function(Y) {
         rightRoads: function(player) {
             var rightNode = this.rightNode(),
                 rightEdges = this.rightEdges();
-            if(!rightNode.isSettled() || rightNode.get("player") === player) {
+
+            if(!rightNode.isSettled() || rightNode.isSettled(player)) {
                 return filter(rightEdges, function(edge) {
-                    return edge.player == player;
+                    return edge && edge.isSettled(player);
                 });
             } else {
                 return [];

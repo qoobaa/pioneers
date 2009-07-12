@@ -41,35 +41,26 @@ YUI.add("pioneers-position", function(Y) {
     };
 
     Position.prototype.hexes = function() {
-        var board = this.get("board"),
-            hexes = map(this.hexPositions(), function(position) {
-                return board.hex(position);
-            });
+        var board = this.get("board");
 
-        return reject(hexes, function(hex) {
-            return !isValue(hex);
+        return map(this.hexPositions(), function(position) {
+            return board.hex(position);
         });
     };
 
     Position.prototype.nodes = function() {
-        var board = this.get("board"),
-            nodes = map(this.nodePositions(), function(position) {
-                return board.node(position);
-            });
+        var board = this.get("board");
 
-        return reject(nodes, function(node) {
-            return !isValue(node);
+        return map(this.nodePositions(), function(position) {
+            return board.node(position);
         });
     };
 
     Position.prototype.edges = function() {
-        var board = this.get("board"),
-            edges = map(this.edgePositions(), function(position) {
-                return board.edge(position);
-            });
+        var board = this.get("board");
 
-        return reject(edges, function(edge) {
-            return !isValue(edge);
+        return map(this.edgePositions(), function(position) {
+            return board.edge(position);
         });
     };
 

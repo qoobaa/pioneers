@@ -52,8 +52,14 @@ YUI.add("pioneers-node", function(Y) {
     };
 
     extend(Node, Base, {
-        isSettled: function() {
-            return isValue(this.get("player"));
+        isSettled: function(player) {
+            var nodePlayer = this.get("player");
+
+            if(arguments.length) {
+                return nodePlayer === player;
+            } else {
+                return isValue(nodePlayer);
+            }
         },
 
         _hasPlayerAndState: function(otherPlayer, otherState) {
@@ -78,20 +84,16 @@ YUI.add("pioneers-node", function(Y) {
             var col = this.col(),
                 row = this.row();
 
-            if(col % 2 == 0) {
-                return [[row - 1, col / 2],
-                        [row - 1, col / 2 - 1],
-                        [row, col / 2 - 1]];
+            if(col % 2 === 0) {
+                return [[row - 1, col / 2], [row - 1, col / 2 - 1], [row, col / 2 - 1]];
             } else {
-                return [[row - 1, (col - 1) / 2],
-                        [row, (col - 1) / 2 - 1],
-                        [row, (col - 1) / 2]];
+                return [[row - 1, (col - 1) / 2], [row, (col - 1) / 2 - 1], [row, (col - 1) / 2]];
             }
         },
 
         isSettleable: function() {
             return isValue(find(this.hexes(), function(hex) {
-                return hex.isSettleable();
+                return hex && hex.isSettleable();
             }));
         },
 
@@ -99,7 +101,7 @@ YUI.add("pioneers-node", function(Y) {
             var col = this.col(),
                 row = this.row();
 
-            if(col % 2 == 0) {
+            if(col % 2 === 0) {
                 return [[row - 1, col + 1], [row, col - 1], [row, col + 1]];
             } else {
                 return [[row, col + 1], [row, col - 1], [row + 1, col - 1]];
@@ -108,7 +110,7 @@ YUI.add("pioneers-node", function(Y) {
 
         hasSettlementInNeighbourhood: function() {
             return isValue(find(this.nodes(), function(node) {
-                return node.isSettled();
+                return node && node.isSettled();
             }));
         },
 
@@ -117,7 +119,7 @@ YUI.add("pioneers-node", function(Y) {
                 col = position[1];
 
             return isValue(find(this.hexes(), function(hex) {
-                return row === hex.row() && col === hex.col();
+                return hex && row === hex.row() && col === hex.col();
             }));
         },
 
@@ -125,7 +127,7 @@ YUI.add("pioneers-node", function(Y) {
             var col = this.col(),
                 row = this.row();
 
-            if(col % 2 == 0) {
+            if(col % 2 === 0) {
                 return [[row - 1, 3 * col / 2 + 3], [row, 3 * col / 2 + 1], [row, 3 * col / 2 + 2]];
             } else {
                 return [[row, 3 * ((col - 1) / 2 + 1) + 1], [row, 3 * ((col - 1) / 2 + 1) - 1], [row, 3 * ((col - 1) / 2 + 1)]];
@@ -134,7 +136,7 @@ YUI.add("pioneers-node", function(Y) {
 
         roads: function(player) {
             return filter(this.edges(), function(edge) {
-                return edge.isRoad(player);
+                return edge && edge.isRoad(player);
             });
         },
 
@@ -143,15 +145,11 @@ YUI.add("pioneers-node", function(Y) {
         },
 
         isValidForFirstSettlement: function() {
-            return !this.isSettled() &&
-                this.isSettleable() &&
-                !this.hasSettlementInNeighbourhood();
+            return !this.isSettled() && this.isSettleable() && !this.hasSettlementInNeighbourhood();
         },
 
         isValidForSettlement: function(player) {
-            return !this.isSettled() &&
-                !this.hasSettlementInNeighbourhood() &&
-                this.hasRoad(player);
+            return !this.isSettled() && !this.hasSettlementInNeighbourhood() && this.hasRoad(player);
         },
 
         isValidForCity: function(player) {
