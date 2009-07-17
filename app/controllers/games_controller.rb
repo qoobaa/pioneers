@@ -78,7 +78,7 @@ class GamesController < ApplicationController
                                                        :player => :player_number }],
                                           :size => :size,
                                           :robberPosition => :robber_position}])
-        game[:userPlayerNumber] = @user_player.number if @user_player
+        game[:userPlayer] = @user_player.number if @user_player
         game[:offer] = @game.offer.to_hash(:sender => :sender_number,
                                            :recipient => :recipient_number,
                                            :bricks => :bricks,
@@ -89,6 +89,7 @@ class GamesController < ApplicationController
                                            :state => :state,
                                            :responses => [:offer_responses,
                                                           { :player => :player_number, :agreed => :agreed }]) if @game.offer
+
         render :json => { :game => game }
       end
     end

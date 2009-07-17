@@ -231,4 +231,4 @@ YUI.add("pioneers-edge", function(Y) {
 
     pioneers.Edge = Edge;
 
-}, '0.0.1', { requires: ["attributes", "collection", "pioneers-position"] });
+}, '0.0.1', { requires: ["base", "collection", "pioneers-position"] });

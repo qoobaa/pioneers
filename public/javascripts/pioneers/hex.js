@@ -57,9 +57,11 @@ YUI.add("pioneers-hex", function(Y) {
         hasRobber: function() {
             var row = this.row(),
                 col = this.col(),
-                board = this.get("board");
+                board = this.get("board"),
+                robberRow = board.get("robberRow"),
+                robberCol = board.get("robberCol");
 
-            return row === board.robberRow() && col === board.robberCol();
+            return row === robberRow && col === robberCol;
         },
 
         isSettleable: function() {
@@ -121,4 +123,4 @@ YUI.add("pioneers-hex", function(Y) {
 
     pioneers.Hex = Hex;
 
-}, '0.0.1', { requires: ["attributes", "collection", "pioneers-position"] });
+}, '0.0.1', { requires: ["base", "collection", "pioneers-position"] });

@@ -145,7 +145,8 @@ class ApplicationController < ActionController::Base
 
   def offer
     @offer.reload
-    @offer.to_hash(:sender => :sender_number,
+    @offer.to_hash(:id => :id,
+                   :sender => :sender_number,
                    :recipient => :recipient_number,
                    :bricks => :bricks,
                    :grain => :grain,

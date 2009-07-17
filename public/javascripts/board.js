@@ -108,8 +108,8 @@ YUI.add("board", function(Y) {
 
         _renderBoard: function() {
             var contentBox = this.get(CONTENT_BOX),
-                height = this.board.height(),
-                width = this.board.width(),
+                height = this.board.get("height"),
+                width = this.board.get("width"),
                 sizeClassName = this.getClassName(BOARD, SIZE, height, width);
 
             var board = Y.Node.create(BOARD_TEMPLATE);
@@ -120,8 +120,8 @@ YUI.add("board", function(Y) {
         },
 
         _renderHexes: function() {
-            var height = this.board.height(),
-                width = this.board.width(),
+            var height = this.board.get("height"),
+                width = this.board.get("width"),
                 hexesClassName = this.getClassName(HEXES),
                 hexes = this._createTbody(hexesClassName);
 
@@ -185,8 +185,8 @@ YUI.add("board", function(Y) {
         },
 
         _renderNodes: function() {
-            var height = this.board.nodeHeight(),
-                width = this.board.nodeWidth(),
+            var height = this.board.get("nodeHeight"),
+                width = this.board.get("nodeWidth"),
                 nodesClassName = this.getClassName(NODES),
                 nodes = this._createTbody(nodesClassName);
 
@@ -220,8 +220,8 @@ YUI.add("board", function(Y) {
         },
 
         _renderEdges: function() {
-            var height = this.board.edgeHeight(),
-                width = this.board.edgeWidth(),
+            var height = this.board.get("edgeHeight"),
+                width = this.board.get("edgeWidth"),
                 edgesClassName = this.getClassName(EDGES),
                 edges = this._createTbody(edgesClassName);
 
@@ -434,19 +434,18 @@ YUI.add("board", function(Y) {
                 switch(event.prevVal) {
                 case "firstSettlement":
                 case "settlement":
-                    console.log(nodePosition);
+                    this.fire(SETTLEMENT, nodePosition);
                     break;
                 case "city":
-                    console.log(nodePosition);
+                    this.fire(CITY, nodePosition);
                     break;
                 case "firstRoad":
                 case "road":
-                    console.log(edgePosition);
+                    this.fire(ROAD, edgePosition);
                     break;
                 case "robber":
                 case "robbery":
-                    console.log(robberPosition);
-                    console.log(robbedPlayer);
+                    this.fire(ROBBER, robberPosition, robbedPlayer);
                     break;
                 }
 

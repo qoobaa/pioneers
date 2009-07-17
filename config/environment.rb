@@ -8,6 +8,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.gem "authlogic"
+  config.gem "bunny"
   config.gem "chriseppstein-compass", :lib => "compass"
   config.gem "haml"
   config.gem "pager-acts_as_list", :lib => "active_record/acts/list"

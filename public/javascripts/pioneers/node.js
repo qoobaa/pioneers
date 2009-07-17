@@ -114,15 +114,6 @@ YUI.add("pioneers-node", function(Y) {
             }));
         },
 
-        // hasHexInNeighbourhood: function(position) {
-        //     var row = position[0],
-        //         col = position[1];
-
-        //     return isValue(find(this.hexes(), function(hex) {
-        //         return hex && row === hex.row() && col === hex.col();
-        //     }));
-        // },
-
         edgePositions: function() {
             var col = this.col(),
                 row = this.row();
