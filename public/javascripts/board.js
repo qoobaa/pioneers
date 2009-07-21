@@ -123,9 +123,7 @@ YUI.add("board", function(Y) {
                 for(var col = 0; col < width; col++) {
                     var hex = board.hex([row, col]);
                     if(hex) {
-                        var colClassName = this.getClassName(HEXES, COL, col),
-                            colNode = this._createHex(hex);
-                        colNode.addClass(colClassName);
+                        var colNode = this._createHex(hex);
                         this.hexNodes[row][col] = rowNode.appendChild(colNode);
                     }
                 }
@@ -140,14 +138,9 @@ YUI.add("board", function(Y) {
                 type = hex.get("type"),
                 roll = hex.get("roll"),
                 position = hex.get("position"),
-                className = C_HEX,
-                typeClassName = this.getClassName(HEX, type),
                 harborClassName = this.getClassName(HEX, HARBOR),
                 harborTypeClassName = this.getClassName(HARBOR, harborType, harborPosition),
                 colNode = Node.create(TD_TEMPLATE);
-
-            colNode.addClass(className);
-            colNode.addClass(typeClassName);
 
             if(isSettleable) {
                 var robberSpan = Node.create(ROBBER_TEMPLATE);
@@ -191,9 +184,7 @@ YUI.add("board", function(Y) {
                 for(var col = 0; col < width; col++) {
                     var node = board.node([row, col]);
                     if(node) {
-                        var colClassName = this.getClassName(NODES, COL, col),
-                            colNode = this._createNode(node);
-                        colNode.addClass(colClassName);
+                        var colNode = this._createNode(node);
                         this.nodeNodes[row][col] = rowNode.appendChild(colNode);
                     }
                 }
@@ -202,10 +193,8 @@ YUI.add("board", function(Y) {
 
         _createNode: function(node) {
             var position = node.get("position"),
-                colNode = Node.create(TD_TEMPLATE),
-                className = C_NODE;
+                colNode = Node.create(TD_TEMPLATE);
 
-            colNode.addClass(className);
             colNode.setAttribute("position", position.join());
 
             return colNode;
@@ -229,9 +218,7 @@ YUI.add("board", function(Y) {
                 for(var col = 0; col < width; col++) {
                     var edge = board.edge([row, col]);
                     if(edge) {
-                        var colClassName = this.getClassName(EDGES, COL, col),
-                            colNode = this._createEdge(edge);
-                        colNode.addClass(colClassName);
+                        var colNode = this._createEdge(edge);
                         this.edgeNodes[row][col] = rowNode.appendChild(colNode);
                     }
                 }
@@ -240,10 +227,8 @@ YUI.add("board", function(Y) {
 
         _createEdge: function(edge) {
             var position = edge.get("position"),
-                className = C_EDGE,
                 colNode = Node.create(TD_TEMPLATE);
 
-            colNode.addClass(className);
             colNode.setAttribute("position", position.join());
 
             return colNode;
@@ -275,19 +260,30 @@ YUI.add("board", function(Y) {
             var board = this.get("board"),
                 robberPosition = board.get("robberPosition"),
                 hex = board.hex(robberPosition);
-            this._uiSyncHex(hex);
+
+            each(board.hexesList(), function(hex) {
+                this._uiSyncHex(hex);
+            }, this);
         },
 
         _uiSyncHex: function(hex) {
             var row = hex.row(),
                 col = hex.col(),
-                hexNode = this.hexNodes[row][col];
+                hexNode = this.hexNodes[row][col],
+                className = C_HEX,
+                type = hex.get("type"),
+                typeClassName = this.getClassName(HEX, type),
+                colClassName = this.getClassName(HEXES, COL, col),
+                classNames = [typeClassName, colClassName, className];
 
-            hexNode.removeAttr("class");
+
+            hexNode.removeAttribute("class");
 
             if(hex.hasRobber()) {
-                hexNode.addClass(C_ROBBER);
+                classNames.push(C_ROBBER);
             }
+
+            hexNode.setAttribute("class", classNames.join(" "));
         },
 
         _uiSyncNodes: function() {
@@ -305,13 +301,18 @@ YUI.add("board", function(Y) {
                 row = node.row(),
                 col = node.col(),
                 nodeNode = this.nodeNodes[row][col],
-                className = this.getClassName(state, player);
+                className = C_NODE,
+                colClassName = this.getClassName(NODES, COL, col),
+                classNames = [className, colClassName];
 
-            nodeNode.removeAttr("class");
+            nodeNode.removeAttribute("class");
 
             if(isSettled) {
-                nodeNode.addClass(className);
+                var settledClassName = this.getClassName(state, player);
+                classNames.push(settledClassName);
             }
+
+            nodeNode.setAttribute("class", classNames.join(" "));
         },
 
         _uiSyncEdges: function() {
@@ -327,13 +328,18 @@ YUI.add("board", function(Y) {
                 row = edge.row(),
                 col = edge.col(),
                 edgeNode = this.edgeNodes[row][col],
-                className = this.getClassName(ROAD, player);
+                className = C_EDGE,
+                colClassName = this.getClassName(EDGES, COL, col),
+                classNames = [className, colClassName];
 
-            edgeNode.removeAttr("class");
+            edgeNode.removeAttribute("class");
 
             if(isSettled) {
-                edgeNode.addClass(className);
+                var settledClassName = this.getClassName(ROAD, player);
+                classNames.push(settledClassName);
             }
+
+            edgeNode.setAttribute("class", classNames.join(" "));
         },
 
         bindUI: function() {

@@ -120,6 +120,9 @@ YUI({ modules: {
         board = new Y.Board({ board: game.board, player: game.userPlayer });
         board.render();
 
+        game.setAttrs({ board: { nodes: [ { position: [4, 8], state: "city", player: 1 } ] } });
+        board.syncUI();
+        game.setAttrs({ board: { nodes: [ { position: [4, 8], state: "settlement", player: 2 } ] } });
         board.syncUI();
 
         // board.on("settlement", function(event) {
