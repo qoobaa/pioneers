@@ -16,10 +16,6 @@
 // License along with this program.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-// Filters added to this controller apply to all controllers in the
-// application.  Likewise, all the methods added will be available for
-// all controllers.
-
 YUI.add("pioneers-player", function(Y) {
     var pioneers = Y.namespace("pioneers"),
         PLAYER = "pioneers-player",

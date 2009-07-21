@@ -112,8 +112,16 @@ YUI({ modules: {
         //     console.log(event.details[0]);
         // });
 
-        board = new Y.Board(game);
+        game = new Y.pioneers.Game(game);
+        game.after("testChange", function(event) {
+            console.log(event);
+        });
+
+        board = new Y.Board({ board: game.board, player: game.userPlayer });
         board.render();
+
+        board.syncUI();
+
         // board.on("settlement", function(event) {
         //     console.log("settlement", event.details[0]);
         // });
@@ -126,11 +134,4 @@ YUI({ modules: {
         // board.on("robber", function(event) {
         //     console.log("robber", event.details[0], event.details[1]);
         // });
-
-        game = new Y.pioneers.Game(game);
-        game.after("testChange", function(event) {
-            console.log(event);
-        });
-
-        game.setAttrs({board: { nodes: [ { position: [4, 4], state: "settlement", player: 1 } ] } });
 });

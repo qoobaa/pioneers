@@ -20,9 +20,6 @@
 require 'test_helper'
 
 class HexTest < Test::Unit::TestCase
-  should_allow_values_for :roll, [2, 3, 4, 5, 6, 8, 9, 10, 11, 12, nil]
-  should_allow_values_for :hex_type, ["hill", "field", "mountain", "pasture", "forest", "sea", "desert"]
-
   context "Validations" do
     setup { @hex = Factory.build(:hex, :position => [0, 0]) }
 
