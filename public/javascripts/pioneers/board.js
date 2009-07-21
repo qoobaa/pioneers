@@ -55,7 +55,7 @@ YUI.add("pioneers-board", function(Y) {
                 return this.get("robberPosition")[0];
             }
         },
-        robberRow: {
+        robberCol: {
             setter: function(value) {
                 var row = this.get("row");
                 return [row, parseInt(value)];
