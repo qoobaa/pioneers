@@ -28,6 +28,7 @@ class Game < ActiveRecord::Base
   has_many :exchanges
   has_many :robberies
   has_one :board
+  belongs_to :card
 
   belongs_to :largest_army_player, :class_name => "Player"
   belongs_to :longest_road_player, :class_name => "Player"
@@ -60,7 +61,7 @@ class Game < ActiveRecord::Base
 
     before_transition :on => :start_game do |game|
       game.reset_robber
-      game.reset_current_turn_card_played
+      game.reset_card
       game.deal_resources
       game.largest_army_size = 2
       game.longest_road_length = 4
@@ -179,11 +180,13 @@ class Game < ActiveRecord::Base
     end
 
     before_transition :on => :army_card_played do |game, transition|
-      game.playing? and game.current_user_turn?(*transition.args)
+      game.playing? and game.current_user_turn?(transition.args.last)
     end
 
-    before_transition :on => :army_card_played, :do => :current_turn_card_not_played?
-    before_transition :on => :army_card_played, :do => :set_current_turn_card_played
+    before_transition :on => :army_card_played, :do => :not_card
+    before_transition :on => :army_card_played do |game, transition|
+      game.card = transition.args.last
+    end
     before_transition :on => :army_card_played, :do => :largest_army
 
     # road building card played
@@ -193,11 +196,13 @@ class Game < ActiveRecord::Base
     end
 
     before_transition :on => :road_building_card_played do |game, transition|
-      game.playing? and game.current_user_turn?(*transition.args)
+      game.playing? and game.current_user_turn?(transition.args.first)
     end
 
-    before_transition :on => :road_building_card_played, :do => :current_turn_card_not_played?
-    before_transition :on => :road_building_card_played, :do => :set_current_turn_card_played
+    before_transition :on => :road_building_card_played, :do => :not_card
+    before_transition :on => :road_building_card_played do |game, transition|
+      game.card = transition.args.last
+    end
 
     # card played
 
@@ -206,11 +211,13 @@ class Game < ActiveRecord::Base
     end
 
     before_transition :on => :card_played do |game, transition|
-      game.playing? and game.current_user_turn?(*transition.args)
+      game.playing? and game.current_user_turn?(transition.args.first)
     end
 
-    before_transition :on => :card_played, :do => :current_turn_card_not_played?
-    before_transition :on => :card_played, :do => :set_current_turn_card_played
+    before_transition :on => :card_played, :do => :not_card
+    before_transition :on => :card_played do |game, transition|
+      game.card = transition.args.last
+    end
 
     # TODO: end road building - event is not used
 
@@ -338,23 +345,19 @@ class Game < ActiveRecord::Base
 
   def next_turn
     self.current_turn += 1
-    reset_current_turn_card_played
+    reset_card
     untap_cards
     next_player
   end
 
   # cards
 
-  def reset_current_turn_card_played
-    self.current_turn_card_played = false
+  def reset_card
+    self.card = nil
   end
 
-  def current_turn_card_not_played?
-    not current_turn_card_played
-  end
-
-  def set_current_turn_card_played
-    self.current_turn_card_played = true
+  def not_card
+    card.nil?
   end
 
   def untap_cards

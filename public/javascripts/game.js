@@ -26,6 +26,7 @@ YUI.add("game", function(Y) {
         Widget = Y.Widget,
         Node = Y.Node,
         bind = Y.bind,
+        isValue = Y.Lang.isValue,
         pioneers = Y.namespace("pioneers");
 
     function Game() {
@@ -59,7 +60,7 @@ YUI.add("game", function(Y) {
                 contentBox = this.get(CONTENT_BOX),
                 boardNode = Node.create(DIV_TEMPLATE);
 
-            this.board = new Y.Board({ board: board, player: player, contentBox: boardNode });
+            this.board = new Y.Board({ game: game, contentBox: boardNode });
             contentBox.append(boardNode);
 
             this.board.render();
@@ -67,68 +68,92 @@ YUI.add("game", function(Y) {
 
         _renderExchange: function() {
             var game = this.get("game"),
+                player = game.get("userPlayer"),
                 contentBox = this.get(CONTENT_BOX),
                 exchangeNode = Node.create(DIV_TEMPLATE);
 
-            this.exchange = new Y.Exchange({ contentBox: exchangeNode });
-            contentBox.append(exchangeNode);
+            if(isValue(player)) {
+                this.exchange = new Y.Exchange({ contentBox: exchangeNode, game: game });
+                contentBox.append(exchangeNode);
 
-            this.exchange.render();
+                this.exchange.render();
+            }
         },
 
         _renderDiscard: function() {
             var game = this.get("game"),
+                player = game.get("userPlayer"),
                 contentBox = this.get(CONTENT_BOX),
                 discardNode = Node.create(DIV_TEMPLATE);
 
-            this.discard = new Y.Discard({ contentBox: discardNode });
-            contentBox.append(discardNode);
+            if(isValue(player)) {
+                this.discard = new Y.Discard({ contentBox: discardNode, game: game });
+                contentBox.append(discardNode);
 
-            this.discard.render();
+                this.discard.render();
+            }
         },
 
         _renderOffer: function() {
             var game = this.get("game"),
+                player = game.get("userPlayer"),
                 contentBox = this.get(CONTENT_BOX),
                 offerNode = Node.create(DIV_TEMPLATE);
 
-            this.offer = new Y.Offer({ contentBox: offerNode });
-            contentBox.append(offerNode);
+            if(isValue(player)) {
+                this.offer = new Y.Offer({ contentBox: offerNode, game: game });
+                contentBox.append(offerNode);
 
-            this.offer.render();
+                this.offer.render();
+            }
         },
 
         _renderBuild: function() {
             var game = this.get("game"),
+                player = game.get("userPlayer"),
                 contentBox = this.get(CONTENT_BOX),
                 buildNode = Node.create(DIV_TEMPLATE);
 
-            this.build = new Y.Build({ contentBox: buildNode });
-            contentBox.append(buildNode);
+            if(isValue(player)) {
+                this.build = new Y.Build({ contentBox: buildNode, game: game });
+                contentBox.append(buildNode);
 
-            this.build.render();
+                this.build.render();
+            }
         },
 
         _renderCards: function() {
             var game = this.get("game"),
+                player = game.get("userPlayer"),
+                cards = game.get("userCards"),
                 contentBox = this.get(CONTENT_BOX),
                 cardsNode = Node.create(DIV_TEMPLATE);
 
-            this.cards = new Y.Cards({ contentBox: cardsNode });
-            contentBox.append(cardsNode);
+            if(isValue(player)) {
+                this.cards = new Y.Cards({ contentBox: cardsNode, cards: cards });
+                contentBox.append(cardsNode);
 
-            this.cards.render();
+                this.cards.render();
+            }
         },
 
         _renderBeforeRoll: function() {
             var game = this.get("game"),
+                player = game.get("userPlayer"),
+                cards = game.get("userCards"),
                 contentBox = this.get(CONTENT_BOX),
                 beforeRollNode = Node.create(DIV_TEMPLATE);
 
-            this.beforeRoll = new Y.BeforeRoll({ contentBox: beforeRollNode });
-            contentBox.append(beforeRollNode);
+            if(isValue(player)) {
+                this.beforeRoll = new Y.BeforeRoll({ contentBox: beforeRollNode, cards: cards });
+                contentBox.append(beforeRollNode);
 
-            this.beforeRoll.render();
+                this.beforeRoll.render();
+            }
+        },
+
+        syncUI: function() {
+
         }
 
     });

@@ -40,13 +40,6 @@ YUI.add("cards", function(Y) {
         NAME: CARDS,
         ATTRS: {
             cards: {
-                value: [
-                    { type: "army", id: 5, state: "untapped" },
-                    { type: "monopoly", id: 100, state: "untapped" },
-                    { type: "army", id: 6, state: "tapped" },
-                    { type: "victoryPoint", id: 10, state: "untapped" },
-                    { type: "yearOfPlenty", id: 8, state: "untapped" }
-                ]
             },
             strings: {
                 value: {
@@ -115,7 +108,7 @@ YUI.add("cards", function(Y) {
             var cardNode = this._createButton(buttonString, className);
             contentBox.appendChild(cardNode);
 
-            cardNode.set("disabled", card.state === "tapped" || card.type === "victoryPoint");
+            cardNode.set("disabled", card.state !== "untapped" || card.type === "victoryPoint");
 
             Y.on("click", bind(this._cardClicked, this, card), cardNode);
         },

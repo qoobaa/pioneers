@@ -290,6 +290,32 @@ YUI.add("pioneers-board", function(Y) {
                     }, this);
                 }
             }, this);
+        },
+
+        canBuildSettlement: function(player) {
+            return !!this.nodesValidForSettlement(player).length;
+        },
+
+        canBuildFirstSettlement: function(player) {
+            return !!this.nodesValidForFirstSettlement(player).length;
+        },
+
+        canBuildFirstRoad: function(player) {
+            return !!this.edgesValidForFirstRoad(player).length;
+        },
+
+        canBuildRoad: function(player) {
+            return !!this.edgesValidForRoad(player).length;
+        },
+
+        canBuildCity: function(player) {
+            return !!this.settlements(player).length;
+        },
+
+        canRobOtherPlayer: function(player, position) {
+            var hex = this.hex(position);
+
+            return !!hex.robbableNodes(player).length;
         }
     });
 

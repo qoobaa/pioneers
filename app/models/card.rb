@@ -60,8 +60,19 @@ class Card < ActiveRecord::Base
     game_players.find_by_user_id(user.id)
   end
 
-  def class_name
-    self.class.name
+  def card_type
+    case self.class.name
+    when "Card::Army"
+      "army"
+    when "Card::Monopoly"
+      "monopoly"
+    when "Card::YearOfPlenty"
+      "yearOfPlenty"
+    when "Card::VictoryPoint"
+      "victoryPoint"
+    when "Card::RoadBuilding"
+      "roadBuilding"
+    end
   end
 
   protected

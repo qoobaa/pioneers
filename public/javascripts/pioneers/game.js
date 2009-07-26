@@ -67,22 +67,8 @@ YUI.add("pioneers-game", function(Y) {
         },
         card: {
         },
-        players: {
-            setter: function(values) {
-                var initialized = this.get("initialized");
-                if(initialized) {
-                    each(values, function(value) {
-                        var number = values.number,
-                            player = this.player(number);
-                        player.setAttrs(value);
-                    }, this);
-                }
-            }
-        },
-        userPlayer: {
-            writeOnce: true
-        },
         userCards: {
+            lazyAdd: false,
             setter: function(values) {
                 var initialized = this.get("initialized");
                 if(initialized) {
@@ -102,7 +88,24 @@ YUI.add("pioneers-game", function(Y) {
                 }
             }
         },
+        players: {
+            lazyAdd: false,
+            setter: function(values) {
+                var initialized = this.get("initialized");
+                if(initialized) {
+                    each(values, function(value) {
+                        var number = value.number,
+                            player = this.player(number);
+                        player.setAttrs(value);
+                    }, this);
+                }
+            }
+        },
+        userPlayer: {
+            writeOnce: true
+        },
         board: {
+            lazyAdd: false,
             setter: function(value) {
                 var initialized = this.get("initialized");
                 if(initialized) {
@@ -111,6 +114,7 @@ YUI.add("pioneers-game", function(Y) {
             }
         },
         offer: {
+            lazyAdd: false,
             setter: function(value) {
                 var offer = this.get("offer");
                 if(offer.id === value.id) {

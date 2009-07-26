@@ -40,6 +40,6 @@ class Card::Monopoly < Card
 
   def card_played
     return unless graveyard?
-    game_card_played!(user)
+    game_card_played!(user, self)
   end
 end

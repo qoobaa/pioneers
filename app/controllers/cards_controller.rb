@@ -32,7 +32,7 @@ class CardsController < ApplicationController
     @card = @game.cards.build(params[:card])
     @card.user = @current_user
     if @card.save
-      stomp_send(@game, { :game => game, :card => card })
+      # stomp_send(@game, { :game => game, :card => card })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity
@@ -44,7 +44,7 @@ class CardsController < ApplicationController
     @card.attributes = params[:card]
     @card.user = @current_user
     if @card.update_attributes(params[:card])
-      stomp_send(@game, { :game => game, :card => card })
+      # stomp_send(@game, { :game => game, :card => card })
       render :nothing => true, :status => :created
     else
       render :nothing => true, :status => :unprocessable_entity

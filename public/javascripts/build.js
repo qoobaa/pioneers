@@ -43,13 +43,33 @@ YUI.add("build", function(Y) {
     Y.mix(Build, {
         NAME: BUILD,
         ATTRS: {
+            game: {
+            },
             resources: {
-                value: {
-                    bricks: 0,
-                    grain: 0,
-                    lumber: 0,
-                    ore: 0,
-                    wool: 0
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game"),
+                        cards = game.get("cards"),
+                        player = game.userPlayer(),
+                        bricks = player.get("bricks"),
+                        grain = player.get("grain"),
+                        lumber = player.get("lumber"),
+                        ore = player.get("ore"),
+                        wool = player.get("wool"),
+                        settlements = player.get("settlements"),
+                        cities = player.get("cities"),
+                        roads = player.get("roads");
+                    return {
+                        bricks: bricks,
+                        grain: grain,
+                        lumber: lumber,
+                        ore: ore,
+                        wool: wool,
+                        settlements: settlements,
+                        cities: cities,
+                        roads: roads,
+                        cards: cards
+                    };
                 }
             },
             strings: {
@@ -113,24 +133,26 @@ YUI.add("build", function(Y) {
         },
 
         _isEnoughForRoad: function(resources) {
-            return resources.bricks > 0 && resources.lumber > 0;
+            return resources.bricks > 0 && resources.lumber > 0 && resources.roads > 0;
         },
 
         _isEnoughForSettlement: function(resources) {
             return resources.bricks > 0 &&
                 resources.lumber > 0 &&
                 resources.grain > 0 &&
-                resources.wool > 0;
+                resources.wool > 0 &&
+                resources.settlements > 0;
         },
 
         _isEnoughForCity: function(resources) {
-            return resources.grain > 1 && resources.ore > 2;
+            return resources.grain > 1 && resources.ore > 2 && resources.cities > 0;
         },
 
         _isEnoughForCard: function(resources) {
             return resources.grain > 0 &&
                 resources.ore > 0 &&
-                resources.wool > 0;
+                resources.wool > 0 &&
+                resources.cards > 0;
         },
 
         _renderButtons: function() {

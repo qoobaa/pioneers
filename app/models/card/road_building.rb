@@ -25,6 +25,6 @@ class Card::RoadBuilding < Card
 
   def road_building_card_played
     return unless graveyard?
-    game_road_building_card_played!(user)
+    game_road_building_card_played!(user, self)
   end
 end

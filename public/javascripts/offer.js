@@ -32,6 +32,8 @@ YUI.add("offer", function(Y) {
             label: {
                 value: "Offer"
             },
+            game: {
+            },
             max: {
                 value: {
                     bricks: 19,
@@ -39,6 +41,25 @@ YUI.add("offer", function(Y) {
                     lumber: 19,
                     ore: 19,
                     wool: 19
+                }
+            },
+            min: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game"),
+                        player = game.userPlayer(),
+                        bricks = player.get("bricks"),
+                        grain = player.get("grain"),
+                        lumber = player.get("lumber"),
+                        ore = player.get("ore"),
+                        wool = player.get("wool");
+                    return {
+                        bricks: - bricks,
+                        grain: - grain,
+                        lumber: - lumber,
+                        ore: - ore,
+                        wool: - wool
+                    };
                 }
             }
         }

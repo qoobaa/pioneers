@@ -29,11 +29,37 @@ YUI.add("discard", function(Y) {
     Y.mix(Discard, {
         NAME: DISCARD,
         ATTRS: {
+            game: {
+            },
             label: {
                 value: "Discard"
             },
             limit: {
-                value: 0
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game"),
+                        limit = game.get("discardLimit");
+                    return limit;
+                }
+            },
+            min: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game"),
+                        player = game.userPlayer(),
+                        bricks = player.get("bricks"),
+                        grain = player.get("grain"),
+                        lumber = player.get("lumber"),
+                        ore = player.get("ore"),
+                        wool = player.get("wool");
+                    return {
+                        bricks: - bricks,
+                        grain: - grain,
+                        lumber: - lumber,
+                        ore: - ore,
+                        wool: - wool
+                    };
+                }
             }
         }
     });

@@ -41,10 +41,6 @@ YUI.add("before-roll", function(Y) {
         ATTRS: {
             cards: {
                 value: [
-                    // { type: "army", id: 5, state: "untapped" },
-                    // { type: "army", id: 6, state: "tapped" },
-                    // { type: "victoryPoint", id: 10, state: "untapped" },
-                    // { type: "yearOfPlenty", id: 8, state: "untapped" }
                 ]
             },
             strings: {

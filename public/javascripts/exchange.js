@@ -32,16 +32,48 @@ YUI.add("exchange", function(Y) {
             label: {
                 value: "Exchange"
             },
+            game: {
+            },
             steps: {
-                value: {
-                    bricks: 4,
-                    grain: 4,
-                    lumber: 4,
-                    ore: 4,
-                    wool: 4
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game"),
+                        player = game.userPlayer(),
+                        bricks = player.get("bricksRate"),
+                        grain = player.get("grainRate"),
+                        lumber = player.get("lumberRate"),
+                        ore = player.get("oreRate"),
+                        wool = player.get("woolRate");
+                    return {
+                        bricks: bricks,
+                        grain: grain,
+                        lumber: lumber,
+                        ore: ore,
+                        wool: wool
+                    };
+                }
+            },
+            min: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game"),
+                        player = game.userPlayer(),
+                        bricks = player.get("bricks"),
+                        grain = player.get("grain"),
+                        lumber = player.get("lumber"),
+                        ore = player.get("ore"),
+                        wool = player.get("wool");
+                    return {
+                        bricks: - bricks,
+                        grain: - grain,
+                        lumber: - lumber,
+                        ore: - ore,
+                        wool: - wool
+                    };
                 }
             },
             max: {
+                readOnly: true,
                 value: {
                     bricks: 19,
                     grain: 19,

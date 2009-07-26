@@ -31,7 +31,6 @@ class GamesController < ApplicationController
       format.html
       format.json do
         game = @game.to_hash(:id => :id,
-                             :cardPlayed => :current_turn_card_played,
                              :discardPlayer => :current_discard_player_number,
                              :discardLimit => :current_discard_resource_limit,
                              :phase => :phase,
@@ -78,7 +77,29 @@ class GamesController < ApplicationController
                                                        :player => :player_number }],
                                           :size => :size,
                                           :robberPosition => :robber_position}])
+        game[:card] = @game.card.to_hash(:player => :player_number,
+                                         :id => :id,
+                                         :bricks => :bricks,
+                                         :grain => :grain,
+                                         :lumber => :lumber,
+                                         :ore => :ore,
+                                         :wool => :wool,
+                                         :resource => :resource_type,
+                                         :type => :card_type,
+                                         :state => :state) if @game.card
         game[:userPlayer] = @user_player.number if @user_player
+        game[:userCards] = @user_player.cards.without_state(:graveyard).map do |card|
+          card.to_hash(:player => :player_number,
+                       :id => :id,
+                       :bricks => :bricks,
+                       :grain => :grain,
+                       :lumber => :lumber,
+                       :ore => :ore,
+                       :wool => :wool,
+                       :resource => :resource_type,
+                       :type => :card_type,
+                       :state => :state)
+        end if @user_player
         game[:offer] = @game.offer.to_hash(:sender => :sender_number,
                                            :recipient => :recipient_number,
                                            :bricks => :bricks,
@@ -98,8 +119,7 @@ class GamesController < ApplicationController
   def update
     @game = Game.find(params[:id])
     @game.user = @current_user
-    # FIXME: problems with phase_event
-    if @game.end_turn # @game.update_attributes(params[:game])
+    if @game.update_attributes(params[:game])
       stomp_send(@game, { :game => game })
       render :nothing => true, :status => :created
     else

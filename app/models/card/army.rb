@@ -30,6 +30,6 @@ class Card::Army < Card
 
   def army_card_played
     return unless graveyard?
-    game_army_card_played!(user)
+    game_army_card_played!(user, self)
   end
 end

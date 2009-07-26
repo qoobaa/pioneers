@@ -71,11 +71,8 @@ YUI.add("board", function(Y) {
     Y.mix(Board, {
         NAME: BOARD,
         ATTRS: {
-            board: {
-                writeOnce: true
-            },
-            player: {
-                writeOnce: true
+            game: {
+
             },
             mode: {
                 value: "default"
@@ -93,7 +90,8 @@ YUI.add("board", function(Y) {
 
         _renderBoard: function() {
             var contentBox = this.get(CONTENT_BOX),
-                board = this.get("board"),
+                game = this.get("game"),
+                board = game.board,
                 height = board.get("height"),
                 width = board.get("width"),
                 sizeClassName = this.getClassName(BOARD, SIZE, height, width);
@@ -106,7 +104,8 @@ YUI.add("board", function(Y) {
         },
 
         _renderHexes: function() {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 height = board.get("height"),
                 width = board.get("width"),
                 hexesClassName = this.getClassName(HEXES),
@@ -167,7 +166,8 @@ YUI.add("board", function(Y) {
         },
 
         _renderNodes: function() {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 height = board.get("nodeHeight"),
                 width = board.get("nodeWidth"),
                 nodesClassName = this.getClassName(NODES),
@@ -201,7 +201,8 @@ YUI.add("board", function(Y) {
         },
 
         _renderEdges: function() {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 height = board.get("edgeHeight"),
                 width = board.get("edgeWidth"),
                 edgesClassName = this.getClassName(EDGES),
@@ -257,7 +258,8 @@ YUI.add("board", function(Y) {
         },
 
         _uiSyncHexes: function() {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 robberPosition = board.get("robberPosition"),
                 hex = board.hex(robberPosition);
 
@@ -287,7 +289,8 @@ YUI.add("board", function(Y) {
         },
 
         _uiSyncNodes: function() {
-            var board = this.get("board");
+            var game = this.get("game"),
+                board = game.board;
 
             each(board.nodesList(), function(node) {
                 this._uiSyncNode(node);
@@ -316,7 +319,8 @@ YUI.add("board", function(Y) {
         },
 
         _uiSyncEdges: function() {
-            var board = this.get("board");
+            var game = this.get("game"),
+                board = game.board;
             each(board.edgesList(), function(edge) {
                 this._uiSyncEdge(edge);
             }, this);
@@ -363,7 +367,11 @@ YUI.add("board", function(Y) {
         },
 
         _modeChange: function(event) {
-            var player = this.get("player");
+            var game = this.get("game"),
+                board = game.board,
+                player = this.get("player"),
+                robberPosition = this.get("robberPosition");
+
             if(!isValue(player)) {
                 event.preventDefault();
                 return;
@@ -371,32 +379,32 @@ YUI.add("board", function(Y) {
 
             switch(event.newVal) {
             case "firstSettlement":
-                if(!this.canBuildFirstSettlement()) {
+                if(!board.canBuildFirstSettlement(player)) {
                     event.preventDefault();
                 }
                 break;
             case "settlement":
-                if(!this.canBuildSettlement()) {
+                if(!board.canBuildSettlement(player)) {
                     event.preventDefault();
                 }
                 break;
             case "firstRoad":
-                if(!this.canBuildFirstRoad()) {
+                if(!board.canBuildFirstRoad(player)) {
                     event.preventDefault();
                 }
                 break;
             case "road":
-                if(!this.canBuildRoad()) {
+                if(!board.canBuildRoad(player)) {
                     event.preventDefault();
                 }
                 break;
             case "city":
-                if(!this.canBuildCity()) {
+                if(!board.canBuildCity(player)) {
                     event.preventDefault();
                 }
                 break;
             case "robbery":
-                if(!this._canRobOtherPlayer()) {
+                if(!board.canRobOtherPlayer(player, robberPosition)) {
                     event.newVal = "default";
                 }
                 break;
@@ -436,7 +444,8 @@ YUI.add("board", function(Y) {
         },
 
         _hexesMouseOver: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 hexNode = event.currentTarget,
                 position = this._getPosition(hexNode),
@@ -453,7 +462,8 @@ YUI.add("board", function(Y) {
         },
 
         _hexesMouseOut: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 hexNode = event.currentTarget,
                 position = this._getPosition(hexNode),
@@ -465,7 +475,8 @@ YUI.add("board", function(Y) {
         },
 
         _hexesClick: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 hexNode = event.currentTarget,
                 position = this._getPosition(hexNode),
@@ -481,7 +492,8 @@ YUI.add("board", function(Y) {
         },
 
         _nodesMouseOver: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = this._getPosition(nodeNode),
@@ -537,7 +549,8 @@ YUI.add("board", function(Y) {
         },
 
         _nodesMouseOut: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = this._getPosition(nodeNode),
@@ -549,7 +562,8 @@ YUI.add("board", function(Y) {
         },
 
         _nodesClick: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = this._getPosition(nodeNode),
@@ -591,7 +605,8 @@ YUI.add("board", function(Y) {
         },
 
         _edgesMouseOver: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 edgeNode = event.currentTarget,
                 position = this._getPosition(edgeNode),
@@ -620,7 +635,8 @@ YUI.add("board", function(Y) {
         },
 
         _edgesMouseOut: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 edgeNode = event.currentTarget,
                 position = this._getPosition(edgeNode),
@@ -632,7 +648,8 @@ YUI.add("board", function(Y) {
         },
 
         _edgesClick: function(event) {
-            var board = this.get("board"),
+            var game = this.get("game"),
+                board = game.board,
                 mode = this.get("mode"),
                 edgeNode = event.currentTarget,
                 position = this._getPosition(edgeNode),
@@ -663,48 +680,6 @@ YUI.add("board", function(Y) {
                 return [parseInt(position[0]), parseInt(position[1])];
             }
             return null;
-        },
-
-        canBuildSettlement: function() {
-            var player = this.get("player"),
-                board = this.get("board");
-
-            return !!board.nodesValidForSettlement(player).length;
-        },
-
-        canBuildFirstSettlement: function() {
-            var player = this.get("player"),
-                board = this.get("board");
-
-            return !!board.nodesValidForFirstSettlement(player).length;
-        },
-
-        canBuildFirstRoad: function() {
-            var player = this.get("player"),
-                board = this.get("board");
-
-            return !!board.edgesValidForFirstRoad(player).length;
-        },
-
-        canBuildRoad: function() {
-            var player = this.get("player");
-
-            return !!board.edgesValidForRoad(player).length;
-        },
-
-        canBuildCity: function() {
-            var player = this.get("player");
-
-            return !!board.settlements(player).length;
-        },
-
-        _canRobOtherPlayer: function() {
-            var board = this.get("board"),
-                player = this.get("player"),
-                robberPosition = this.get("robberPosition"),
-                hex = board.hex(robberPosition);
-
-            return !!hex.robbableNodes(player).length;
         }
     });
 
