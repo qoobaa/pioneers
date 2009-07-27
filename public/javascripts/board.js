@@ -74,6 +74,20 @@ YUI.add("board", function(Y) {
             game: {
 
             },
+            board: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game");
+                    return game.board;
+                }
+            },
+            player: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game");
+                    return game.get("userPlayer");
+                }
+            },
             mode: {
                 value: "default"
             }
@@ -90,8 +104,7 @@ YUI.add("board", function(Y) {
 
         _renderBoard: function() {
             var contentBox = this.get(CONTENT_BOX),
-                game = this.get("game"),
-                board = game.board,
+                board = this.get("board"),
                 height = board.get("height"),
                 width = board.get("width"),
                 sizeClassName = this.getClassName(BOARD, SIZE, height, width);
@@ -104,8 +117,7 @@ YUI.add("board", function(Y) {
         },
 
         _renderHexes: function() {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 height = board.get("height"),
                 width = board.get("width"),
                 hexesClassName = this.getClassName(HEXES),
@@ -166,8 +178,7 @@ YUI.add("board", function(Y) {
         },
 
         _renderNodes: function() {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 height = board.get("nodeHeight"),
                 width = board.get("nodeWidth"),
                 nodesClassName = this.getClassName(NODES),
@@ -201,8 +212,7 @@ YUI.add("board", function(Y) {
         },
 
         _renderEdges: function() {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 height = board.get("edgeHeight"),
                 width = board.get("edgeWidth"),
                 edgesClassName = this.getClassName(EDGES),
@@ -258,8 +268,7 @@ YUI.add("board", function(Y) {
         },
 
         _uiSyncHexes: function() {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 robberPosition = board.get("robberPosition"),
                 hex = board.hex(robberPosition);
 
@@ -289,8 +298,7 @@ YUI.add("board", function(Y) {
         },
 
         _uiSyncNodes: function() {
-            var game = this.get("game"),
-                board = game.board;
+            var board = this.get("board");
 
             each(board.nodesList(), function(node) {
                 this._uiSyncNode(node);
@@ -319,8 +327,7 @@ YUI.add("board", function(Y) {
         },
 
         _uiSyncEdges: function() {
-            var game = this.get("game"),
-                board = game.board;
+            var board = this.get("board");
             each(board.edgesList(), function(edge) {
                 this._uiSyncEdge(edge);
             }, this);
@@ -367,8 +374,7 @@ YUI.add("board", function(Y) {
         },
 
         _modeChange: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 player = this.get("player"),
                 robberPosition = this.get("robberPosition");
 
@@ -444,8 +450,7 @@ YUI.add("board", function(Y) {
         },
 
         _hexesMouseOver: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 hexNode = event.currentTarget,
                 position = this._getPosition(hexNode),
@@ -462,8 +467,7 @@ YUI.add("board", function(Y) {
         },
 
         _hexesMouseOut: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 hexNode = event.currentTarget,
                 position = this._getPosition(hexNode),
@@ -475,8 +479,7 @@ YUI.add("board", function(Y) {
         },
 
         _hexesClick: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 hexNode = event.currentTarget,
                 position = this._getPosition(hexNode),
@@ -492,8 +495,7 @@ YUI.add("board", function(Y) {
         },
 
         _nodesMouseOver: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = this._getPosition(nodeNode),
@@ -549,8 +551,7 @@ YUI.add("board", function(Y) {
         },
 
         _nodesMouseOut: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = this._getPosition(nodeNode),
@@ -562,8 +563,7 @@ YUI.add("board", function(Y) {
         },
 
         _nodesClick: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 nodeNode = event.currentTarget,
                 position = this._getPosition(nodeNode),
@@ -605,8 +605,7 @@ YUI.add("board", function(Y) {
         },
 
         _edgesMouseOver: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 edgeNode = event.currentTarget,
                 position = this._getPosition(edgeNode),
@@ -635,8 +634,7 @@ YUI.add("board", function(Y) {
         },
 
         _edgesMouseOut: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 edgeNode = event.currentTarget,
                 position = this._getPosition(edgeNode),
@@ -648,8 +646,7 @@ YUI.add("board", function(Y) {
         },
 
         _edgesClick: function(event) {
-            var game = this.get("game"),
-                board = game.board,
+            var board = this.get("board"),
                 mode = this.get("mode"),
                 edgeNode = event.currentTarget,
                 position = this._getPosition(edgeNode),

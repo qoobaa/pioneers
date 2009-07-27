@@ -148,7 +148,7 @@ YUI.add("pioneers-game", function(Y) {
 
         isUserPhase: function() {
             var userPlayer = this.get("userPlayer"),
-                player = tihs.get("player");
+                player = this.get("player");
             return userPlayer === player;
         },
 

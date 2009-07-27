@@ -60,7 +60,7 @@ YUI.add("game", function(Y) {
                 contentBox = this.get(CONTENT_BOX),
                 boardNode = Node.create(DIV_TEMPLATE);
 
-            this.board = new Y.Board({ game: game, contentBox: boardNode });
+            this.board = new Y.Board({ contentBox: boardNode, game: game });
             contentBox.append(boardNode);
 
             this.board.render();
@@ -130,7 +130,7 @@ YUI.add("game", function(Y) {
                 cardsNode = Node.create(DIV_TEMPLATE);
 
             if(isValue(player)) {
-                this.cards = new Y.Cards({ contentBox: cardsNode, cards: cards });
+                this.cards = new Y.Cards({ contentBox: cardsNode, game: game });
                 contentBox.append(cardsNode);
 
                 this.cards.render();
@@ -145,7 +145,7 @@ YUI.add("game", function(Y) {
                 beforeRollNode = Node.create(DIV_TEMPLATE);
 
             if(isValue(player)) {
-                this.beforeRoll = new Y.BeforeRoll({ contentBox: beforeRollNode, cards: cards });
+                this.beforeRoll = new Y.BeforeRoll({ contentBox: beforeRollNode, game: game });
                 contentBox.append(beforeRollNode);
 
                 this.beforeRoll.render();
@@ -153,7 +153,53 @@ YUI.add("game", function(Y) {
         },
 
         syncUI: function() {
+            var game = this.get("game"),
+                player = game.get("userPlayer");
 
+            if(isValue(player)) {
+                this.board.syncUI();
+                this.exchange.syncUI();
+                this.discard.syncUI();
+                this.offer.syncUI();
+                this.build.syncUI();
+                this.cards.syncUI();
+                this.beforeRoll.syncUI();
+                this.exchange.hide();
+                this.discard.hide();
+                this.offer.hide();
+                this.build.hide();
+                this.cards.hide();
+                this.beforeRoll.hide();
+
+                if(game.isUserFirstSettlement()) {
+
+                } else if(game.isUserSecondSettlement()) {
+
+                } else if(game.isUserFirstRoad()) {
+
+                } else if(game.isUserSecondRoad()) {
+
+                } else if(game.isUserBeforeRoll()) {
+                    this.cards.show();
+                    this.beforeRoll.show();
+                } else if(game.isUserAfterRoll()) {
+                    this.exchange.show();
+                    this.offer.show();
+                    this.build.show();
+                    this.cards.show();
+                } else if(game.isUserRobber()) {
+                    this.cards.show();
+                } else if(game.isUserDiscard()) {
+                    this.cards.show();
+                    this.discard.show();
+                } else if(game.isUserOffer()) {
+                    // TODO
+                } else if(game.isOtherOffer()) {
+                    // TODO
+                } else {
+
+                }
+            }
         }
 
     });

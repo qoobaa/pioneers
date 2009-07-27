@@ -39,9 +39,15 @@ YUI.add("before-roll", function(Y) {
     Y.mix(BeforeRoll, {
         NAME: BEFORE_ROLL,
         ATTRS: {
+            game: {
+            },
             cards: {
-                value: [
-                ]
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game");
+
+                    return game.get("userCards");
+                }
             },
             strings: {
                 value: {
@@ -61,42 +67,42 @@ YUI.add("before-roll", function(Y) {
 
         bindUI: function() {
             this.after("cardsChange", bind(this._afterCardsChange, this));
-            Y.on("click", bind(this._armyClick, this), this.armyNode);
+            // Y.on("click", bind(this._armyClick, this), this.armyNode);
             Y.on("click", bind(this._rollClick, this), this.rollNode);
         },
 
-        _afterCardsChange: function(event) {
-            this._uiSyncButtons(event.newVal);
-        },
+        // _afterCardsChange: function(event) {
+        //     this._uiSyncButtons(event.newVal);
+        // },
 
-        syncUI: function() {
-            this._uiSyncButtons(this.get("cards"));
-        },
+        // syncUI: function() {
+        //     this._uiSyncButtons(this.get("cards"));
+        // },
 
-        _armyClick: function(event) {
-            this.fire(CARD, this._armyCard(this.get("cards")));
-        },
+        // _armyClick: function(event) {
+        //     this.fire(CARD, this._armyCard(this.get("cards")));
+        // },
 
         _rollClick: function(event) {
             this.fire(ROLL);
         },
 
-        _uiSyncButtons: function(cards) {
-            this.armyNode.set("disabled", !this._armyCard(cards));
-        },
+        // _uiSyncButtons: function(cards) {
+        //     this.armyNode.set("disabled", !this._armyCard(cards));
+        // },
 
-        _armyCard: function(cards) {
-            return Y.Array.find(cards, function(card) {
-                return card.type === "army";
-            });
-        },
+        // _armyCard: function(cards) {
+        //     return Y.Array.find(cards, function(card) {
+        //         return card.type === "army";
+        //     });
+        // },
 
         _renderButtons: function() {
             var contentBox = this.get(CONTENT_BOX),
                 strings = this.get("strings");
 
-            var army = this._createButton(strings.army, C_ARMY);
-            this.armyNode = contentBox.appendChild(army);
+            // var army = this._createButton(strings.army, C_ARMY);
+            // this.armyNode = contentBox.appendChild(army);
 
             var roll = this._createButton(strings.roll, C_ROLL);
             this.rollNode = contentBox.appendChild(roll);

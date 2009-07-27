@@ -45,6 +45,20 @@ YUI.add("build", function(Y) {
         ATTRS: {
             game: {
             },
+            board: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game");
+                    return game.board;
+                }
+            },
+            player: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game");
+                    return game.get("userPlayer");
+                }
+            },
             resources: {
                 readOnly: true,
                 getter: function() {
@@ -102,53 +116,69 @@ YUI.add("build", function(Y) {
         },
 
         _roadClick: function(event) {
-            if(this._isEnoughForRoad(this.get("resources"))) {
+            if(this._isRoadEnabled(this.get("resources"))) {
                 this.fire(ROAD);
             }
         },
 
         _settlementClick: function(event) {
-            if(this._isEnoughForSettlement(this.get("resources"))) {
+            if(this._isSettlementEnabled(this.get("resources"))) {
                 this.fire(SETTLEMENT);
             }
         },
 
         _cityClick: function(event) {
-            if(this._isEnoughForCity(this.get("resources"))) {
+            if(this._isCityEnabled(this.get("resources"))) {
                 this.fire(CITY);
             }
         },
 
         _cardClick: function(event) {
-            if(this._isEnoughForCard(this.get("resources"))) {
+            if(this._isCardEnabled(this.get("resources"))) {
                 this.fire(CARD);
             }
         },
 
         _uiSyncButtons: function(resources) {
-            this.roadNode.set("disabled", !this._isEnoughForRoad(resources));
-            this.settlementNode.set("disabled", !this._isEnoughForSettlement(resources));
-            this.cityNode.set("disabled", !this._isEnoughForCity(resources));
-            this.cardNode.set("disabled", !this._isEnoughForCard(resources));
+            this.roadNode.set("disabled", !this._isRoadEnabled(resources));
+            this.settlementNode.set("disabled", !this._isSettlementEnabled(resources));
+            this.cityNode.set("disabled", !this._isCityEnabled(resources));
+            this.cardNode.set("disabled", !this._isCardEnabled(resources));
         },
 
-        _isEnoughForRoad: function(resources) {
-            return resources.bricks > 0 && resources.lumber > 0 && resources.roads > 0;
+        _isRoadEnabled: function(resources) {
+            var board = this.get("board"),
+                player = this.get("player");
+
+            return resources.bricks > 0 &&
+                resources.lumber > 0 &&
+                resources.roads > 0 &&
+                board.canBuildRoad(player);
         },
 
-        _isEnoughForSettlement: function(resources) {
+        _isSettlementEnabled: function(resources) {
+            var board = this.get("board"),
+                player = this.get("player");
+
             return resources.bricks > 0 &&
                 resources.lumber > 0 &&
                 resources.grain > 0 &&
                 resources.wool > 0 &&
-                resources.settlements > 0;
+                resources.settlements > 0 &&
+                board.canBuildSettlement(player);
         },
 
-        _isEnoughForCity: function(resources) {
-            return resources.grain > 1 && resources.ore > 2 && resources.cities > 0;
+        _isCityEnabled: function(resources) {
+            var board = this.get("board"),
+                player = this.get("player");
+
+            return resources.grain > 1 &&
+                resources.ore > 2 &&
+                resources.cities > 0 &&
+                board.canBuildCity(player);
         },
 
-        _isEnoughForCard: function(resources) {
+        _isCardEnabled: function(resources) {
             return resources.grain > 0 &&
                 resources.ore > 0 &&
                 resources.wool > 0 &&

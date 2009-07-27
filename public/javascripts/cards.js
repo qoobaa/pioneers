@@ -30,6 +30,7 @@ YUI.add("cards", function(Y) {
         YearOfPlenty = Y.YearOfPlenty,
         Monopoly = Y.Monopoly,
         Node = Y.Node,
+        isValue = Y.Lang.isValue,
         bind = Y.bind;
 
     function Cards() {
@@ -39,7 +40,15 @@ YUI.add("cards", function(Y) {
     Y.mix(Cards, {
         NAME: CARDS,
         ATTRS: {
+            game: {
+            },
             cards: {
+                readOnly: true,
+                getter: function() {
+                    var game = this.get("game");
+
+                    return game.get("userCards");
+                }
             },
             strings: {
                 value: {
@@ -83,7 +92,7 @@ YUI.add("cards", function(Y) {
             this.fire(CARD, event.details[0]);
         },
 
-        _afterCardsChange: function(event) {
+        syncUI: function() {
             this._renderButtons();
         },
 
@@ -103,12 +112,20 @@ YUI.add("cards", function(Y) {
         _renderButton: function(card) {
             var contentBox = this.get(CONTENT_BOX),
                 buttonString = this.get("strings." + card.type),
-                className = this.getClassName(card.type);
+                className = this.getClassName(card.type),
+                game = this.get("game");
 
             var cardNode = this._createButton(buttonString, className);
             contentBox.appendChild(cardNode);
 
-            cardNode.set("disabled", card.state !== "untapped" || card.type === "victoryPoint");
+            var tapped = (card.state !== "untapped"),
+                victoryPoint = (card.type === "victoryPoint"),
+                armyCard = (card.type === "army"),
+                cardPlayed = isValue(game.get("card")),
+                afterRoll = game.isUserAfterRoll(),
+                beforeRoll = game.isUserBeforeRoll();
+
+            cardNode.set("disabled", tapped || victoryPoint || cardPlayed || !(armyCard && beforeRoll || afterRoll));
 
             Y.on("click", bind(this._cardClicked, this, card), cardNode);
         },
