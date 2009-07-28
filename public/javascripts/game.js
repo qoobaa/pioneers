@@ -19,6 +19,14 @@
 YUI.add("game", function(Y) {
 
     var GAME = "game",
+        ROLL = "roll",
+        CARD = "card",
+        ROAD = "road",
+        SETTLEMENT = "settlement",
+        CITY = "city",
+        EXCHANGE = "exchange",
+        OFFER = "offer",
+        ROBBER = "robber",
         getCN = Y.ClassNameManager.getClassName,
         C_GAME = getCN(GAME),
         CONTENT_BOX = "contentBox",
@@ -157,51 +165,136 @@ YUI.add("game", function(Y) {
                 player = game.get("userPlayer");
 
             if(isValue(player)) {
-                this.board.syncUI();
-                this.exchange.syncUI();
-                this.discard.syncUI();
-                this.offer.syncUI();
-                this.build.syncUI();
-                this.cards.syncUI();
-                this.beforeRoll.syncUI();
-                this.exchange.hide();
-                this.discard.hide();
-                this.offer.hide();
-                this.build.hide();
-                this.cards.hide();
-                this.beforeRoll.hide();
-
-                if(game.isUserFirstSettlement()) {
-
-                } else if(game.isUserSecondSettlement()) {
-
-                } else if(game.isUserFirstRoad()) {
-
-                } else if(game.isUserSecondRoad()) {
-
-                } else if(game.isUserBeforeRoll()) {
-                    this.cards.show();
-                    this.beforeRoll.show();
-                } else if(game.isUserAfterRoll()) {
-                    this.exchange.show();
-                    this.offer.show();
-                    this.build.show();
-                    this.cards.show();
-                } else if(game.isUserRobber()) {
-                    this.cards.show();
-                } else if(game.isUserDiscard()) {
-                    this.cards.show();
-                    this.discard.show();
-                } else if(game.isUserOffer()) {
-                    // TODO
-                } else if(game.isOtherOffer()) {
-                    // TODO
-                } else {
-
-                }
+                this._uiSyncBoard();
+                this._uiSyncOffer();
+                this._uiSyncExchange();
+                this._uiSyncDiscard();
+                this._uiSyncBuild();
+                this._uiSyncCards();
+                this._uiSyncBeforeRoll();
             }
-        }
+        },
 
+        _uiSyncBoard: function() {
+            this.board.syncUI();
+        },
+
+        _uiSyncOffer: function() {
+            this.offer.syncUI();
+            if(game.isUserAfterRoll()) {
+                this.offer.show();
+            } else {
+                this.offer.hide();
+            }
+        },
+
+        _uiSyncExchange: function() {
+            this.exchange.syncUI();
+            if(game.isUserAfterRoll()) {
+                this.exchange.show();
+            } else {
+                this.exchange.hide();
+            }
+        },
+
+        _uiSyncBuild: function() {
+            this.build.syncUI();
+            if(game.isUserAfterRoll()) {
+                this.build.show();
+            } else {
+                this.build.hide();
+            }
+        },
+
+        _uiSyncDiscard: function() {
+            this.discard.syncUI();
+            if(game.isUserDiscard()) {
+                this.discard.show();
+            } else {
+                this.discard.hide();
+            }
+        },
+
+        _uiSyncCards: function() {
+            this.cards.syncUI();
+            if(game.isUserAfterRoll() || game.isUserBeforeRoll()) {
+                this.cards.show();
+            } else {
+                this.cards.hide();
+            }
+        },
+
+        _uiSyncBeforeRoll: function() {
+            this.beforeRoll.syncUI();
+            if(game.isUserBeforeRoll()) {
+                this.beforeRoll.show();
+            } else {
+                this.beforeRoll.hide();
+            }
+        },
+
+        bindUI: function() {
+            this.beforeRoll.after(ROLL, bind(this._afterRoll, this));
+            this.cards.after(CARD, bind(this._afterCardPlay, this));
+            this.board.after(ROAD, bind(this._afterRoadBuilt, this));
+            this.board.after(SETTLEMENT, bind(this._afterSettlementBuilt, this));
+            this.board.after(CITY, bind(this._afterCityBuilt, this));
+            this.board.after(ROBBER, bind(this._afterRobberMoved, this));
+            this.build.after(ROAD, bind(this._afterBuildRoad, this));
+            this.build.after(SETTLEMENT, bind(this._afterBuildSettlement, this));
+            this.build.after(CITY, bind(this._afterBuildCity, this));
+            this.build.after(CARD, bind(this._afterBuildCard, this));
+            this.exchange.after(EXCHANGE, bind(this._afterExchange, this));
+            this.offer.after(OFFER, bind(this._afterOffer, this));
+        },
+
+        _afterRoll: function(event) {
+            console.log(event);
+        },
+
+        _afterCardPlay: function(event) {
+            console.log(event);
+        },
+
+        _afterBuildRoad: function(event) {
+            console.log(event);
+        },
+
+        _afterBuildSettlement: function(event) {
+            console.log(event);
+        },
+
+        _afterBuildCity: function(event) {
+            console.log(event);
+        },
+
+        _afterBuildCard: function(event) {
+            console.log(event);
+        },
+
+        _afterExchange: function(event) {
+            console.log(exchange);
+        },
+
+        _afterOffer: function(event) {
+            console.log(event);
+        },
+
+        _afterRoadBuilt: function(event) {
+            console.log(event);
+        },
+
+        _afterSettlementBuilt: function(event) {
+            console.log(event);
+        },
+
+        _afterCityBuilt: function(event) {
+            console.log(event);
+        },
+
+        _afterRobberMoved: function(event) {
+            console.log(event);
+        }
     });
 
     Y.Game = Game;

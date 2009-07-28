@@ -89,16 +89,16 @@ YUI({ modules: {
         function complete(id, response) {
             gameAttributes = parse(response.responseText);
             if(initialized) {
-                game.setAttrs(gameAttributes.game);
-                gameWidget.syncUI();
+                // game.setAttrs(gameAttributes.game);
+                // gameWidget.syncUI();
             } else {
                 game = new Y.pioneers.Game(gameAttributes.game);
                 gameWidget = new Y.Game({ game: game });
                 gameWidget.render();
-                initialized = true;
-                later(5000, this, function() {
-                    io(uri);
-                }, null, false);
+                // initialized = true;
+                // later(5000, this, function() {
+                //     io(uri);
+                // }, null, false);
             }
         };
 

@@ -90,6 +90,12 @@ YUI.add("board", function(Y) {
             },
             mode: {
                 value: "default"
+            },
+            robberPosition: {
+
+            },
+            robbedPlayer: {
+
             }
         }
     });
@@ -153,6 +159,8 @@ YUI.add("board", function(Y) {
                 harborTypeClassName = this.getClassName(HARBOR, harborType, harborPosition),
                 colNode = Node.create(TD_TEMPLATE);
 
+            colNode.addClass(C_HEX);
+
             if(isSettleable) {
                 var robberSpan = Node.create(ROBBER_TEMPLATE);
                 colNode.appendChild(robberSpan);
@@ -206,6 +214,8 @@ YUI.add("board", function(Y) {
             var position = node.get("position"),
                 colNode = Node.create(TD_TEMPLATE);
 
+            colNode.addClass(C_NODE);
+
             colNode.setAttribute("position", position.join());
 
             return colNode;
@@ -239,6 +249,8 @@ YUI.add("board", function(Y) {
         _createEdge: function(edge) {
             var position = edge.get("position"),
                 colNode = Node.create(TD_TEMPLATE);
+
+            colNode.addClass(C_EDGE);
 
             colNode.setAttribute("position", position.join());
 
@@ -384,31 +396,31 @@ YUI.add("board", function(Y) {
             }
 
             switch(event.newVal) {
-            case "firstSettlement":
-                if(!board.canBuildFirstSettlement(player)) {
-                    event.preventDefault();
-                }
-                break;
-            case "settlement":
-                if(!board.canBuildSettlement(player)) {
-                    event.preventDefault();
-                }
-                break;
-            case "firstRoad":
-                if(!board.canBuildFirstRoad(player)) {
-                    event.preventDefault();
-                }
-                break;
-            case "road":
-                if(!board.canBuildRoad(player)) {
-                    event.preventDefault();
-                }
-                break;
-            case "city":
-                if(!board.canBuildCity(player)) {
-                    event.preventDefault();
-                }
-                break;
+            // case "firstSettlement":
+            //     if(!board.canBuildFirstSettlement(player)) {
+            //         event.preventDefault();
+            //     }
+            //     break;
+            // case "settlement":
+            //     if(!board.canBuildSettlement(player)) {
+            //         event.preventDefault();
+            //     }
+            //     break;
+            // case "firstRoad":
+            //     if(!board.canBuildFirstRoad(player)) {
+            //         event.preventDefault();
+            //     }
+            //     break;
+            // case "road":
+            //     if(!board.canBuildRoad(player)) {
+            //         event.preventDefault();
+            //     }
+            //     break;
+            // case "city":
+            //     if(!board.canBuildCity(player)) {
+            //         event.preventDefault();
+            //     }
+            //     break;
             case "robbery":
                 if(!board.canRobOtherPlayer(player, robberPosition)) {
                     event.newVal = "default";
