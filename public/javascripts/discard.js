@@ -65,6 +65,17 @@ YUI.add("discard", function(Y) {
     });
 
     Y.extend(Discard, Resources, {
+        bindUI: function() {
+            Discard.superclass.bindUI.apply(this, arguments);
+            this.acceptButton.after("click", Y.bind(this._afterAcceptClick, this));
+        },
+
+        _afterAcceptClick: function(event) {
+            var values = this._getSpinnersValues();
+
+            this.fire(DISCARD, values);
+        },
+
         _validateValue: function(value) {
             return Discard.superclass._validateValue.apply(this, arguments) &&
                 this._isValidDiscard(value);

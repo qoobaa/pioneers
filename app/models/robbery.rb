@@ -35,7 +35,7 @@ class Robbery < ActiveRecord::Base
   delegate :number, :to => :recipient, :prefix => true
 
   before_validation :associate_sender
-  before_save :rob_player
+  before_save :rob_player, :if => :sender
   after_save :robbed, :update_board_robber_position
 
   attr_reader :user
@@ -93,7 +93,7 @@ class Robbery < ActiveRecord::Base
   end
 
   def sender_in_neighbourhood
-    errors.add :sender, "must be in neighbourhood" unless players.include? sender
+    errors.add :sender, "must be in neighbourhood" unless sender.nil? or players.include? sender
   end
 
   def rob_player

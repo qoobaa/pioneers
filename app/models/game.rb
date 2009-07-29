@@ -180,7 +180,7 @@ class Game < ActiveRecord::Base
     end
 
     before_transition :on => :army_card_played do |game, transition|
-      game.playing? and game.current_user_turn?(transition.args.last)
+      game.playing? and game.current_user_turn?(transition.args.first)
     end
 
     before_transition :on => :army_card_played, :do => :not_card

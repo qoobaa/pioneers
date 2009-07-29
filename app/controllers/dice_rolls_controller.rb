@@ -24,9 +24,9 @@ class DiceRollsController < ApplicationController
     @dice_roll = @game.dice_rolls.build(params[:dice_roll])
     @dice_roll.user = @current_user
     if @dice_roll.save
-      @game.reload
-      stomp_send(@game, { game: game })
-      render :nothing => true, :status => :created
+      # @game.reload
+      # stomp_send(@game, { game: game })
+      render :json => { :game => game }
     else
       render :nothing => true, :status => :unprocessable_entity
     end

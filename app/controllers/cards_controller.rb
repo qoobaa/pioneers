@@ -20,20 +20,21 @@
 class CardsController < ApplicationController
   before_filter :require_user, :fetch_game
 
-  def index
-    @player = @game.players.find_by_user_id(@current_user.id)
-    @cards = @player.cards.with_state(:tapped, :untapped)
-    respond_to do |format|
-      format.json { render :json => { :cards => @cards.map { |card| { :id => card.id, :type => card.type, :state => card.state } } } }
-    end
-  end
+  # def index
+  #   @player = @game.players.find_by_user_id(@current_user.id)
+  #   @cards = @player.cards.with_state(:tapped, :untapped)
+  #   respond_to do |format|
+  #     format.json { render :json => { :cards => @cards.map { |card| { :id => card.id, :type => card.type, :state => card.state } } } }
+  #   end
+  # end
 
   def create
     @card = @game.cards.build(params[:card])
     @card.user = @current_user
     if @card.save
       # stomp_send(@game, { :game => game, :card => card })
-      render :nothing => true, :status => :created
+      # render :nothing => true, :status => :created
+      render :json => { :game => game }
     else
       render :nothing => true, :status => :unprocessable_entity
     end
@@ -45,7 +46,8 @@ class CardsController < ApplicationController
     @card.user = @current_user
     if @card.update_attributes(params[:card])
       # stomp_send(@game, { :game => game, :card => card })
-      render :nothing => true, :status => :created
+      # render :nothing => true, :status => :created
+      render :json => { :game => game }
     else
       render :nothing => true, :status => :unprocessable_entity
     end

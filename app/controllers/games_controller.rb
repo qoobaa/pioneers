@@ -30,87 +30,6 @@ class GamesController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        game = @game.to_hash(:id => :id,
-                             :discardPlayer => :current_discard_player_number,
-                             :discardLimit => :current_discard_resource_limit,
-                             :phase => :phase,
-                             :player => :current_player_number,
-                             :roll => :current_dice_roll_value,
-                             :state => :state,
-                             :turn => :current_turn,
-                             :winner => :winner_number,
-                             :cards => :cards_count,
-                             :players => [:players,
-                                          { :number => :number,
-                                            :state => :state,
-                                            :name => :user_login,
-                                            :cards => :cards_count,
-                                            :points => :visible_points,
-                                            :resources => :resources,
-                                            :bricks => :bricks,
-                                            :bricksRate => :bricks_exchange_rate,
-                                            :grain => :grain,
-                                            :grainRate => :grain_exchange_rate,
-                                            :lumber => :lumber,
-                                            :lumberRate => :lumber_exchange_rate,
-                                            :ore => :ore,
-                                            :oreRate => :ore_exchange_rate,
-                                            :wool => :wool,
-                                            :woolRate => :wool_exchange_rate,
-                                            :settlements => :settlements,
-                                            :cities => :cities,
-                                            :roads => :roads }],
-                             :board => [:board,
-                                        { :nodes => [:nodes,
-                                                     { :position => :position,
-                                                       :player => :player_number,
-                                                       :state => :state,
-                                                       :id => :id }],
-                                          :hexes => [:hexes,
-                                                     { :position => :position,
-                                                       :roll => :roll,
-                                                       :type => :hex_type,
-                                                       :harborPosition => :harbor_position,
-                                                       :harborType => :harbor_type}],
-                                          :edges => [:edges,
-                                                     { :position => :position,
-                                                       :player => :player_number }],
-                                          :size => :size,
-                                          :robberPosition => :robber_position}])
-        game[:card] = @game.card.to_hash(:player => :player_number,
-                                         :id => :id,
-                                         :bricks => :bricks,
-                                         :grain => :grain,
-                                         :lumber => :lumber,
-                                         :ore => :ore,
-                                         :wool => :wool,
-                                         :resource => :resource_type,
-                                         :type => :card_type,
-                                         :state => :state) if @game.card
-        game[:userPlayer] = @user_player.number if @user_player
-        game[:userCards] = @user_player.cards.without_state(:graveyard).map do |card|
-          card.to_hash(:player => :player_number,
-                       :id => :id,
-                       :bricks => :bricks,
-                       :grain => :grain,
-                       :lumber => :lumber,
-                       :ore => :ore,
-                       :wool => :wool,
-                       :resource => :resource_type,
-                       :type => :card_type,
-                       :state => :state)
-        end if @user_player
-        game[:offer] = @game.offer.to_hash(:sender => :sender_number,
-                                           :recipient => :recipient_number,
-                                           :bricks => :bricks,
-                                           :grain => :grain,
-                                           :lumber => :lumber,
-                                           :ore => :ore,
-                                           :wool => :wool,
-                                           :state => :state,
-                                           :responses => [:offer_responses,
-                                                          { :player => :player_number, :agreed => :agreed }]) if @game.offer
-
         render :json => { :game => game }
       end
     end
@@ -119,9 +38,11 @@ class GamesController < ApplicationController
   def update
     @game = Game.find(params[:id])
     @game.user = @current_user
-    if @game.update_attributes(params[:game])
-      stomp_send(@game, { :game => game })
-      render :nothing => true, :status => :created
+    if @game.end_turn
+      # stomp_send(@game, { :game => game })
+      # render :nothing => true, :status => :created
+      # render :nothing => true, :status => :created
+      render :json => { :game => game }
     else
       render :nothing => true, :status => :unprocessable_entity
     end

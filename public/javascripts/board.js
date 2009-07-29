@@ -92,10 +92,12 @@ YUI.add("board", function(Y) {
                 value: "default"
             },
             robberPosition: {
-
             },
             robbedPlayer: {
-
+            },
+            nodePosition: {
+            },
+            edgePosition: {
             }
         }
     });

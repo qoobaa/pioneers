@@ -77,8 +77,8 @@ YUI.add("cards", function(Y) {
 
         bindUI: function() {
             this.after("cardsChange", bind(this._afterCardsChange, this));
-            this.monopoly.after("afterMonopoly", bind(this._monopoly, this));
-            this.yearOfPlenty.after("afterYearOfPlenty", bind(this._yearOfPlenty, this));
+            this.monopoly.after(MONOPOLY, bind(this._afterMonopoly, this));
+            this.yearOfPlenty.after(YEAR_OF_PLENTY, bind(this._afterYearOfPlenty, this));
         },
 
         _afterMonopoly: function(event) {
@@ -100,9 +100,10 @@ YUI.add("cards", function(Y) {
             var contentBox = this.get(CONTENT_BOX),
                 strings = this.get("strings"),
                 cards = this.get("cards"),
+                cardsClassName = this.getClassName(CARD);
                 that = this;
 
-            contentBox.queryAll("button").remove();
+            contentBox.queryAll("." + cardsClassName).remove();
 
             Y.each(cards, function(card) {
                 that._renderButton(card);
@@ -113,9 +114,10 @@ YUI.add("cards", function(Y) {
             var contentBox = this.get(CONTENT_BOX),
                 buttonString = this.get("strings." + card.type),
                 className = this.getClassName(card.type),
+                cardsClassName = this.getClassName(CARD),
                 game = this.get("game");
 
-            var cardNode = this._createButton(buttonString, className);
+            var cardNode = this._createButton(buttonString, [className, cardsClassName].join(" "));
             contentBox.appendChild(cardNode);
 
             var tapped = (card.state !== "untapped"),

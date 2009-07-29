@@ -25,8 +25,10 @@ YUI.add("game", function(Y) {
         SETTLEMENT = "settlement",
         CITY = "city",
         EXCHANGE = "exchange",
+        DISCARD = "discard",
         OFFER = "offer",
         ROBBER = "robber",
+        END_TURN = "end-turn",
         getCN = Y.ClassNameManager.getClassName,
         C_GAME = getCN(GAME),
         CONTENT_BOX = "contentBox",
@@ -35,7 +37,11 @@ YUI.add("game", function(Y) {
         Node = Y.Node,
         bind = Y.bind,
         isValue = Y.Lang.isValue,
-        pioneers = Y.namespace("pioneers");
+        io = Y.io,
+        later = Y.later,
+        parse = Y.JSON.parse,
+        pioneers = Y.namespace("pioneers"),
+        TIMEOUT = 10000;
 
     function Game() {
         Game.superclass.constructor.apply(this, arguments);
@@ -59,6 +65,7 @@ YUI.add("game", function(Y) {
             this._renderBuild();
             this._renderCards();
             this._renderBeforeRoll();
+            this._renderAfterRoll();
         },
 
         _renderBoard: function() {
@@ -160,6 +167,20 @@ YUI.add("game", function(Y) {
             }
         },
 
+        _renderAfterRoll: function() {
+            var game = this.get("game"),
+                player = game.get("userPlayer"),
+                contentBox = this.get(CONTENT_BOX),
+                afterRollNode = Node.create(DIV_TEMPLATE);
+
+            if(isValue(player)) {
+                this.afterRoll = new Y.AfterRoll({ contentBox: afterRollNode });
+                contentBox.append(afterRollNode);
+
+                this.afterRoll.render();
+            }
+        },
+
         syncUI: function() {
             var game = this.get("game"),
                 player = game.get("userPlayer");
@@ -172,14 +193,40 @@ YUI.add("game", function(Y) {
                 this._uiSyncBuild();
                 this._uiSyncCards();
                 this._uiSyncBeforeRoll();
+                this._uiSyncAfterRoll();
             }
+
+            if(this.timer) {
+                this.timer.cancel();
+            }
+            this.timer = later(TIMEOUT, this, bind(this._refreshGame, this));
+        },
+
+        _complete: function(id, response) {
+            var gameAttributes = parse(response.responseText),
+                game = this.get("game");
+
+            game.setAttrs(gameAttributes.game);
+            this.syncUI();
+        },
+
+        _refreshGame: function() {
+            var uri = "/games/1.json";
+            io(uri);
         },
 
         _uiSyncBoard: function() {
+            var game = this.get("game");
+
             this.board.syncUI();
+            if(game.isUserRobber()) {
+                this.board.set("mode", "robber");
+            }
         },
 
         _uiSyncOffer: function() {
+            var game = this.get("game");
+
             this.offer.syncUI();
             if(game.isUserAfterRoll()) {
                 this.offer.show();
@@ -189,6 +236,8 @@ YUI.add("game", function(Y) {
         },
 
         _uiSyncExchange: function() {
+            var game = this.get("game");
+
             this.exchange.syncUI();
             if(game.isUserAfterRoll()) {
                 this.exchange.show();
@@ -198,6 +247,8 @@ YUI.add("game", function(Y) {
         },
 
         _uiSyncBuild: function() {
+            var game = this.get("game");
+
             this.build.syncUI();
             if(game.isUserAfterRoll()) {
                 this.build.show();
@@ -207,6 +258,8 @@ YUI.add("game", function(Y) {
         },
 
         _uiSyncDiscard: function() {
+            var game = this.get("game");
+
             this.discard.syncUI();
             if(game.isUserDiscard()) {
                 this.discard.show();
@@ -216,6 +269,8 @@ YUI.add("game", function(Y) {
         },
 
         _uiSyncCards: function() {
+            var game = this.get("game");
+
             this.cards.syncUI();
             if(game.isUserAfterRoll() || game.isUserBeforeRoll()) {
                 this.cards.show();
@@ -225,6 +280,8 @@ YUI.add("game", function(Y) {
         },
 
         _uiSyncBeforeRoll: function() {
+            var game = this.get("game");
+
             this.beforeRoll.syncUI();
             if(game.isUserBeforeRoll()) {
                 this.beforeRoll.show();
@@ -233,67 +290,192 @@ YUI.add("game", function(Y) {
             }
         },
 
+        _uiSyncAfterRoll: function() {
+            var game = this.get("game");
+
+            this.afterRoll.syncUI();
+            if(game.isUserAfterRoll()) {
+                this.afterRoll.show();
+            } else {
+                this.afterRoll.hide();
+            }
+        },
+
         bindUI: function() {
-            this.beforeRoll.after(ROLL, bind(this._afterRoll, this));
-            this.cards.after(CARD, bind(this._afterCardPlay, this));
-            this.board.after(ROAD, bind(this._afterRoadBuilt, this));
-            this.board.after(SETTLEMENT, bind(this._afterSettlementBuilt, this));
-            this.board.after(CITY, bind(this._afterCityBuilt, this));
-            this.board.after(ROBBER, bind(this._afterRobberMoved, this));
-            this.build.after(ROAD, bind(this._afterBuildRoad, this));
-            this.build.after(SETTLEMENT, bind(this._afterBuildSettlement, this));
-            this.build.after(CITY, bind(this._afterBuildCity, this));
-            this.build.after(CARD, bind(this._afterBuildCard, this));
-            this.exchange.after(EXCHANGE, bind(this._afterExchange, this));
-            this.offer.after(OFFER, bind(this._afterOffer, this));
+            var game = this.get("game"),
+                player = game.get("userPlayer");
+
+            if(isValue(player)) {
+                this.beforeRoll.after(ROLL, bind(this._afterRoll, this));
+                this.afterRoll.after(END_TURN, bind(this._afterEndTurn, this));
+                this.cards.after(CARD, bind(this._afterCardPlay, this));
+                this.board.after(ROAD, bind(this._afterRoadBuilt, this));
+                this.board.after(SETTLEMENT, bind(this._afterSettlementBuilt, this));
+                this.board.after(CITY, bind(this._afterCityBuilt, this));
+                this.board.after(ROBBER, bind(this._afterRobberMoved, this));
+                this.build.after(ROAD, bind(this._afterBuildRoad, this));
+                this.build.after(SETTLEMENT, bind(this._afterBuildSettlement, this));
+                this.build.after(CITY, bind(this._afterBuildCity, this));
+                this.build.after(CARD, bind(this._afterBuildCard, this));
+                this.exchange.after(EXCHANGE, bind(this._afterExchange, this));
+                this.offer.after(OFFER, bind(this._afterOffer, this));
+                this.discard.after(DISCARD, bind(this._afterDiscard, this));
+            }
+
+            Y.on("io:complete", bind(this._complete, this));
         },
 
         _afterRoll: function(event) {
-            console.log(event);
+            this._io("post", "/dice_rolls");
+        },
+
+        _afterEndTurn: function(event) {
+            this._io("put", "", ["game[phase_event]=end_turn"]);
         },
 
         _afterCardPlay: function(event) {
             console.log(event);
+            var details = event.details[0],
+                id = details.id,
+                resourceType = details.resourceType,
+                bricks = details.bricks,
+                grain = details.grain,
+                lumber = details.lumber,
+                ore = details.ore,
+                wool = details.wool,
+                params = [];
+
+            params.push("card[state_event]=play");
+
+            if(isValue(resourceType)) {
+                params.push("card[resource_type]=" + resourceType);
+            }
+
+            if(isValue(bricks)) {
+                params.push("card[bricks]=" + bricks);
+            }
+
+            if(isValue(grain)) {
+                params.push("card[grain]=" + grain);
+            }
+
+            if(isValue(lumber)) {
+                params.push("card[lumber]=" + lumber);
+            }
+
+            if(isValue(ore)) {
+                params.push("card[ore]=" + ore);
+            }
+
+            if(isValue(wool)) {
+                params.push("card[wool]=" + wool);
+            }
+
+            this._io("put", "/cards/" + id, params);
         },
 
         _afterBuildRoad: function(event) {
-            console.log(event);
+            this.board.set("mode", ROAD);
         },
 
         _afterBuildSettlement: function(event) {
-            console.log(event);
+            this.board.set("mode", SETTLEMENT);
         },
 
         _afterBuildCity: function(event) {
-            console.log(event);
+            this.board.set("mode", CITY);
         },
 
         _afterBuildCard: function(event) {
-            console.log(event);
+            this._io("post", "/cards");
         },
 
         _afterExchange: function(event) {
-            console.log(exchange);
+            // console.log(exchange);
         },
 
         _afterOffer: function(event) {
-            console.log(event);
+            // console.log(event);
         },
 
         _afterRoadBuilt: function(event) {
-            console.log(event);
+            var position = event.details[0],
+                params = [
+                    "edge[row]=" + position[0],
+                    "edge[col]=" + position[1],
+                    "edge[state_event]=settle"
+                ];
+
+            this._io("post", "/edges", params);
         },
 
         _afterSettlementBuilt: function(event) {
-            console.log(event);
+            var position = event.details[0],
+                params = [
+                    "node[row]=" + position[0],
+                    "node[col]=" + position[1],
+                    "node[state_event]=settle"
+                ];
+
+            this._io("post", "/nodes", params);
         },
 
         _afterCityBuilt: function(event) {
-            console.log(event);
+            var position = event.details[0];
+
+            this._io("put", "/nodes/" + position.join(","), ["node[state_event]=expand"]);
         },
 
         _afterRobberMoved: function(event) {
-            console.log(event);
+            var position = event.details[0],
+                player = event.details[1],
+                params = [];
+
+            params.push("robbery[row]=" + position[0]);
+            params.push("robbery[col]=" + position[1]);
+
+            if(isValue(player)) {
+                params.push("robbery[sender_number]=" + player);
+            }
+
+            this._io("post", "/robberies", params);
+        },
+
+        _afterDiscard: function(event) {
+            var details = event.details[0],
+                params = [
+                    "discard[bricks]=" + details.bricks,
+                    "discard[grain]=" + details.grain,
+                    "discard[lumber]=" + details.lumber,
+                    "discard[ore]=" + details.ore,
+                    "discard[wool]=" + details.wool
+                ];
+
+            this._io("post", "/discards", params);
+        },
+
+        _io: function(method, path, params) {
+            var timer = this.timer,
+                game = this.get("game"),
+                id = game.get("id"),
+                configuration = {};
+
+            params = params || [];
+
+            if(method !== "get") {
+                configuration.method = "post";
+                if(method !== "post") {
+                    params.push("_method=" + method);
+                }
+            }
+
+            configuration.data = params.join("&");
+
+            if(timer) {
+                timer.cancel();
+            }
+
+            io("/games/" + id + path, configuration);
         }
     });
 

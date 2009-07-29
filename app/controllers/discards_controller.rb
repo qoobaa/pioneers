@@ -24,9 +24,10 @@ class DiscardsController < ApplicationController
     @discard = @game.discards.build(params[:discard])
     @discard.user = @current_user
     if @discard.save
-      @game.reload
-      stomp_send(@game, { :game => game, :discard => discard })
-      render :nothing => true, :status => :created
+      # @game.reload
+      # stomp_send(@game, { :game => game, :discard => discard })
+      # render :nothing => true, :status => :created
+      render :json => { :game => game }
     else
       render :nothing => true, :status => :unprocessable_entity
     end

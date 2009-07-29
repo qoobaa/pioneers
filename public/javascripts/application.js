@@ -37,7 +37,11 @@ YUI({ modules: {
     },
     "before-roll": {
         fullpath: "/javascripts/before-roll.js",
-        requires: ["widget", "collection"]
+        requires: ["widget"]
+    },
+    "after-roll": {
+        fullpath: "/javascripts/after-roll.js",
+        requires: ["widget"]
     },
     "board": {
         fullpath: "/javascripts/board.js",
@@ -45,7 +49,7 @@ YUI({ modules: {
     },
     "game": {
         fullpath: "/javascripts/game.js",
-        requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll"]
+        requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll", "after-roll", "io-base", "json-parse"]
     },
     "pioneers-board": {
         fullpath: "/javascripts/pioneers/board.js",
@@ -82,27 +86,22 @@ YUI({ modules: {
 
         var parse = Y.JSON.parse,
             io = Y.io,
-            later = Y.later,
-            uri = "/games/1.json",
-            initialized = false;
+            pathname = document.location.pathname;
 
-        function complete(id, response) {
-            gameAttributes = parse(response.responseText);
-            if(initialized) {
-                // game.setAttrs(gameAttributes.game);
-                // gameWidget.syncUI();
-            } else {
-                game = new Y.pioneers.Game(gameAttributes.game);
-                gameWidget = new Y.Game({ game: game });
-                gameWidget.render();
-                // initialized = true;
-                // later(5000, this, function() {
-                //     io(uri);
-                // }, null, false);
-            }
-        };
+        if(pathname.match(/^\/games\/\d+$/)) {
+            function complete(id, response) {
+                Y.detach("io:complete", complete);
 
-        Y.on('io:complete', complete, this);
+                var gameAttributes = parse(response.responseText),
+                    gameObject = new Y.pioneers.Game(gameAttributes.game);
 
-        var request = io(uri);
+                game = new Y.Game({ game: gameObject });
+
+                game.render();
+            };
+
+            Y.on('io:complete', complete, this);
+
+            var request = io(pathname + ".json");
+        }
 });
