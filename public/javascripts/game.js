@@ -391,7 +391,16 @@ YUI.add("game", function(Y) {
         },
 
         _afterExchange: function(event) {
-            // console.log(exchange);
+            var details = event.details[0],
+                params = [
+                    "exchange[bricks]=" + details.bricks,
+                    "exchange[grain]=" + details.grain,
+                    "exchange[lumber]=" + details.lumber,
+                    "exchange[ore]=" + details.ore,
+                    "exchange[wool]=" + details.wool
+                ];
+
+            this._io("post", "/exchanges", params);
         },
 
         _afterOffer: function(event) {
@@ -402,8 +411,7 @@ YUI.add("game", function(Y) {
             var position = event.details[0],
                 params = [
                     "edge[row]=" + position[0],
-                    "edge[col]=" + position[1],
-                    "edge[state_event]=settle"
+                    "edge[col]=" + position[1]
                 ];
 
             this._io("post", "/edges", params);

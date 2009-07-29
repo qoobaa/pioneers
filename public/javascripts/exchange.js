@@ -99,6 +99,17 @@ YUI.add("exchange", function(Y) {
                 ore = value.ore >= 0 ? value.ore : value.ore / steps.ore,
                 wool = value.wool >= 0 ? value.wool : value.wool / steps.wool;
             return bricks + grain + lumber + ore + wool === 0;
+        },
+
+        bindUI: function() {
+            Exchange.superclass.bindUI.apply(this, arguments);
+            this.acceptButton.after("click", Y.bind(this._afterAcceptClick, this));
+        },
+
+        _afterAcceptClick: function(event) {
+            var values = this._getSpinnersValues();
+
+            this.fire(EXCHANGE, values);
         }
     });
 
