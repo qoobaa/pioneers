@@ -219,7 +219,7 @@ YUI.add("pioneers-edge", function(Y) {
         },
 
         isValidForRoad: function(player) {
-            return !this.isSettled() && (this.hasSettlement(player) || this.hasRoad(player));
+            return !this.isSettled() && this.isSettleable() && (this.hasSettlement(player) || this.hasRoad(player));
         }
     });
 

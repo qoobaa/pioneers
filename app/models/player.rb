@@ -19,7 +19,6 @@
 
 class Player < ActiveRecord::Base
   include ToHash
-  extend AttrModifier
 
   belongs_to :game
   belongs_to :user
@@ -30,7 +29,6 @@ class Player < ActiveRecord::Base
 
   acts_as_list :scope => :game, :column => "number"
   validates_uniqueness_of :user_id, :scope => [:game_id]
-  delegate :count, :to => :cards, :prefix => true
   delegate :login, :idle?, :to => :user, :prefix => true
   delegate :start_game, :preparing?, :current_player, :to => :game,
            :prefix => true
@@ -38,12 +36,6 @@ class Player < ActiveRecord::Base
   validates_numericality_of :bricks, :grain, :ore, :wool, :lumber,
                             :settlements, :cities, :roads, :points,
                             :visible_points, :hidden_points,
-                            :modified_settlements, :modified_bricks,
-                            :modified_grain, :modified_ore,
-                            :modified_wool, :modified_lumber,
-                            :modified_settlements, :modified_cities,
-                            :modified_roads, :modified_visible_points,
-                            :modified_hidden_points,
                             :greater_than_or_equal_to => 0,
                             :only_integer => true, :allow_nil => true
 
@@ -52,9 +44,6 @@ class Player < ActiveRecord::Base
                             :lumber_exchange_rate, :ore_exchange_rate,
                             :wool_exchange_rate, :allow_nil => true,
                             :greater_than => 0, :only_integer => true
-
-  attr_modifier :bricks, :grain, :lumber, :ore, :wool, :settlements,
-                :cities, :roads, :visible_points, :hidden_points
 
   before_destroy :game_preparing?
   before_save :sum_resources, :sum_points
@@ -89,6 +78,10 @@ class Player < ActiveRecord::Base
 
   def current?
     game_current_player == self
+  end
+
+  def cards_count
+    cards.without_state(:graveyard).count
   end
 
   protected

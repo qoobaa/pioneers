@@ -116,7 +116,7 @@ YUI.add("resources", function(Y) {
         syncUI : function() {
             this._uiSetMin(this.get("min"));
             this._uiSetMax(this.get("max"));
-            this._uiSetValue(this.get("value"));
+            // this._uiSetValue(this.get("value"));
             this._uiSetSteps(this.get("steps"));
             this._uiSyncButton(this.get("value"));
         },

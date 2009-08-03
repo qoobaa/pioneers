@@ -68,14 +68,22 @@ YUI.add("pioneers-offer", function(Y) {
         },
         responses: {
             value: [],
+            lazyAdd: false,
             setter: function(values) {
                 var initialized = this.get("initialized");
 
                 if(initialized) {
                     var responses = this.get("responses");
                     each(values, function(value) {
-                        // RESPONSE ADDED (value)
-                        responses.push(value);
+                        var player = value.player,
+                            response = find(responses, function(response) {
+                                return response.player === player;
+                            });
+                        if(response) {
+                            response.agreed = value.agreed;
+                        } else {
+                            responses.push(value);
+                        }
                     }, this);
                     return responses;
                 } else {
@@ -86,7 +94,13 @@ YUI.add("pioneers-offer", function(Y) {
     };
 
     extend(Offer, Base, {
+        playerResponse: function(player) {
+            var responses = this.get("responses");
 
+            return find(responses, function(response) {
+                return response.player === player;
+            });
+        }
     });
 
     pioneers.Offer = Offer;

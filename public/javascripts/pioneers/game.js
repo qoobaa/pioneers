@@ -72,19 +72,21 @@ YUI.add("pioneers-game", function(Y) {
             setter: function(values) {
                 var initialized = this.get("initialized");
                 if(initialized) {
+                    var userCards = this.get("userCards");
                     each(values, function(value) {
                         var id = value.id,
-                            userCards = this.get("userCards"),
                             card = find(userCards, function(userCard) {
                                 return userCard.id === id;
                             });
                         if(card) {
                             card.state = value.state;
-                            return userCards;
                         } else {
-                            return userCards.push(card);
+                            userCards.push(card);
                         }
                     }, this);
+                    return userCards;
+                } else {
+                    return values;
                 }
             }
         },
@@ -117,7 +119,7 @@ YUI.add("pioneers-game", function(Y) {
             lazyAdd: false,
             setter: function(value) {
                 var offer = this.get("offer");
-                if(offer.id === value.id) {
+                if(offer && value && offer.id === value.id) {
                     offer.setAttrs(value);
                     return offer;
                 } else {
@@ -196,7 +198,7 @@ YUI.add("pioneers-game", function(Y) {
 
         isUserOffer: function() {
             var phase = this.get("phase");
-            return isUserPhase() && phase === "offer";
+            return this.isUserPhase() && phase === "offer";
         },
 
         isOtherOffer: function() {

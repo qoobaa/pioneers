@@ -24,8 +24,9 @@ class OffersController < ApplicationController
     @offer = @game.offers.build(params[:offer])
     @offer.user = @current_user
     if @offer.save
-      stomp_send(@game, { :game => game, :offer => offer })
-      render :nothing => true, :status => :created
+      # stomp_send(@game, { :game => game, :offer => offer })
+      # render :nothing => true, :status => :created
+      render :json => { :game => game }
     else
       render :nothing => true, :status => :unprocessable_entity
     end
@@ -35,8 +36,9 @@ class OffersController < ApplicationController
     @offer = @game.offer
     @offer.user = @current_user
     if @offer.update_attributes(params[:offer])
-      stomp_send(@game, { :game => game, :offer => offer })
-      render :nothing => true, :status => :created
+      # stomp_send(@game, { :game => game, :offer => offer })
+      # render :nothing => true, :status => :created
+      render :json => { :game => game }
     else
       render :nothing => true, :status => :unprocessable_entity
     end

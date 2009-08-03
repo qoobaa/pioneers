@@ -83,6 +83,17 @@ YUI.add("offer", function(Y) {
                 value.ore > 0 ||
                 value.wool > 0;
             return minus && plus;
+        },
+
+        bindUI: function() {
+            Offer.superclass.bindUI.apply(this, arguments);
+            this.acceptButton.after("click", Y.bind(this._afterAcceptClick, this));
+        },
+
+        _afterAcceptClick: function(event) {
+            var values = this._getSpinnersValues();
+
+            this.fire(OFFER, values);
         }
     });
 

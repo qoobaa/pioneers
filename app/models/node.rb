@@ -114,8 +114,8 @@ class Node < ActiveRecord::Base
   def add_resources(type)
     return if type.nil?
     amount = settlement? ? 1 : 2
-    player.attributes = { "#{type}_modifier" => amount }
-    # player.save
+    player[type] = player.send("#{type}_was") + amount
+    player.save
   end
 
   def has_road?
@@ -141,7 +141,7 @@ class Node < ActiveRecord::Base
   end
 
   def add_victory_point
-    player.attributes = { :visible_points_modifier => 1 }
+    player.visible_points = player.visible_points_was + 1
   end
 
   def save_player
@@ -189,7 +189,7 @@ class Node < ActiveRecord::Base
 
   # settlement - before validation
   def build_settlement
-    player.attributes = { :settlements_modifier => -1 }
+    player.settlements = player.settlements_was - 1
     add_resources_from_neighbours if game_second_settlement?
     charge_for_settlement if game_after_roll?
     update_exchange_rates if harbor?
@@ -197,29 +197,23 @@ class Node < ActiveRecord::Base
   end
 
   def charge_for_settlement
-    player.attributes = {
-      :lumber_modifier => -1,
-      :grain_modifier => -1,
-      :wool_modifier => -1,
-      :bricks_modifier => -1
-    }
+    player.bricks = player.bricks_was - 1
+    player.grain = player.grain_was - 1
+    player.lumber = player.lumber_was - 1
+    player.wool = player.wool_was - 1
   end
 
   # city - before validation
   def build_city
-    player.attributes = {
-      :settlements_modifier => 1,
-      :cities_modifier => -1
-    }
+    player.settlements = player.settlements_was + 1
+    player.cities = player.cities_was - 1
     charge_for_city
     add_victory_point
   end
 
   def charge_for_city
-    player.attributes = {
-      :ore_modifier => -3,
-      :grain_modifier => -2
-    }
+    player.ore = player.ore_was - 3
+    player.grain = player.grain_was - 2
   end
 
   def settlement_built

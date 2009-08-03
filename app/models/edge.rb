@@ -232,12 +232,13 @@ class Edge < ActiveRecord::Base
   # before validation
 
   def build_road
-    player.attributes = { :roads_modifier => -1 }
+    player.roads = player.roads_was - 1
     charge_for_road if game_after_roll?
   end
 
   def charge_for_road
-    player.attributes = { :bricks_modifier => -1, :lumber_modifier => -1 }
+    player.bricks = player.bricks_was - 1
+    player.lumber = player.lumber_was - 1
   end
 
   def road_built

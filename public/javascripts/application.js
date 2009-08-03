@@ -47,9 +47,29 @@ YUI({ modules: {
         fullpath: "/javascripts/board.js",
         requires: ["widget", "pioneers-board"]
     },
+    "players": {
+        fullpath: "/javascripts/players.js",
+        requires: ["widget"]
+    },
+    "user-player": {
+        fullpath: "/javascripts/user-player.js",
+        requires: ["widget"]
+    },
     "game": {
         fullpath: "/javascripts/game.js",
-        requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll", "after-roll", "io-base", "json-parse"]
+        requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll", "after-roll", "io-base", "json-parse", "players", "game-status", "offer-sent", "offer-received", "user-player"]
+    },
+    "game-status": {
+        fullpath: "/javascripts/game-status.js",
+        requires: ["widget"]
+    },
+    "offer-sent": {
+        fullpath: "/javascripts/offer-sent.js",
+        requires: ["widget", "pioneers-offer"]
+    },
+    "offer-received": {
+        fullpath: "/javascripts/offer-received.js",
+        requires: ["widget", "pioneers-offer"]
     },
     "pioneers-board": {
         fullpath: "/javascripts/pioneers/board.js",
@@ -73,10 +93,14 @@ YUI({ modules: {
     },
     "pioneers-game": {
         fullpath: "/javascripts/pioneers/game.js",
-        requires: ["base", "pioneers-board", "pioneers-player"]
+        requires: ["base", "pioneers-board", "pioneers-player", "pioneers-offer"]
     },
     "pioneers-player": {
         fullpath: "/javascripts/pioneers/player.js",
+        requires: ["base"]
+    },
+    "pioneers-offer": {
+        fullpath: "/javascripts/pioneers/offer.js",
         requires: ["base"]
     }
 }

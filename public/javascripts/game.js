@@ -28,6 +28,8 @@ YUI.add("game", function(Y) {
         DISCARD = "discard",
         OFFER = "offer",
         ROBBER = "robber",
+        ACCEPT = "accept",
+        DECLINE = "decline",
         END_TURN = "end-turn",
         getCN = Y.ClassNameManager.getClassName,
         C_GAME = getCN(GAME),
@@ -58,6 +60,9 @@ YUI.add("game", function(Y) {
 
     Y.extend(Game, Widget, {
         renderUI: function() {
+            this._renderGameStatus();
+            this._renderPlayers();
+            this._renderUserPlayer();
             this._renderBoard();
             this._renderExchange();
             this._renderDiscard();
@@ -66,6 +71,8 @@ YUI.add("game", function(Y) {
             this._renderCards();
             this._renderBeforeRoll();
             this._renderAfterRoll();
+            this._renderOfferSent();
+            this._renderOfferReceived();
         },
 
         _renderBoard: function() {
@@ -181,11 +188,79 @@ YUI.add("game", function(Y) {
             }
         },
 
+        _renderPlayers: function() {
+            var game = this.get("game"),
+                contentBox = this.get(CONTENT_BOX),
+                playersNode = Node.create(DIV_TEMPLATE);
+
+            this.players = new Y.Players({ contentBox: playersNode, game: game });
+            contentBox.append(playersNode);
+
+            this.players.render();
+        },
+
+        _renderUserPlayer: function() {
+            var game = this.get("game"),
+                player = game.get("userPlayer"),
+                contentBox = this.get(CONTENT_BOX),
+                userPlayerNode = Node.create(DIV_TEMPLATE);
+
+            if(isValue(player)) {
+                this.userPlayer = new Y.UserPlayer({ contentBox: userPlayerNode, game: game });
+                contentBox.append(userPlayerNode);
+
+                this.userPlayer.render();
+            }
+        },
+
+        _renderGameStatus: function() {
+            var game = this.get("game"),
+                contentBox = this.get(CONTENT_BOX),
+                gameStatusNode = Node.create(DIV_TEMPLATE);
+
+            this.gameStatus = new Y.GameStatus({ contentBox: gameStatusNode, game: game });
+            contentBox.append(gameStatusNode);
+
+            this.gameStatus.render();
+        },
+
+        _renderOfferSent: function() {
+            var game = this.get("game"),
+                player = game.get("userPlayer"),
+                contentBox = this.get(CONTENT_BOX),
+                offerSentNode = Node.create(DIV_TEMPLATE);
+
+            if(isValue(player)) {
+                this.offerSent = new Y.OfferSent({ contentBox: offerSentNode, game: game });
+                contentBox.append(offerSentNode);
+
+                this.offerSent.render();
+            }
+        },
+
+        _renderOfferReceived: function() {
+            var game = this.get("game"),
+                player = game.get("userPlayer"),
+                contentBox = this.get(CONTENT_BOX),
+                offerReceivedNode = Node.create(DIV_TEMPLATE);
+
+            if(isValue(player)) {
+                this.offerReceived = new Y.OfferReceived({ contentBox: offerReceivedNode, game: game });
+                contentBox.append(offerReceivedNode);
+
+                this.offerReceived.render();
+            }
+        },
+
         syncUI: function() {
             var game = this.get("game"),
                 player = game.get("userPlayer");
 
+            this._uiSyncGameStatus();
+            this._uiSyncPlayers();
+
             if(isValue(player)) {
+                this._uiSyncUserPlayer();
                 this._uiSyncBoard();
                 this._uiSyncOffer();
                 this._uiSyncExchange();
@@ -194,6 +269,8 @@ YUI.add("game", function(Y) {
                 this._uiSyncCards();
                 this._uiSyncBeforeRoll();
                 this._uiSyncAfterRoll();
+                this._uiSyncOfferSent();
+                this._uiSyncOfferReceived();
             }
 
             if(this.timer) {
@@ -211,8 +288,28 @@ YUI.add("game", function(Y) {
         },
 
         _refreshGame: function() {
-            var uri = "/games/1.json";
+            var game = this.get("game"),
+                id = game.get("id"),
+                uri = "/games/" + id + ".json";
             io(uri);
+        },
+
+        _uiSyncGameStatus: function() {
+            var game = this.get("game");
+
+            this.gameStatus.syncUI();
+        },
+
+        _uiSyncPlayers: function() {
+            var game = this.get("game");
+
+            this.players.syncUI();
+        },
+
+        _uiSyncUserPlayer: function() {
+            var game = this.get("game");
+
+            this.userPlayer.syncUI();
         },
 
         _uiSyncBoard: function() {
@@ -221,6 +318,12 @@ YUI.add("game", function(Y) {
             this.board.syncUI();
             if(game.isUserRobber()) {
                 this.board.set("mode", "robber");
+            } else if(game.isUserFirstSettlement() || game.isUserSecondSettlement()) {
+                this.board.set("mode", "firstSettlement");
+            } else if(game.isUserFirstRoad() || game.isUserSecondRoad()) {
+                this.board.set("mode", "firstRoad");
+            } else if(!game.isUserAfterRoll()) {
+                this.board.set("mode", "default");
             }
         },
 
@@ -301,6 +404,28 @@ YUI.add("game", function(Y) {
             }
         },
 
+        _uiSyncOfferSent: function() {
+            var game = this.get("game");
+
+            this.offerSent.syncUI();
+            if(game.isUserOffer()) {
+                this.offerSent.show();
+            } else {
+                this.offerSent.hide();
+            }
+        },
+
+        _uiSyncOfferReceived: function() {
+            var game = this.get("game");
+
+            this.offerReceived.syncUI();
+            if(game.isOtherOffer()) {
+                this.offerReceived.show();
+            } else {
+                this.offerReceived.hide();
+            }
+        },
+
         bindUI: function() {
             var game = this.get("game"),
                 player = game.get("userPlayer");
@@ -320,6 +445,10 @@ YUI.add("game", function(Y) {
                 this.exchange.after(EXCHANGE, bind(this._afterExchange, this));
                 this.offer.after(OFFER, bind(this._afterOffer, this));
                 this.discard.after(DISCARD, bind(this._afterDiscard, this));
+                this.offerSent.after(DECLINE, bind(this._afterOfferSentDecline, this));
+                this.offerSent.after(ACCEPT, bind(this._afterOfferSentAccept, this));
+                this.offerReceived.after(ACCEPT, bind(this._afterOfferReceivedAccept, this));
+                this.offerReceived.after(DECLINE, bind(this._afterOfferReceivedDecline, this));
             }
 
             Y.on("io:complete", bind(this._complete, this));
@@ -404,7 +533,34 @@ YUI.add("game", function(Y) {
         },
 
         _afterOffer: function(event) {
-            // console.log(event);
+            var details = event.details[0],
+                params = [
+                    "offer[bricks]=" + details.bricks,
+                    "offer[grain]=" + details.grain,
+                    "offer[lumber]=" + details.lumber,
+                    "offer[ore]=" + details.ore,
+                    "offer[wool]=" + details.wool
+                ];
+
+            this._io("post", "/offer", params);
+        },
+
+        _afterOfferSentDecline: function(event) {
+            this._io("put", "/offer", ["offer[state_event]=decline"]);
+        },
+
+        _afterOfferSentAccept: function(event) {
+            var player = event.details[0];
+
+            this._io("put", "/offer", ["offer[state_event]=accept", "offer[recipient_number]=" + player]);
+        },
+
+        _afterOfferReceivedDecline: function(event) {
+            this._io("post", "/offer_response", ["offer_response[agreed]=false"]);
+        },
+
+        _afterOfferReceivedAccept: function(event) {
+            this._io("post", "/offer_response", ["offer_response[agreed]=true"]);
         },
 
         _afterRoadBuilt: function(event) {

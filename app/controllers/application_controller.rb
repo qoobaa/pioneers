@@ -20,7 +20,7 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
-require "stomp"
+# require "stomp"
 
 class ApplicationController < ActionController::Base
   helper :all
@@ -265,16 +265,21 @@ class ApplicationController < ActionController::Base
                    :type => :card_type,
                    :state => :state)
     end if @user_player
-    game[:offer] = @game.offer.to_hash(:sender => :sender_number,
-                                       :recipient => :recipient_number,
-                                       :bricks => :bricks,
-                                       :grain => :grain,
-                                       :lumber => :lumber,
-                                       :ore => :ore,
-                                       :wool => :wool,
-                                       :state => :state,
-                                       :responses => [:offer_responses,
-                                                      { :player => :player_number, :agreed => :agreed }]) if @game.offer
+    if @game.offer
+      game[:offer] = @game.offer.to_hash(:id => :id,
+                                         :sender => :sender_number,
+                                         :recipient => :recipient_number,
+                                         :bricks => :bricks,
+                                         :grain => :grain,
+                                         :lumber => :lumber,
+                                         :ore => :ore,
+                                         :wool => :wool,
+                                         :state => :state,
+                                         :responses => [:offer_responses,
+                                                        { :player => :player_number, :agreed => :agreed }])
+    else
+      game[:offer] = nil
+    end
     game
   end
 end
