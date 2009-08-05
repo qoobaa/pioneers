@@ -1,8 +1,8 @@
 module Generator
-  ROLLS = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11].freeze
-  HARBORS = (["bricks", "grain", "lumber", "ore", "wool"] + ["generic"] * 4).freeze
-  SEAS = (["sea"] * 18).freeze
-  LANDS = (["desert"] + ["mountain"] * 3 + ["field"] * 4 + ["hill"] * 3 + ["forest"] * 4 + ["pasture"] * 4).freeze
+  ROLLS = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
+  HARBORS = (["bricks", "grain", "lumber", "ore", "wool"] + ["generic"] * 4)
+  SEAS = (["sea"] * 18)
+  LANDS = (["desert"] + ["mountain"] * 3 + ["field"] * 4 + ["hill"] * 3 + ["forest"] * 4 + ["pasture"] * 4)
   HEXES_ATTRIBUTES =
     [
      { :position => [0, 3], :type => :sea, :harbor => [4] },
@@ -42,7 +42,7 @@ module Generator
      { :position => [4, 2], :type => :land },
      { :position => [3, 2], :type => :land },
      { :position => [3, 3], :type => :land },
-    ].freeze
+    ]
 
   def self.generate
     rolls = ROLLS.dup

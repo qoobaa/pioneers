@@ -31,7 +31,7 @@ class Hex < ActiveRecord::Base
 
   named_scope :roll, lambda { |roll| { :conditions => { :roll => roll } } }
 
-  RESOURCE_TYPES = { "hill" => "bricks", "field" => "grain", "mountain" => "ore", "pasture" => "wool", "forest" => "lumber" }.freeze
+  RESOURCE_TYPES = { "hill" => "bricks", "field" => "grain", "mountain" => "ore", "pasture" => "wool", "forest" => "lumber" }
 
   def robber?
     board_robber_position == position
