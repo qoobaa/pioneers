@@ -62,47 +62,35 @@ YUI.add("before-roll", function(Y) {
     Y.extend(BeforeRoll, Widget, {
         renderUI: function() {
             this._renderLabel();
-            this._renderButtons();
+            this._renderButton();
         },
 
         bindUI: function() {
-            this.after("cardsChange", bind(this._afterCardsChange, this));
-            // Y.on("click", bind(this._armyClick, this), this.armyNode);
+            this.after("disabledChange", this._afterDisabledChange);
             Y.on("click", bind(this._rollClick, this), this.rollNode);
         },
 
-        // _afterCardsChange: function(event) {
-        //     this._uiSyncButtons(event.newVal);
-        // },
+        syncUI: function() {
+            this._uiSyncButton();
+        },
 
-        // syncUI: function() {
-        //     this._uiSyncButtons(this.get("cards"));
-        // },
+        _uiSyncButton: function() {
+            var disabled = this.get("disabled");
 
-        // _armyClick: function(event) {
-        //     this.fire(CARD, this._armyCard(this.get("cards")));
-        // },
+            this.rollNode.set("disabled", disabled);
+        },
+
+        _afterDisabledChange: function() {
+            this.syncUI();
+        },
 
         _rollClick: function(event) {
             this.fire(ROLL);
         },
 
-        // _uiSyncButtons: function(cards) {
-        //     this.armyNode.set("disabled", !this._armyCard(cards));
-        // },
-
-        // _armyCard: function(cards) {
-        //     return Y.Array.find(cards, function(card) {
-        //         return card.type === "army";
-        //     });
-        // },
-
-        _renderButtons: function() {
+        _renderButton: function() {
             var contentBox = this.get(CONTENT_BOX),
                 strings = this.get("strings");
-
-            // var army = this._createButton(strings.army, C_ARMY);
-            // this.armyNode = contentBox.appendChild(army);
 
             var roll = this._createButton(strings.roll, C_ROLL);
             this.rollNode = contentBox.appendChild(roll);

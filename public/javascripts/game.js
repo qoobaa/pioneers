@@ -17,7 +17,6 @@
 // <http://www.gnu.org/licenses/>.
 
 YUI.add("game", function(Y) {
-
     var GAME = "game",
         ROLL = "roll",
         CARD = "card",
@@ -279,7 +278,7 @@ YUI.add("game", function(Y) {
             this.timer = later(TIMEOUT, this, bind(this._refreshGame, this));
         },
 
-        _complete: function(id, response) {
+        _success: function(id, response) {
             var gameAttributes = parse(response.responseText),
                 game = this.get("game");
 
@@ -322,6 +321,8 @@ YUI.add("game", function(Y) {
                 this.board.set("mode", "firstSettlement");
             } else if(game.isUserFirstRoad() || game.isUserSecondRoad()) {
                 this.board.set("mode", "firstRoad");
+            } else if(game.isUserRoadBuildingFirstRoad() || game.isUserRoadBuildingSecondRoad()) {
+                this.board.set("mode", "road");
             } else if(!game.isUserAfterRoll()) {
                 this.board.set("mode", "default");
             }
@@ -451,7 +452,7 @@ YUI.add("game", function(Y) {
                 this.offerReceived.after(DECLINE, bind(this._afterOfferReceivedDecline, this));
             }
 
-            Y.on("io:complete", bind(this._complete, this));
+            Y.on("io:success", bind(this._success, this));
         },
 
         _afterRoll: function(event) {

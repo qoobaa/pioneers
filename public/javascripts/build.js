@@ -105,10 +105,15 @@ YUI.add("build", function(Y) {
         },
 
         bindUI: function() {
+            this.after("disabledChange", this._afterDisabledChange);
             Y.on("click", bind(this._roadClick, this), this.roadNode);
             Y.on("click", bind(this._settlementClick, this), this.settlementNode);
             Y.on("click", bind(this._cityClick, this), this.cityNode);
             Y.on("click", bind(this._cardClick, this), this.cardNode);
+        },
+
+        _afterDisabledChange: function(event) {
+            this.syncUI();
         },
 
         syncUI: function() {
@@ -148,9 +153,11 @@ YUI.add("build", function(Y) {
 
         _isRoadEnabled: function(resources) {
             var board = this.get("board"),
-                player = this.get("player");
+                player = this.get("player"),
+                disabled = this.get("disabled");
 
-            return resources.bricks > 0 &&
+            return !disabled &&
+                resources.bricks > 0 &&
                 resources.lumber > 0 &&
                 resources.roads > 0 &&
                 board.canBuildRoad(player);
@@ -158,9 +165,11 @@ YUI.add("build", function(Y) {
 
         _isSettlementEnabled: function(resources) {
             var board = this.get("board"),
-                player = this.get("player");
+                player = this.get("player"),
+                disabled = this.get("disabled");
 
-            return resources.bricks > 0 &&
+            return !disabled &&
+                resources.bricks > 0 &&
                 resources.lumber > 0 &&
                 resources.grain > 0 &&
                 resources.wool > 0 &&
@@ -170,15 +179,19 @@ YUI.add("build", function(Y) {
 
         _isCityEnabled: function(resources) {
             var board = this.get("board"),
-                player = this.get("player");
+                player = this.get("player"),
+                disabled = this.get("disabled");
 
-            return resources.grain > 1 &&
+            return !disabled &&
+                resources.grain > 1 &&
                 resources.ore > 2 &&
                 resources.cities > 0 &&
                 board.canBuildCity(player);
         },
 
         _isCardEnabled: function(resources) {
+            var disabled = this.get("disabled");
+
             return resources.grain > 0 &&
                 resources.ore > 0 &&
                 resources.wool > 0 &&

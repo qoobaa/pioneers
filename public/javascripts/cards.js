@@ -76,9 +76,13 @@ YUI.add("cards", function(Y) {
         },
 
         bindUI: function() {
-            this.after("cardsChange", bind(this._afterCardsChange, this));
+            this.after("disabledChange", this._afterDisabledChange);
             this.monopoly.after(MONOPOLY, bind(this._afterMonopoly, this));
             this.yearOfPlenty.after(YEAR_OF_PLENTY, bind(this._afterYearOfPlenty, this));
+        },
+
+        _afterDisabledChange: function(event) {
+            this.syncUI();
         },
 
         _afterMonopoly: function(event) {
@@ -101,13 +105,12 @@ YUI.add("cards", function(Y) {
                 strings = this.get("strings"),
                 cards = this.get("cards"),
                 cardsClassName = this.getClassName(CARD);
-                that = this;
 
             contentBox.queryAll("." + cardsClassName).remove();
 
             Y.each(cards, function(card) {
-                that._renderButton(card);
-            });
+                this._renderButton(card);
+            }, this);
         },
 
         _renderButton: function(card) {
@@ -115,7 +118,8 @@ YUI.add("cards", function(Y) {
                 buttonString = this.get("strings." + card.type),
                 className = this.getClassName(card.type),
                 cardsClassName = this.getClassName(CARD),
-                game = this.get("game");
+                game = this.get("game"),
+                disabled = this.get("disabled");
 
             var cardNode = this._createButton(buttonString, [className, cardsClassName].join(" "));
             contentBox.appendChild(cardNode);
@@ -127,7 +131,7 @@ YUI.add("cards", function(Y) {
                 afterRoll = game.isUserAfterRoll(),
                 beforeRoll = game.isUserBeforeRoll();
 
-            cardNode.set("disabled", tapped || victoryPoint || cardPlayed || !(armyCard && beforeRoll || afterRoll));
+            cardNode.set("disabled", disabled || tapped || victoryPoint || cardPlayed || !(armyCard && beforeRoll || afterRoll));
 
             Y.on("click", bind(this._cardClicked, this, card), cardNode);
         },

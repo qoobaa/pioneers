@@ -81,7 +81,7 @@ YUI.add("pioneers-game", function(Y) {
                         if(card) {
                             card.state = value.state;
                         } else {
-                            userCards.push(card);
+                            userCards.push(value);
                         }
                     }, this);
                     return userCards;
@@ -167,6 +167,16 @@ YUI.add("pioneers-game", function(Y) {
         isUserFirstRoad: function() {
             var phase = this.get("phase");
             return this.isUserPhase() && phase === "first_road";
+        },
+
+        isUserRoadBuildingFirstRoad: function() {
+            var phase = this.get("phase");
+            return this.isUserPhase() && phase === "road_building_first_road";
+        },
+
+        isUserRoadBuildingSecondRoad: function() {
+            var phase = this.get("phase");
+            return this.isUserPhase() && phase === "road_building_second_road";
         },
 
         isUserSecondRoad: function() {

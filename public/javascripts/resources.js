@@ -38,12 +38,9 @@ YUI.add("resources", function(Y) {
         NAME: RESOURCES,
         ATTRS: {
             value: {
-                value: {
-                    bricks: 0,
-                    grain: 0,
-                    lumber: 0,
-                    ore: 0,
-                    wool: 0
+                readOnly: true,
+                getter: function() {
+                    return this._getSpinnersValues();
                 }
             },
             min: {
@@ -97,11 +94,10 @@ YUI.add("resources", function(Y) {
         },
 
         bindUI: function() {
+            this.after("disabledChange", this._afterDisabledChange);
             this.after("minChange", this._afterMinChange);
             this.after("maxChange", this._afterMaxChange);
             this.after("stepsChange", this._afterStepsChange);
-            this.after("valueChange", this._afterValueChange);
-            Y.on("click", Y.bind(this._onAcceptClick, this), this.acceptButton);
             this.bricksSpinner.after("valueChange", bind(this._afterSpinnerValueChange, this));
             this.grainSpinner.after("valueChange", bind(this._afterSpinnerValueChange, this));
             this.lumberSpinner.after("valueChange", bind(this._afterSpinnerValueChange, this));
@@ -109,20 +105,33 @@ YUI.add("resources", function(Y) {
             this.woolSpinner.after("valueChange", bind(this._afterSpinnerValueChange, this));
         },
 
+        reset: function() {
+            Resources.superclass.reset.apply(this, arguments);
+            this.bricksSpinner.set("value", 0);
+            this.grainSpinner.set("value", 0);
+            this.lumberSpinner.set("value", 0);
+            this.oreSpinner.set("value", 0);
+            this.woolSpinner.set("value", 0);
+        },
+
+        _afterDisabledChange: function(event) {
+            this.bricksSpinner.set("disabled", event.newVal);
+            this.grainSpinner.set("disabled", event.newVal);
+            this.lumberSpinner.set("disabled", event.newVal);
+            this.oreSpinner.set("disabled", event.newVal);
+            this.woolSpinner.set("disabled", event.newVal);
+            this.syncUI();
+        },
+
         _afterSpinnerValueChange: function() {
-            this._uiSyncButton(this._getSpinnersValues());
+            this._uiSyncButton(this.get("value"));
         },
 
         syncUI : function() {
             this._uiSetMin(this.get("min"));
             this._uiSetMax(this.get("max"));
-            // this._uiSetValue(this.get("value"));
             this._uiSetSteps(this.get("steps"));
             this._uiSyncButton(this.get("value"));
-        },
-
-        _afterValueChange: function(event) {
-            this._uiSetValue(event.newVal);
         },
 
         _afterStepsChange: function(event) {
@@ -141,11 +150,8 @@ YUI.add("resources", function(Y) {
         },
 
         _uiSyncButton: function(value) {
-            this.acceptButton.set("disabled", !this._validateValue(value));
-        },
-
-        _onAcceptClick: function() {
-            this.set("value", this._getSpinnersValues());
+            var disabled = this.get("disabled");
+            this.acceptButton.set("disabled", disabled || !this._validateValue(value));
         },
 
         _getSpinnersValues: function() {
@@ -218,14 +224,6 @@ YUI.add("resources", function(Y) {
                 value.lumber !== 0 ||
                 value.ore !== 0 ||
                 value.wool !== 0;
-        },
-
-        _uiSetValue: function(value) {
-            this.bricksSpinner.set("value", value.bricks);
-            this.grainSpinner.set("value", value.grain);
-            this.lumberSpinner.set("value", value.lumber);
-            this.oreSpinner.set("value", value.ore);
-            this.woolSpinner.set("value", value.wool);
         },
 
         _uiSetMin: function(min) {

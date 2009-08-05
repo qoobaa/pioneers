@@ -54,7 +54,22 @@ YUI.add("after-roll", function(Y) {
         },
 
         bindUI: function() {
+            this.after("disabledChange", this._afterDisabledChange);
             Y.on("click", bind(this._endTurnClick, this), this.endTurnNode);
+        },
+
+        syncUI: function() {
+            this._uiSyncButton();
+        },
+
+        _uiSyncButton: function() {
+            var disabled = this.get("disabled");
+
+            this.endTurnNode.set("disabled", disabled);
+        },
+
+        _afterDisabledChange: function() {
+            this.syncUI();
         },
 
         _endTurnClick: function(event) {

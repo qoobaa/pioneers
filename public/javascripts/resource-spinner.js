@@ -71,6 +71,7 @@ YUI.add("resource-spinner", function(Y) {
         },
 
         bindUI: function() {
+            this.after("disabledChange", this._afterDisabledChange);
             this.after("valueChange", this._afterValueChange);
             this.after("minChange", this._afterMinChange);
             this.after("maxChange", this._afterMaxChange);
@@ -79,6 +80,10 @@ YUI.add("resource-spinner", function(Y) {
             Y.on("click", Y.bind(this._onDecrementClick, this), this.decrementNode);
             Y.on("click", Y.bind(this._onIncrementClick, this), this.incrementNode);
             Y.on("change", Y.bind(this._onInputChange, this));
+        },
+
+        _afterDisabledChange: function() {
+            this.syncUI();
         },
 
         _onDecrementClick: function(event) {
@@ -150,9 +155,10 @@ YUI.add("resource-spinner", function(Y) {
 
         _uiSyncButtons: function(value) {
             var incrementedValue = this._incrementValue(value),
-                decrementedValue = this._decrementValue(value);
-            this.decrementNode.set("disabled", !this._validateValue(decrementedValue));
-            this.incrementNode.set("disabled", !this._validateValue(incrementedValue));
+                decrementedValue = this._decrementValue(value),
+                disabled = this.get("disabled");
+            this.decrementNode.set("disabled", disabled || !this._validateValue(decrementedValue));
+            this.incrementNode.set("disabled", disabled || !this._validateValue(incrementedValue));
         },
 
         _renderInput: function() {
