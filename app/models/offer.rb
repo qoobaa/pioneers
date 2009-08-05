@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Offer < ActiveRecord::Base
-  include ToHash
-
   belongs_to :game
   belongs_to :sender, :class_name => "Player"
   belongs_to :recipient, :class_name => "Player"
@@ -69,6 +67,22 @@ class Offer < ActiveRecord::Base
 
   def recipient_number=(number)
     self.recipient = agreed_players.find_by_number(number)
+  end
+
+  def to_json(options = {})
+    hash = {
+      :id => id,
+      :sender => sender_number,
+      :recipient => recipient_number,
+      :bricks => bricks,
+      :grain => grain,
+      :lumber => lumber,
+      :ore => ore,
+      :wool => wool,
+      :state => state,
+      :responses => responses
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 
   protected

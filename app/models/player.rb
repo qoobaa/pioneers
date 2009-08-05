@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Player < ActiveRecord::Base
-  include ToHash
-
   belongs_to :game
   belongs_to :user
   has_many :nodes
@@ -82,6 +80,31 @@ class Player < ActiveRecord::Base
 
   def cards_count
     cards.without_state(:graveyard).count
+  end
+
+  def to_json(options = {})
+    hash = {
+      :number => number,
+      :state => state,
+      :name => user_login,
+      :cards => cards_count,
+      :points => visible_points,
+      :resources => resources,
+      :bricks => bricks,
+      :bricksRate => bricks_exchange_rate,
+      :grain => grain,
+      :grainRate => grain_exchange_rate,
+      :lumber => lumber,
+      :lumberRate => lumber_exchange_rate,
+      :ore => ore,
+      :oreRate => ore_exchange_rate,
+      :wool => wool,
+      :woolRate => wool_exchange_rate,
+      :settlements => settlements,
+      :cities => cities,
+      :roads => roads
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 
   protected

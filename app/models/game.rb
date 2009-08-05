@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Game < ActiveRecord::Base
-  include ToHash
-
   has_many :players, :order => "number"
   has_many :dice_rolls, :order => "turn DESC"
   has_many :discards
@@ -30,14 +28,17 @@ class Game < ActiveRecord::Base
   has_one :board
   belongs_to :card
 
+  belongs_to :current_player, :class_name => "Player"
+  belongs_to :current_discard_player, :class_name => "Player"
   belongs_to :largest_army_player, :class_name => "Player"
   belongs_to :longest_road_player, :class_name => "Player"
 
-  delegate :id, :to => :current_player, :prefix => true
   delegate :hexes, :nodes, :edges, :height, :width, :size, :robber_position, :to => :board, :prefix => true
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true, :allow_nil => true
   delegate :resources, :to => :current_discard_player, :prefix => true
   delegate :number, :to => :winner, :prefix => true, :allow_nil => true
+  delegate :number, :to => :current_player, :prefix => true
+  delegate :number, :to => :current_discard_player, :prefix => true, :allow_nil => true
 
   before_update :sum_cards_count
   after_update :save_players, :end_game
@@ -66,7 +67,7 @@ class Game < ActiveRecord::Base
       game.largest_army_size = 2
       game.longest_road_length = 4
       game.current_turn = 1
-      game.current_player_number = 1
+      game.current_player = players.first
       game.army_cards = 14
       game.monopoly_cards = 2
       game.year_of_plenty_cards = 2
@@ -266,12 +267,12 @@ class Game < ActiveRecord::Base
 
   # turn
 
-  def current_user_turn?(user)
-    user.players.find_by_game_id(id) == current_player
+  def user_player(user)
+    user.players.find_by_game_id(id)
   end
 
-  def current_player
-    players[current_player_number - 1]
+  def current_user_turn?(user)
+    user_player(user) == current_player
   end
 
   def next_player?
@@ -279,8 +280,7 @@ class Game < ActiveRecord::Base
   end
 
   def next_player
-    self.current_player_number = current_player_number + 1
-    self.current_player_number = 1 if current_player_number > players.count
+    self.current_player = players[current_player_number % players.count]
   end
 
   def previous_player?
@@ -288,8 +288,7 @@ class Game < ActiveRecord::Base
   end
 
   def previous_player
-    self.current_player_number = current_player_number - 1
-    self.current_player_number = players.count if current_player_number == 0
+    self.current_player = players[(current_player_number - 2) % players.count]
   end
 
   # discard
@@ -298,12 +297,8 @@ class Game < ActiveRecord::Base
     user.players.find_by_game_id(id) == current_discard_player
   end
 
-  def current_discard_player
-    players[current_discard_player_number - 1]
-  end
-
   def next_player_to_discard?
-    players.exists?([%Q(resources > 7 and number > ?), current_discard_player_number])
+    players.exists?([%Q(resources > 7 and number > ?), current_discard_player_number || 0])
   end
 
   def player_resources_discarded?
@@ -311,13 +306,12 @@ class Game < ActiveRecord::Base
   end
 
   def next_player_discard
-    player = players.find(:first, :conditions => [%Q(resources > 7 and number > ?), current_discard_player_number])
-    self.current_discard_player_number = player.number
-    self.current_discard_resource_limit = (player.resources + 1).div(2)
+    self.current_discard_player = players.find(:first, :conditions => [%Q(resources > 7 and number > ?), current_discard_player_number || 0])
+    self.current_discard_resource_limit = (current_discard_player.resources + 1).div(2)
   end
 
   def reset_robber
-    self.current_discard_player_number = 0
+    self.current_discard_player = nil
     self.current_discard_resource_limit = 0
   end
 
@@ -457,12 +451,32 @@ class Game < ActiveRecord::Base
         longest_road_player.save
       end
 
-      longest_road_player = new_longest_road_player
+      self.longest_road_player = new_longest_road_player
 
       if longest_road_player
         longest_road_player.visible_points += 2
         longest_road_player.save
       end
     end
+  end
+
+  def to_json(options = {})
+    hash = {
+      :id => id,
+      :discardPlayer => current_discard_player_number,
+      :discardLimit => current_discard_resource_limit,
+      :phase => phase,
+      :player => current_player_number,
+      :roll => current_dice_roll_value,
+      :state => state,
+      :turn => current_turn,
+      :winner => winner_number,
+      :cards => cards_count,
+      :players => players,
+      :card => card,
+      :board => board,
+      :offer => offer
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 end

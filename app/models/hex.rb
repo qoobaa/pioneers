@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Hex < ActiveRecord::Base
-  include ToHash
-
   belongs_to :board
   delegate :width, :height, :size, :robber_position, :nodes, :edges, :hexes, :to => :board, :prefix => true
   delegate :game, :to => :board
@@ -97,5 +95,16 @@ class Hex < ActiveRecord::Base
 
   def harbor_on?(position)
     node_positions[harbor_position] == position or node_positions[(harbor_position + 1) % 6] == position unless harbor_position.nil?
+  end
+
+  def to_json(options = {})
+    hash = {
+      :position => position,
+      :roll => roll,
+      :type => hex_type,
+      :harborPosition => harbor_position,
+      :harborType => harbor_type
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 end

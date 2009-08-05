@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Node < ActiveRecord::Base
-  include ToHash
-
   state_machine do
     event :settle do
       transition nil => :settlement
@@ -128,6 +126,16 @@ class Node < ActiveRecord::Base
 
   def harbor_type
     harbor_hex.harbor_type if harbor?
+  end
+
+  def to_json(options = {})
+    hash = {
+      :position => position,
+      :player => player_number,
+      :state => state,
+      :id => id
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 
   protected

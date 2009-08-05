@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Robbery < ActiveRecord::Base
-  include ToHash
-
   belongs_to :game
   belongs_to :sender, :class_name => "Player"
   belongs_to :recipient, :class_name => "Player"

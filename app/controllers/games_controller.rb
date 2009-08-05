@@ -30,7 +30,8 @@ class GamesController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render :json => { :game => game }
+        render :json => @game.to_json
+        # { :game => game }
       end
     end
   end

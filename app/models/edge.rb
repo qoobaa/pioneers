@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Edge < ActiveRecord::Base
-  include ToHash
-
   validates_presence_of :player, :board
   validates_associated :player
   validates_uniqueness_of :board_id, :scope => [:row, :col]
@@ -187,6 +185,14 @@ class Edge < ActiveRecord::Base
 
     longest_road = 1 + (left_road_lenghts.max or 0) + (right_road_lenghts.max or 0)
     return [longest_road, visited_roads]
+  end
+
+  def to_json(options = {})
+    hash = {
+      :position => :position,
+      :player => :player_number
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 
   protected

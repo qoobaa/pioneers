@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Card < ActiveRecord::Base
-  include ToHash
-
   belongs_to :game
   belongs_to :player
 
@@ -73,6 +71,22 @@ class Card < ActiveRecord::Base
     when "Card::RoadBuilding"
       "roadBuilding"
     end
+  end
+
+  def to_json(options = {})
+    hash = {
+      :id => id,
+      :player => player_number,
+      :bricks => bricks,
+      :grain => grain,
+      :lumber => lumber,
+      :ore => ore,
+      :wool => wool,
+      :resource => resource_type,
+      :type => card_type,
+      :state => state
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 
   protected

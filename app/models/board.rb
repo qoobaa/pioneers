@@ -19,7 +19,6 @@
 
 class Board < ActiveRecord::Base
   extend ActiveSupport::Memoizable
-  include ToHash
 
   belongs_to :game
 
@@ -49,6 +48,17 @@ class Board < ActiveRecord::Base
 
   def robber_position=(position)
     self.robber_row, self.robber_col = position
+  end
+
+  def to_json(options = {})
+    hash = {
+      :nodes => nodes,
+      :hexes => hexes,
+      :edges => edges,
+      :size => size,
+      :robberPosition => robber_position
+    }
+    ActiveSupport::JSON.encode(hash)
   end
 
   protected

@@ -1,6 +1,4 @@
 class OfferResponse < ActiveRecord::Base
-  include ToHash
-
   belongs_to :offer
   belongs_to :player
 
@@ -25,6 +23,13 @@ class OfferResponse < ActiveRecord::Base
 
   def user_player
     game_players.find_by_user_id(user.id)
+  end
+
+  def as_json
+    {
+      :player => player_number,
+      :agreed => agreed
+    }
   end
 
   protected

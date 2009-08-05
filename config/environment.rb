@@ -11,8 +11,8 @@ Rails::Initializer.run do |config|
   config.gem "bunny"
   config.gem "chriseppstein-compass", :lib => "compass"
   config.gem "haml"
+  config.gem "json"
   config.gem "pager-acts_as_list", :lib => "active_record/acts/list"
-  config.gem "qoobaa-to_hash", :lib => "to_hash"
   config.gem "state_machine"
 
   config.time_zone = 'UTC'
