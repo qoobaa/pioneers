@@ -80,7 +80,7 @@ class Offer < ActiveRecord::Base
       :ore => ore,
       :wool => wool,
       :state => state,
-      :responses => responses
+      :responses => offer_responses
     }
     ActiveSupport::JSON.encode(hash)
   end

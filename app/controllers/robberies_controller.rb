@@ -24,10 +24,7 @@ class RobberiesController < ApplicationController
     @robbery = @game.robberies.build(params[:robbery])
     @robbery.user = @current_user
     if @robbery.save
-      # @game.reload
-      # stomp_send(@game, { :game => game, :robbery => robbery })
-      # render :nothing => true, :status => :created
-      render :json => { :game => game }
+      redirect_to game_path(@game, :format => :json)
     else
       render :nothing => true, :status => :unprocessable_entity
     end

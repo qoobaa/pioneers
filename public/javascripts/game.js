@@ -42,7 +42,7 @@ YUI.add("game", function(Y) {
         later = Y.later,
         parse = Y.JSON.parse,
         pioneers = Y.namespace("pioneers"),
-        TIMEOUT = 10000;
+        TIMEOUT = 3000;
 
     function Game() {
         Game.superclass.constructor.apply(this, arguments);
@@ -282,7 +282,7 @@ YUI.add("game", function(Y) {
             var gameAttributes = parse(response.responseText),
                 game = this.get("game");
 
-            game.setAttrs(gameAttributes.game);
+            game.setAttrs(gameAttributes);
             this.syncUI();
         },
 

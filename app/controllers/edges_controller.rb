@@ -24,9 +24,7 @@ class EdgesController < ApplicationController
     @edge = @game.board_edges.build(params[:edge])
     @edge.user = @current_user
     if @edge.save
-      # stomp_send(@game, { :edge => edge, :game => game })
-      # render :nothing => true, :status => :created
-      render :json => { :game => game }
+      redirect_to game_path(@game, :format => :json)
     else
       render :nothing => true, :status => :unprocessable_entity
     end

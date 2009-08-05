@@ -25,11 +25,12 @@ class OfferResponse < ActiveRecord::Base
     game_players.find_by_user_id(user.id)
   end
 
-  def as_json
-    {
+  def to_json(options = {})
+    hash = {
       :player => player_number,
       :agreed => agreed
     }
+    ActiveSupport::JSON.encode(hash)
   end
 
   protected

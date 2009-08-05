@@ -24,9 +24,7 @@ class NodesController < ApplicationController
     @node = @game.board_nodes.build(params[:node])
     @node.user = @current_user
     if @node.save
-      # stomp_send(@game, { :node =>  node, :game => game })
-      # render :nothing => true, :status => :created
-      render :json => { :game => game }
+      redirect_to game_path(@game, :format => :json)
     else
       render :nothing => true, :status => :unprocessable_entity
     end
@@ -37,9 +35,7 @@ class NodesController < ApplicationController
     @node.user = @current_user
     @node.attributes = params[:node]
     if @node.expand
-      # stomp_send(@game, { :node => node, :game => game })
-      # render :nothing => true, :status => :created
-      render :json => { :game => game }
+      redirect_to game_path(@game, :format => :json)
     else
       render :nothing => true, :status => :unprocessable_entity
     end

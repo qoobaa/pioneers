@@ -25,25 +25,25 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id], include: { board: [:hexes, :nodes, :edges], players: [:user, :cards] })
-    @user_player = @game.players.find_by_user_id(current_user.try(:id))
+    @game = Game.find(params[:id])
     respond_to do |format|
       format.html
       format.json do
-        render :json => @game.to_json
-        # { :game => game }
+        render :json => @game.to_json(:user => current_user)
       end
     end
+  end
+
+  def create
+    @game = Game.create!
+    redirect_to @game
   end
 
   def update
     @game = Game.find(params[:id])
     @game.user = @current_user
     if @game.end_turn
-      # stomp_send(@game, { :game => game })
-      # render :nothing => true, :status => :created
-      # render :nothing => true, :status => :created
-      render :json => { :game => game }
+      redirect_to game_path(@game, :format => :json)
     else
       render :nothing => true, :status => :unprocessable_entity
     end

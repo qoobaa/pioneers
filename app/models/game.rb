@@ -37,11 +37,12 @@ class Game < ActiveRecord::Base
   delegate :robber?, :value, :to => :current_dice_roll, :prefix => true, :allow_nil => true
   delegate :resources, :to => :current_discard_player, :prefix => true
   delegate :number, :to => :winner, :prefix => true, :allow_nil => true
-  delegate :number, :to => :current_player, :prefix => true
+  delegate :number, :to => :current_player, :prefix => true, :allow_nil => true
   delegate :number, :to => :current_discard_player, :prefix => true, :allow_nil => true
 
   before_update :sum_cards_count
   after_update :save_players, :end_game
+  before_validation_on_create :generate_board
 
   attr_accessor :user
 
@@ -261,6 +262,12 @@ class Game < ActiveRecord::Base
     end
   end
 
+  def generate_board
+    hexes_attributes = Generator.generate
+    robber_position = hexes_attributes.find { |hex_attributes| hex_attributes[:hex_type] == "desert" }[:position]
+    build_board(:hexes_attributes => hexes_attributes, :size => [7, 7], :robber_position => robber_position)
+  end
+
   def offer
     offers.with_state(:awaiting).first
   end
@@ -461,6 +468,11 @@ class Game < ActiveRecord::Base
   end
 
   def to_json(options = {})
+    user = options[:user]
+    player = user ? user_player(options[:user]) : nil
+    player_number = player ? player.number : nil
+    cards = player ? player.cards.without_state(:graveyard) : []
+
     hash = {
       :id => id,
       :discardPlayer => current_discard_player_number,
@@ -475,7 +487,9 @@ class Game < ActiveRecord::Base
       :players => players,
       :card => card,
       :board => board,
-      :offer => offer
+      :offer => offer,
+      :userPlayer => player_number,
+      :userCards => cards
     }
     ActiveSupport::JSON.encode(hash)
   end

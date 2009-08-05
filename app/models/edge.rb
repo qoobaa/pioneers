@@ -189,8 +189,8 @@ class Edge < ActiveRecord::Base
 
   def to_json(options = {})
     hash = {
-      :position => :position,
-      :player => :player_number
+      :position => position,
+      :player => player_number
     }
     ActiveSupport::JSON.encode(hash)
   end

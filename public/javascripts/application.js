@@ -117,7 +117,7 @@ YUI({ modules: {
                 Y.detach("io:complete", complete);
 
                 var gameAttributes = parse(response.responseText),
-                    gameObject = new Y.pioneers.Game(gameAttributes.game);
+                    gameObject = new Y.pioneers.Game(gameAttributes);
 
                 game = new Y.Game({ game: gameObject });
 

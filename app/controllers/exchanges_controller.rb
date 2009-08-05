@@ -24,9 +24,7 @@ class ExchangesController < ApplicationController
     @exchange = @game.exchanges.build(params[:exchange])
     @exchange.user = @current_user
     if @exchange.save
-      # stomp_send(@game, { :game => game, :exchange => exchange })
-      # render :nothing => true, :status => :created
-      render :json => { :game => game }
+      redirect_to game_path(@game, :format => :json)
     else
       render :nothing => true, :status => :unprocessable_entity
     end
