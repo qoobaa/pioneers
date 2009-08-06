@@ -75,6 +75,8 @@ YUI.add("pioneers-player", function(Y) {
         cities: {
         },
         roads: {
+        },
+        resources: {
         }
     };
 

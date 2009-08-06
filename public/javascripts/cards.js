@@ -20,7 +20,7 @@ YUI.add("cards", function(Y) {
     var CARDS = "cards",
         CARD = "card",
         CONTENT_BOX = "contentBox",
-        YEAR_OF_PLENTY = "year-of-plenty",
+        YEAR_OF_PLENTY = "yearOfPlenty",
         MONOPOLY = "monopoly",
         getCN = Y.ClassNameManager.getClassName,
         BUTTON_TEMPLATE = '<button type="button"></button>',

@@ -33,6 +33,8 @@ YUI.add("game", function(Y) {
         ACCEPT = "accept",
         DECLINE = "decline",
         END_TURN = "end-turn",
+        YEAR_OF_PLENTY = "year-of-plenty",
+        MONOPOLY = "monopoly",
         getCN = Y.ClassNameManager.getClassName,
         C_GAME = getCN(GAME),
         CONTENT_BOX = "contentBox",
@@ -490,7 +492,6 @@ YUI.add("game", function(Y) {
         },
 
         _afterCardPlay: function(event) {
-            console.log(event);
             var details = event.details[0],
                 id = details.id,
                 resourceType = details.resourceType,

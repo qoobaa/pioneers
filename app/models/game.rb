@@ -56,7 +56,7 @@ class Game < ActiveRecord::Base
     end
 
     state :playing do
-      validates_length_of :players, :in => 2..4
+      validates_length_of :players, :in => 3..4
       validates_presence_of :board
       validate :players_ready
     end

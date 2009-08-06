@@ -108,13 +108,15 @@ YUI({ modules: {
         requires: ["base"]
     }
 }
-    }).use("io-base", "json-parse", "game", function(Y) {
+    }).use("io-base", "json-parse", "game", "overlay", function(Y) {
         // temporary for testing purposes
         window.Y = Y;
 
         var parse = Y.JSON.parse,
             io = Y.io,
             pathname = document.location.pathname;
+
+
 
         if(pathname.match(/^\/games\/\d+$/)) {
             function success(id, response) {
@@ -128,4 +130,8 @@ YUI({ modules: {
 
             var request = io(pathname + ".json", { on: { success: success } });
         }
+
+
+        var overlay = new Y.Overlay();
+        overlay.render();
 });

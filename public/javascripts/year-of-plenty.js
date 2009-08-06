@@ -51,6 +51,7 @@ YUI.add("year-of-plenty", function(Y) {
         bindUI: function() {
             YearOfPlenty.superclass.bindUI.apply(this, arguments);
             this.after("cardChange", bind(this._afterCardChange, this));
+            this.acceptButton.after("click", bind(this._afterAcceptClick, this));
         },
 
         _afterCardChange: function(event) {
@@ -62,7 +63,7 @@ YUI.add("year-of-plenty", function(Y) {
                 this._isValidYearOfPlenty(value);
         },
 
-        _onAcceptClick: function() {
+        _afterAcceptClick: function() {
             var value = this._getSpinnersValues(),
                 card = this.get("card");
             value.id = card.id;
