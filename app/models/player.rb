@@ -84,6 +84,7 @@ class Player < ActiveRecord::Base
 
   def to_json(options = {})
     hash = {
+      :id => id,
       :number => number,
       :state => state,
       :name => user_login,

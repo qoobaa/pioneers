@@ -35,7 +35,8 @@ YUI.add("pioneers-game", function(Y) {
         Offer = pioneers.Offer,
         Hex = pioneers.Hex,
         Edge = pioneers.Edge,
-        Node = pioneers.Node;
+        Node = pioneers.Node,
+        Player = pioneers.Player;
 
     var Game = function() {
         pioneers.Game.superclass.constructor.apply(this, arguments);
@@ -93,14 +94,17 @@ YUI.add("pioneers-game", function(Y) {
         players: {
             lazyAdd: false,
             setter: function(values) {
-                var initialized = this.get("initialized");
-                if(initialized) {
-                    each(values, function(value) {
-                        var number = value.number,
-                            player = this.player(number);
-                        player.setAttrs(value);
-                    }, this);
-                }
+                return map(values, function(value) {
+                    return new Player(value);
+                });
+                // var initialized = this.get("initialized");
+                // if(initialized) {
+                //     each(values, function(value) {
+                //         var number = value.number,
+                //             player = this.player(number);
+                //         player.setAttrs(value);
+                //     }, this);
+                // }
             }
         },
         userPlayer: {
@@ -133,7 +137,7 @@ YUI.add("pioneers-game", function(Y) {
     extend(Game, Base, {
         initializer: function() {
             this._createBoard();
-            this._createPlayers();
+            // this._createPlayers();
         },
 
         _createBoard: function() {
@@ -141,12 +145,12 @@ YUI.add("pioneers-game", function(Y) {
             this.board = new pioneers.Board(board);
         },
 
-        _createPlayers: function() {
-            var players = this.get("players");
-            this.players = map(players, function(player) {
-                return new pioneers.Player(player);
-            });
-        },
+        // _createPlayers: function() {
+        //     var players = this.get("players");
+        //     this.players = map(players, function(player) {
+        //         return new pioneers.Player(player);
+        //     });
+        // },
 
         isUserPhase: function() {
             var userPlayer = this.get("userPlayer"),
@@ -217,7 +221,8 @@ YUI.add("pioneers-game", function(Y) {
         },
 
         player: function(number) {
-            return find(this.players, function(player) {
+            var players = this.get("players");
+            return find(players, function(player) {
                 return player.get("number") === number;
             });
         },

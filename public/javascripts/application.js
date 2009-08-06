@@ -55,9 +55,13 @@ YUI({ modules: {
         fullpath: "/javascripts/user-player.js",
         requires: ["widget"]
     },
+    "join": {
+        fullpath: "/javascripts/join.js",
+        requires: ["widget"]
+    },
     "game": {
         fullpath: "/javascripts/game.js",
-        requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll", "after-roll", "io-base", "json-parse", "players", "game-status", "offer-sent", "offer-received", "user-player"]
+        requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll", "after-roll", "io-base", "json-parse", "players", "game-status", "offer-sent", "offer-received", "user-player", "join"]
     },
     "game-status": {
         fullpath: "/javascripts/game-status.js",
@@ -113,9 +117,7 @@ YUI({ modules: {
             pathname = document.location.pathname;
 
         if(pathname.match(/^\/games\/\d+$/)) {
-            function complete(id, response) {
-                Y.detach("io:complete", complete);
-
+            function success(id, response) {
                 var gameAttributes = parse(response.responseText),
                     gameObject = new Y.pioneers.Game(gameAttributes);
 
@@ -124,8 +126,6 @@ YUI({ modules: {
                 game.render();
             };
 
-            Y.on('io:complete', complete, this);
-
-            var request = io(pathname + ".json");
+            var request = io(pathname + ".json", { on: { success: success } });
         }
 });

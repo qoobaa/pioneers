@@ -18,14 +18,22 @@
 
 YUI.add("join", function(Y) {
     var JOIN = "join",
+        QUIT = "quit",
+        START = "start",
         CONTENT_BOX = "contentBox",
         getCN = Y.ClassNameManager.getClassName,
         BUTTON_TEMPLATE = '<button type="button"></button>',
+        C_JOIN = getCN(JOIN, JOIN),
+        C_QUIT = getCN(JOIN, QUIT),
+        C_START = getCN(JOIN, START),
         C_LABEL = getCN(JOIN, "label"),
         LABEL_TEMPLATE = '<label class="' + C_LABEL + '"></label>',
+        FORM_TEMPLATE = '<form method="post"></form>',
+        METHOD_TEMPLATE = '<input type="hidden" name="_method"></input>',
+        SUBMIT_TEMPLATE = '<input type="submit"></input>',
         Widget = Y.Widget,
         Node = Y.Node,
-        isNumber = Y.Lang.isNumber,
+        isValue = Y.Lang.isValue,
         bind = Y.bind;
 
     function Join() {
@@ -40,7 +48,9 @@ YUI.add("join", function(Y) {
             strings: {
                 value: {
                     label: "Join",
-                    join: ""
+                    join: "Join",
+                    quit: "Quit",
+                    start: "Start"
                 }
             }
         }
@@ -54,7 +64,11 @@ YUI.add("join", function(Y) {
 
         bindUI: function() {
             this.after("disabledChange", this._afterDisabledChange);
+            this.startNode.after("click", bind(this._afterStartClick, this));
+        },
 
+        _afterStartClick: function() {
+            this.fire(START);
         },
 
         _afterDisabledChange: function(event) {
@@ -62,19 +76,33 @@ YUI.add("join", function(Y) {
         },
 
         syncUI: function() {
-            this._uiSyncButtons(this.get("resources"));
+            this._uiSyncButtons();
         },
 
-        _uiSyncButtons: function(resources) {
-            this.settlementNode.set("disabled", !this._isSettlementEnabled(resources));
+        _uiSyncButtons: function() {
+            var game = this.get("game"),
+                player = game.userPlayer(),
+                state = isValue(player) ? player.get("state") : undefined;
+
+            this.joinNode.query("input").set("disabled", isValue(player));
+            this.quitNode.query("input").set("disabled", !isValue(player));
+            this.startNode.set("disabled", state === "ready");
         },
 
         _renderButtons: function() {
             var contentBox = this.get(CONTENT_BOX),
-                strings = this.get("strings");
+                strings = this.get("strings"),
+                game = this.get("game"),
+                id = game.get("id");
 
-            var card = this._createButton(strings.card, C_CARD);
-            this.cardNode = contentBox.appendChild(card);
+            var join = this._createForm("post", "/games/" + id + "/player", strings.join, C_JOIN);
+            this.joinNode = contentBox.appendChild(join);
+
+            var quit = this._createForm("delete", "/games/" + id + "/player", strings.quit, C_QUIT);
+            this.quitNode = contentBox.appendChild(quit);
+
+            var start = this._createButton(strings.start, C_START);
+            this.startNode = contentBox.appendChild(start);
         },
 
         _renderLabel: function() {
@@ -85,6 +113,27 @@ YUI.add("join", function(Y) {
             label.set("innerHTML", strings.label);
 
             this.labelNode = contentBox.appendChild(label);
+        },
+
+        _createForm: function(method, action, text, className) {
+            var form = Y.Node.create(FORM_TEMPLATE),
+                submit = Y.Node.create(SUBMIT_TEMPLATE),
+                input = Y.Node.create(METHOD_TEMPLATE);
+
+
+            submit.set("value", text);
+            submit.set("title", text);
+            submit.addClass(className);
+
+            form.set("action", action);
+            form.appendChild(submit);
+
+            if(method !== "post") {
+                input.set("value", method);
+                form.appendChild(input);
+            }
+
+            return form;
         },
 
         _createButton: function(text, className) {

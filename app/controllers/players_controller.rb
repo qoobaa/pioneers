@@ -38,7 +38,7 @@ class PlayersController < ApplicationController
     else
       flash[:error] = "Could not update"
     end
-    redirect_to game_path(@game)
+    redirect_to game_path(@game, :format => :json)
   end
 
   def destroy

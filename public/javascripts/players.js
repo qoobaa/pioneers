@@ -96,11 +96,11 @@ YUI.add("players", function(Y) {
         },
 
         _uiSyncPlayer: function(player) {
-            var number = player.number,
-                name = player.name,
-                resources = player.resources,
-                cards = player.cards,
-                points = player.points;
+            var number = player.get("number"),
+                name = player.get("name"),
+                resources = player.get("resources"),
+                cards = player.get("cards"),
+                points = player.get("points");
 
             this.nameNodes[number].set("innerHTML", name);
             this.resourcesNodes[number].set("innerHTML", resources);
@@ -119,7 +119,7 @@ YUI.add("players", function(Y) {
         },
 
         _renderPlayer: function(player) {
-            var number = player.number,
+            var number = player.get("number"),
                 contentBox = this.get(CONTENT_BOX),
                 className = this.getClassName(PLAYER, number);
 
@@ -135,7 +135,7 @@ YUI.add("players", function(Y) {
         },
 
         _renderItem: function(type, player) {
-            var number = player.number,
+            var number = player.get("number"),
                 value = player[type],
                 playerNode = this.playerNodes[number],
                 strings = this.get("strings"),

@@ -68,7 +68,7 @@ class Game < ActiveRecord::Base
       game.largest_army_size = 2
       game.longest_road_length = 4
       game.current_turn = 1
-      game.current_player = players.first
+      game.current_player = game.players.first
       game.army_cards = 14
       game.monopoly_cards = 2
       game.year_of_plenty_cards = 2
@@ -443,8 +443,15 @@ class Game < ActiveRecord::Base
     new_longest_road_player = nil
     edges = board_edges
 
+    # Rails.logger.info "************** POCZĄTEK"
+    # Rails.logger.info new_longest_road_length
+    # Rails.logger.info "**************"
+
     until edges.empty?
       length, visited_edges = edges.first.longest_road
+      # Rails.logger.info "**************"
+      # Rails.logger.info length
+      # Rails.logger.info "**************"
       if length > new_longest_road_length
         new_longest_road_player = edges.first.player
         new_longest_road_length = length
@@ -452,12 +459,13 @@ class Game < ActiveRecord::Base
       edges -= visited_edges
     end
 
-    if new_longest_road_player != longest_road_player
+    if new_longest_road_player and (new_longest_road_player != longest_road_player)
       if longest_road_player
         longest_road_player.visible_points -= 2
         longest_road_player.save
       end
 
+      self.longest_road_length = new_longest_road_length
       self.longest_road_player = new_longest_road_player
 
       if longest_road_player

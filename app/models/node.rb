@@ -111,9 +111,8 @@ class Node < ActiveRecord::Base
 
   def add_resources(type)
     return if type.nil?
-    amount = settlement? ? 1 : 2
-    player[type] = player.send("#{type}_was") + amount
-    player.save
+    amount = city? ? 2 : 1
+    player[type] = player[type] + amount
   end
 
   def has_road?
@@ -149,7 +148,7 @@ class Node < ActiveRecord::Base
   end
 
   def add_victory_point
-    player.visible_points = player.visible_points_was + 1
+    player.visible_points = player.visible_points + 1
   end
 
   def save_player
@@ -197,31 +196,35 @@ class Node < ActiveRecord::Base
 
   # settlement - before validation
   def build_settlement
-    player.settlements = player.settlements_was - 1
+    return if @settlement_built
+    player.settlements = player.settlements - 1
     add_resources_from_neighbours if game_second_settlement?
     charge_for_settlement if game_after_roll?
     update_exchange_rates if harbor?
     add_victory_point
+    @settlement_built = true
   end
 
   def charge_for_settlement
-    player.bricks = player.bricks_was - 1
-    player.grain = player.grain_was - 1
-    player.lumber = player.lumber_was - 1
-    player.wool = player.wool_was - 1
+    player.bricks = player.bricks - 1
+    player.grain = player.grain - 1
+    player.lumber = player.lumber - 1
+    player.wool = player.wool - 1
   end
 
   # city - before validation
   def build_city
-    player.settlements = player.settlements_was + 1
-    player.cities = player.cities_was - 1
+    return if @city_built
+    player.settlements = player.settlements + 1
+    player.cities = player.cities - 1
     charge_for_city
     add_victory_point
+    @city_built = true
   end
 
   def charge_for_city
-    player.ore = player.ore_was - 3
-    player.grain = player.grain_was - 2
+    player.ore = player.ore - 3
+    player.grain = player.grain - 2
   end
 
   def settlement_built

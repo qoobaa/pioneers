@@ -21,6 +21,9 @@ YUI.add("game", function(Y) {
         ROLL = "roll",
         CARD = "card",
         ROAD = "road",
+        JOIN = "join",
+        START = "start",
+        QUIT = "quit",
         SETTLEMENT = "settlement",
         CITY = "city",
         EXCHANGE = "exchange",
@@ -60,9 +63,10 @@ YUI.add("game", function(Y) {
     Y.extend(Game, Widget, {
         renderUI: function() {
             this._renderGameStatus();
+            this._renderJoin();
             this._renderPlayers();
-            this._renderUserPlayer();
             this._renderBoard();
+            this._renderUserPlayer();
             this._renderExchange();
             this._renderDiscard();
             this._renderOffer();
@@ -251,11 +255,23 @@ YUI.add("game", function(Y) {
             }
         },
 
+        _renderJoin: function() {
+            var game = this.get("game"),
+                contentBox = this.get(CONTENT_BOX),
+                joinNode = Node.create(DIV_TEMPLATE);
+
+            this.join = new Y.Join({ contentBox: joinNode, game: game });
+            contentBox.append(joinNode);
+
+            this.join.render();
+        },
+
         syncUI: function() {
             var game = this.get("game"),
                 player = game.get("userPlayer");
 
             this._uiSyncGameStatus();
+            this._uiSyncJoin();
             this._uiSyncPlayers();
 
             if(isValue(player)) {
@@ -290,13 +306,19 @@ YUI.add("game", function(Y) {
             var game = this.get("game"),
                 id = game.get("id"),
                 uri = "/games/" + id + ".json";
-            io(uri);
+            io(uri, { on: { success: bind(this._success, this) }});
         },
 
         _uiSyncGameStatus: function() {
             var game = this.get("game");
 
             this.gameStatus.syncUI();
+        },
+
+        _uiSyncJoin: function() {
+            var game = this.get("game");
+
+            this.join.syncUI();
         },
 
         _uiSyncPlayers: function() {
@@ -431,6 +453,8 @@ YUI.add("game", function(Y) {
             var game = this.get("game"),
                 player = game.get("userPlayer");
 
+            this.join.after(START, bind(this._afterStart, this));
+
             if(isValue(player)) {
                 this.beforeRoll.after(ROLL, bind(this._afterRoll, this));
                 this.afterRoll.after(END_TURN, bind(this._afterEndTurn, this));
@@ -451,8 +475,10 @@ YUI.add("game", function(Y) {
                 this.offerReceived.after(ACCEPT, bind(this._afterOfferReceivedAccept, this));
                 this.offerReceived.after(DECLINE, bind(this._afterOfferReceivedDecline, this));
             }
+        },
 
-            Y.on("io:success", bind(this._success, this));
+        _afterStart: function(event) {
+            this._io("put", "/player", ["player[state_event]=start"]);
         },
 
         _afterRoll: function(event) {
@@ -639,6 +665,10 @@ YUI.add("game", function(Y) {
             if(timer) {
                 timer.cancel();
             }
+
+            configuration.on = {
+                success: bind(this._success, this)
+            };
 
             io("/games/" + id + path, configuration);
         }
