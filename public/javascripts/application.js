@@ -1,4 +1,6 @@
-YUI({ modules: {
+YUI({
+    base: 'http://localhost:3000/javascripts/build/',
+    modules: {
     "resource-spinner": {
         fullpath: "/javascripts/resource-spinner.js",
         requires: ["widget"]

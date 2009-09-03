@@ -56,7 +56,7 @@ class Game < ActiveRecord::Base
     end
 
     state :playing do
-      validates_length_of :players, :in => 3..4
+      validates_length_of :players, :in => 2..4
       validates_presence_of :board
       validate :players_ready
     end
@@ -441,17 +441,10 @@ class Game < ActiveRecord::Base
   def longest_road
     new_longest_road_length = self.longest_road_length
     new_longest_road_player = nil
-    edges = board_edges
-
-    # Rails.logger.info "************** POCZĄTEK"
-    # Rails.logger.info new_longest_road_length
-    # Rails.logger.info "**************"
+    edges = Set.new(board_edges)
 
     until edges.empty?
       length, visited_edges = edges.first.longest_road
-      # Rails.logger.info "**************"
-      # Rails.logger.info length
-      # Rails.logger.info "**************"
       if length > new_longest_road_length
         new_longest_road_player = edges.first.player
         new_longest_road_length = length
