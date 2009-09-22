@@ -1,7 +1,6 @@
 log/*.log
 tmp/*
 tmp/**/*
-db/schema.rb
 config/database.yml
 db/*.sqlite3
 public/assets/**
