@@ -9,7 +9,6 @@ require "set"
 
 Rails::Initializer.run do |config|
   config.gem "authlogic"
-  config.gem "bunny"
   config.gem "chriseppstein-compass", :lib => "compass"
   config.gem "haml"
   config.gem "json"
