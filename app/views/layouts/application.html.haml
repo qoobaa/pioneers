@@ -6,6 +6,14 @@
   %body
     #container
       = message_block :class => "message-block"
+      %div
+        - if current_user
+          Logged in as
+          = current_user.login
+          ,
+          = link_to "Logout", user_session_path, :method => :delete
+        - else
+          = link_to "Login", new_user_session_path
       #page
         = yield
     /= javascript_include_tag "http://yui.yahooapis.com/3.0.0b1/build/yui/yui.js", "application"

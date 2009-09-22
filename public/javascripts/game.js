@@ -580,7 +580,8 @@ YUI.add("game", function(Y) {
         _afterOfferSentAccept: function(event) {
             var player = event.details[0];
 
-            this._io("put", "/offer", ["offer[state_event]=accept", "offer[recipient_number]=" + player]);
+            this._io("put", "/offer", ["offer[state_event]=accept", "offer[recipient_number]="
+                                                                    + "" + player]);
         },
 
         _afterOfferReceivedDecline: function(event) {
