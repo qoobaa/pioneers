@@ -198,12 +198,13 @@ class HexTest < Test::Unit::TestCase
     setup do
       @hex = Factory.build(:hex, :hex_type => "forest")
       @node = Object.new
+      stub(@node).player { Factory(:player) }
       stub(@hex).nodes { [@node] }
     end
 
     should "add resources to neighbour nodes without robber when rolled" do
       stub(@hex).robber? { false }
-      mock(@node).add_resources("lumber")
+      mock(@node).add_resources("lumber") { |type| true }
       @hex.rolled
     end
 

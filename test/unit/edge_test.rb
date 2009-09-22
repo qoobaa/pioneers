@@ -131,7 +131,7 @@ class EdgeTest < Test::Unit::TestCase
       stub(@node).player { @edge.player }
       stub(@node).has_road? { false }
       stub(@edge).nodes { [@node] }
-      stub(@edge).game_road_built!
+      stub(@edge).game_road_built! { |user| true }
     end
 
     should "be valid with valid attributes" do
@@ -140,22 +140,22 @@ class EdgeTest < Test::Unit::TestCase
 
     should "not be valid if position is not settleable" do
       stub(@hex).settleable? { false }
-      assert !@edge.valid?
+      assert_false @edge.valid?
     end
 
     should "not be valid if neighbour settlement doesn't belong to player" do
       stub(@node).player { Factory.build(:player) }
-      assert !@edge.valid?
+      assert_false @edge.valid?
     end
 
     should "not be valid if neighbour settlement has road already" do
       stub(@node).has_road? { true }
-      assert !@edge.valid?
+      assert_false @edge.valid?
     end
 
     should "not be valid if no settlements in neighbourhood" do
       stub(@edge).nodes { [] }
-      assert !@edge.valid?
+      assert_false @edge.valid?
     end
 
     should "take one road from player" do
@@ -165,7 +165,7 @@ class EdgeTest < Test::Unit::TestCase
     end
 
     should "call road_built event after save" do
-      mock(@edge).game_road_built!(@edge.player.user)
+      mock(@edge).game_road_built!(@edge.player.user) { |user| true }
       @edge.save!
     end
   end
@@ -174,6 +174,7 @@ class EdgeTest < Test::Unit::TestCase
     setup do
       @edge = Factory.build(:edge)
       @edge.player.attributes = { :bricks => 1, :lumber => 1 }
+      @edge.player.save!
       @hex = Object.new
       stub(@hex).settleable? { true }
       stub(@edge).hexes { [@hex] }
@@ -197,22 +198,25 @@ class EdgeTest < Test::Unit::TestCase
 
       should "not be valid if player has no bricks" do
         @edge.player.attributes = { :bricks => 0 }
-        assert !@edge.valid?
+        @edge.player.save!
+        assert_false @edge.valid?
       end
 
       should "not be valid if player has no lumber" do
         @edge.player.attributes = { :lumber => 0 }
-        assert !@edge.valid?
+        @edge.player.save!
+        assert_false @edge.valid?
       end
 
       should "not be valid if player has no roads" do
         @edge.player.attributes = { :roads => 0 }
-        assert !@edge.valid?
+        @edge.player.save!
+        assert_false @edge.valid?
       end
 
       should "not be valid if settlement doesn't belong to player" do
         stub(@node).player { Factory.build(:player) }
-        assert !@edge.valid?
+        assert_false @edge.valid?
       end
     end
 
@@ -229,14 +233,14 @@ class EdgeTest < Test::Unit::TestCase
 
       should "not be valid if road doesn't belong to player" do
         stub(@edge2).player { Factory.build(:player) }
-        assert !@edge.valid?
+        assert_false @edge.valid?
       end
 
       should "not be valid if left road belong to player but left settlement doesn't" do
         @node = Object.new
         stub(@node).player { Factory.build(:player) }
         stub(@edge).left_node { @node }
-        assert !@edge.valid?
+        assert_false @edge.valid?
       end
     end
   end
