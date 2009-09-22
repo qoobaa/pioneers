@@ -5,5 +5,6 @@ config/database.yml
 db/*.sqlite3
 public/assets/**
 public/stylesheets/compiled/*
+!public/stylesheets/compiled/.keep
 public/javascripts/all.js
 .#*
