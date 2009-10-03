@@ -16,6 +16,4 @@
           = link_to "Login", new_user_session_path
       #page
         = yield
-    /= javascript_include_tag "http://yui.yahooapis.com/3.0.0b1/build/yui/yui.js", "application"
-    = javascript_include_tag "http://localhost:3000/javascripts/build/yui/yui.js"
-    = javascript_include_tag "application"
+    = sprockets_include_tag

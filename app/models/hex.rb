@@ -55,6 +55,7 @@ class Hex < ActiveRecord::Base
 
   def self.find_by_positions(positions)
     find(:all, :conditions => [%Q{(#{quoted_table_name}.row = ? AND #{quoted_table_name}.col = ?) OR } * positions.size + %Q{ 0 = 1}, *positions.flatten])
+    # find(:all, :conditions => [["#{table_name}.row = ? AND #{table_name}.col = ?"] * positions.size * " OR ", *positions.flatten])
   end
 
   def resource_type

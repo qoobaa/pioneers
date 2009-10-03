@@ -18,6 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ActionController::Routing::Routes.draw do |map|
+  SprocketsApplication.routes(map)
   map.resource :user
   map.resource :user_session
   map.resources :messages

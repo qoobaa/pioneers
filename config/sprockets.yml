@@ -1,0 +1,5 @@
+:asset_root: public
+:load_path:
+  - app/javascripts
+:source_files:
+  - app/javascripts/application.js
