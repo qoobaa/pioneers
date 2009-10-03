@@ -1,24 +1,24 @@
-//= require <lib/yui/yui/yui>
-//= require <lib/yui/oop/oop>
-//= require <lib/yui/event-custom/event-custom>
-//= require <lib/yui/io/io-base>
-//= require <lib/yui/json/json-parse>
-//= require <lib/yui/attribute/attribute>
-//= require <lib/yui/event/event-base>
-//= require <lib/yui/pluginhost/pluginhost>
-//= require <lib/yui/dom/dom>
-//= require <lib/yui/node/node>
-//= require <lib/yui/event/event-delegate>
-//= require <lib/yui/event/event-focus>
-//= require <lib/yui/base/base>
-//= require <lib/yui/classnamemanager/classnamemanager>
-//= require <lib/yui/widget/widget>
-//= require <lib/yui/collection/collection>
-//= require <lib/yui/widget/widget-position>
-//= require <lib/yui/widget/widget-position-ext>
-//= require <lib/yui/widget/widget-stack>
-//= require <lib/yui/widget/widget-stdmod>
-//= require <lib/yui/overlay/overlay>
+//= require <lib/yui/yui>
+//= require <lib/oop/oop>
+//= require <lib/event-custom/event-custom>
+//= require <lib/io/io-base>
+//= require <lib/json/json-parse>
+//= require <lib/attribute/attribute>
+//= require <lib/event/event-base>
+//= require <lib/pluginhost/pluginhost>
+//= require <lib/dom/dom>
+//= require <lib/node/node>
+//= require <lib/event/event-delegate>
+//= require <lib/event/event-focus>
+//= require <lib/base/base>
+//= require <lib/classnamemanager/classnamemanager>
+//= require <lib/widget/widget>
+//= require <lib/collection/collection>
+//= require <lib/widget/widget-position>
+//= require <lib/widget/widget-position-ext>
+//= require <lib/widget/widget-stack>
+//= require <lib/widget/widget-stdmod>
+//= require <lib/overlay/overlay>
 
 //= require <pioneers/board>
 //= require <pioneers/edge>
@@ -29,8 +29,6 @@
 //= require <pioneers/player>
 //= require <pioneers/position>
 
-//= require <widgets/resource-spinner>
-//= require <widgets/resources>
 //= require <widgets/after-roll>
 //= require <widgets/before-roll>
 //= require <widgets/board>
@@ -39,18 +37,19 @@
 //= require <widgets/discard>
 //= require <widgets/exchange>
 //= require <widgets/game-status>
+//= require <widgets/game>
 //= require <widgets/join>
 //= require <widgets/monopoly>
-//= require <widgets/offer>
 //= require <widgets/offer-received>
 //= require <widgets/offer-sent>
+//= require <widgets/offer>
 //= require <widgets/players>
+//= require <widgets/resource-spinner>
+//= require <widgets/resources>
 //= require <widgets/user-player>
 //= require <widgets/year-of-plenty>
-//= require <widgets/game>
 
 YUI({
-    // base: 'http://localhost:3000/javascripts/build/',
     modules: {
     "resource-spinner": {
         fullpath: "/javascripts/resource-spinner.js",
@@ -160,23 +159,18 @@ YUI({
         fullpath: "/javascripts/pioneers/offer.js",
         requires: ["base"]
     }
-}
-    }).use("io-base", "json-parse", "game", "overlay", function(Y) {
-        // temporary for testing purposes
-        window.Y = Y;
-
+    }
+}).use("io-base", "json-parse", "game", "overlay", function(Y) {
         var parse = Y.JSON.parse,
             io = Y.io,
             pathname = document.location.pathname;
-
-
 
         if(pathname.match(/^\/games\/\d+$/)) {
             function success(id, response) {
                 var gameAttributes = parse(response.responseText),
                     gameObject = new Y.pioneers.Game(gameAttributes);
 
-                game = new Y.Game({ game: gameObject });
+                var game = new Y.Game({ game: gameObject });
 
                 game.render();
             };
@@ -185,6 +179,14 @@ YUI({
         }
 
 
-        var overlay = new Y.Overlay();
-        overlay.render();
+    // spinner = new Y.ResourceSpinner();
+    // spinner.render();
+
+    // overlay = new Y.Overlay({
+    //     bodyContent: "body <a href='#'>test</a>",
+    //     width: 350,
+    //     centered: true
+    // });
+
+    // overlay.render();
 });
