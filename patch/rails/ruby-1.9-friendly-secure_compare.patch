@@ -1,0 +1,50 @@
+From b5c8136db4bfd73ab4d3a6b2c015de206d2d2fe1 Mon Sep 17 00:00:00 2001
+From: =?utf-8?q?Jakub=20Ku=C5=BAma?= <qoobaa@gmail.com>
+Date: Fri, 4 Sep 2009 09:45:52 +0200
+Subject: [PATCH] ruby 1.9 friendly secure_compare
+
+---
+ .../lib/active_support/message_verifier.rb         |   25 +++++++++++++++----
+ 1 files changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/activesupport/lib/active_support/message_verifier.rb b/activesupport/lib/active_support/message_verifier.rb
+index aae5a34..3127c80 100644
+--- a/activesupport/lib/active_support/message_verifier.rb
++++ b/activesupport/lib/active_support/message_verifier.rb
+@@ -40,14 +40,27 @@ module ActiveSupport
+     private
+       # constant-time comparison algorithm to prevent timing attacks
+       def secure_compare(a, b)
+-        if a.length == b.length
+-          result = 0
+-          for i in 0..(a.length - 1)
+-            result |= a[i] ^ b[i]
++        if a.respond_to?(:bytesize)
++          # > 1.8.6 friendly version
++          if a.bytesize == b.bytesize
++            result = 0
++            j = b.each_byte
++            a.each_byte { |i| result |= i ^ j.next }
++            result == 0
++          else
++            false
+           end
+-          result == 0
+         else
+-          false
++          # <= 1.8.6 friendly version
++          if a.size == b.size
++            result = 0
++            for i in 0..(a.length - 1)
++              result |= a[i] ^ b[i]
++            end
++            result == 0
++          else
++            false
++          end
+         end
+       end
+ 
+-- 
+1.6.0.4
+

@@ -1,0 +1,25 @@
+From 8a67b8a7a9304ff469c7367fb5ab635b3d78bb8a Mon Sep 17 00:00:00 2001
+From: =?utf-8?q?Jakub=20Ku=C5=BAma?= <kuba@synergypeople.net>
+Date: Fri, 4 Sep 2009 11:48:53 +0200
+Subject: [PATCH] read JavaScript sources as binary files
+
+---
+ lib/sprockets/source_file.rb |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/lib/sprockets/source_file.rb b/lib/sprockets/source_file.rb
+index 8dfa525..eb6b98c 100644
+--- a/lib/sprockets/source_file.rb
++++ b/lib/sprockets/source_file.rb
+@@ -12,7 +12,7 @@ module Sprockets
+         lines = []
+ 
+         comments = []
+-        File.open(pathname.absolute_location) do |file|
++        File.open(pathname.absolute_location, "rb") do |file|
+           file.each do |line|
+             lines << line = SourceLine.new(self, line, file.lineno)
+ 
+-- 
+1.6.0.4
+

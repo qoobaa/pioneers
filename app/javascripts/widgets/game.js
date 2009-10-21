@@ -678,4 +678,4 @@ YUI.add("game", function(Y) {
 
     Y.Game = Game;
 
-}, '0.0.1', { requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll", "game-status", "join", "players"] });
+}, '0.0.1', { requires: ["widget", "pioneers-game", "board", "exchange", "discard", "offer", "build", "cards", "before-roll", "game-status", "join", "players", "user-player", "after-roll", "offer-sent", "offer-received"] });

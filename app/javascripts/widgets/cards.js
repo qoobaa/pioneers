@@ -200,4 +200,4 @@ YUI.add("cards", function(Y) {
 
     Y.Cards = Cards;
 
-}, '0.0.1', { requires: ["widget"] });
+}, '0.0.1', { requires: ["widget", "year-of-plenty", "monopoly"] });
