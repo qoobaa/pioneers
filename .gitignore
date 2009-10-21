@@ -8,3 +8,5 @@ public/stylesheets/compiled/*
 !public/stylesheets/compiled/.keep
 public/javascripts/all.js
 .#*
+vendor/rails
+vendor/gems
