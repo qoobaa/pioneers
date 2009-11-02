@@ -6,10 +6,10 @@ require "set"
 
 Rails::Initializer.run do |config|
   config.gem "authlogic"
-  config.gem "chriseppstein-compass", :lib => "compass"
+  config.gem "compass"
   config.gem "haml"
   config.gem "json"
-  config.gem "pager-acts_as_list", :lib => "active_record/acts/list"
+  config.gem "acts_as_list"
   config.gem "sprockets"
   config.gem "state_machine"
 
