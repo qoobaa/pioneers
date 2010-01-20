@@ -1,3 +1,13 @@
+class Array
+  def shuffle
+    sort_by { rand }
+  end
+
+  def shuffle!
+    self.replace shuffle
+  end
+end
+
 module Generator
   ROLLS = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
   HARBORS = (["bricks", "grain", "lumber", "ore", "wool"] + ["generic"] * 4)
