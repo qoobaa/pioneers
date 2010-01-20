@@ -14,6 +14,7 @@
           = link_to "Logout", user_session_path, :method => :delete
         - else
           = link_to "Login", new_user_session_path
+          = link_to "Sign up", new_user_path
       #page
         = yield
     = sprockets_include_tag
